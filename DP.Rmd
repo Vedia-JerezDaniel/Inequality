@@ -1,0 +1,505 @@
+---
+title: "dp"
+author: "Daniel H."
+date: "7/8/2020"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r, message = off}
+library(tidyverse)
+library(readxl)
+library(lmtest)
+
+#library(psych)
+```
+
+
+```{r}
+ine <- read_excel("D:/ECB/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
+
+ine <-  as.data.frame(ine)
+ine2 <- drop_na(ine)
+
+#inef <- drop_na(ineD)
+```
+
+```{r}
+ine2$year <- NULL
+ine2$idem <- NULL
+ine2$debt_g <- NULL
+# se va el grupo de deuda
+
+inst <- ine[c(1:667), c(1:2,54:66)]
+rest <- ine[c(1:667), c(1:53)]
+```
+
+```{r}
+skewedVars<- NA
+library(moments) # for skewness()
+for(i in names(ine2)){
+       skewVal <- skewness(ine2[,i])
+       print(paste(i, skewVal, sep = ": "))
+       if(abs(skewVal) > 1.15){
+         skewedVars <- c(skewedVars, i)
+       }
+}
+
+# solo tomar td_fe
+# inst en growth y graficos aparte
+```
+
+```{r}
+library(purrr)
+library(tidyr)
+library(ggplot2)
+library(ggthemes)
+
+rest %>% keep(is.numeric) %>% 
+  gather() %>% ggplot(aes(value)) +
+    facet_wrap(~ key , scales = "free") +
+    geom_histogram(colour="blue") + theme_wsj(base_size = 8)
+
+
+# Boxplots
+rest %>% keep(is.numeric) %>% 
+  gather() %>% ggplot(aes(value)) +
+    facet_wrap(~ key , scales = "free") +
+    geom_boxplot(colour="blue", fill='gray') + theme_wsj(base_size = 8)
+
+inst %>% keep(is.numeric) %>% 
+  gather() %>% ggplot(aes(value)) +
+    facet_wrap(~ key , scales = "free") +
+    geom_boxplot(colour="blue", fill='gray') + theme_wsj(base_size = 8)
+```
+
+limpiar: gro_GDPpc
+
+```{r}
+library(corrplot)
+ine %>% keep(is.numeric) -> ine2
+ine2$year <- NULL
+ine2 <- subset(ine2, select=-c(pop, GDP_curr, GDP_con))
+
+corr <- cor(na.omit(ine2))
+
+row_indic <- apply(corr, 1, function(x) sum(x > 0.75 | x < -0.75) > 1)
+row_indic_2 <- apply(corr, 1, function(x) sum(x < 0.25 | x > -0.25) > 1)
+
+corr <- corr[row_indic ,row_indic]
+corr2 <- corr[row_indic_2 ,row_indic_2]
+
+corrplot(corr, method="square", diag = F,order = 'hclust',tl.cex = .8)
+corrplot(corr2, method="ellipse", diag = F,order = 'FPC',tl.cex = .8)
+```
+le_female, net_len_w/i, soc_payable, gov_ex, soc_prot, td_female, tertiary_ed, voice, ruleoflaw, goveff, soc_proc_ex_pen, trade, 
+
+```{r}
+plotHist <- function(data_in, i) {
+    data <- data.frame(x=data_in[[i]])
+    p <- ggplot(data=data, aes(x=factor(x))) + stat_count() + xlab(colnames(data_in)[i]) + theme_grey() + 
+   theme(axis.text.x = element_text(angle = 90, hjust =1))
+    return (p)
+}
+```
+
+```{r}
+library(gridExtra)
+doPlots <- function(data_in, fun, ii, ncol=2) {
+    pp <- list()
+    for (i in ii) {
+        p <- fun(data_in=data_in, i=i)
+        pp <- c(pp, list(p))
+    }
+    do.call("grid.arrange", c(pp, ncol=ncol))
+}
+```
+
+```{r}
+plotDen <- function(data_in, i){
+    data <- data.frame(x=data_in[[i]], y = data_in$Gini_net)
+    p <- ggplot(data= data) + geom_bar(aes(x = x), stat = 'density', size = 1, alpha = 0.7) + xlab(paste0((colnames(data_in)[i]), '\n', 'Skewness:',
+round(skewness(data_in[[i]], na.rm = T), 2))) 
+return(p)
+    }
+```
+
+```{r}
+doPlots(ine2, fun = plotDen, ii = 1:9, ncol = 3)
+```
+```{r}
+plotCorr <- function(data_in, i){
+data <- data.frame(x = data_in[[i]], y= data_in$Gini_net)
+p <- ggplot(data, aes(x = x, y = y)) + geom_point(shape = 1, na.rm = T) +  geom_smooth(method = lm ) + xlab(paste0(colnames(data_in)[i], 
+  '\n', 'R-Squared: ', round(cor(data_in[[i]], data$y, 
+ use = 'complete.obs'), 2))) 
+ return(suppressWarnings(p))
+}
+```
+
+```{r}
+highcorr <- c(names(corr[,'Gini_net'])[which(corr[,'Gini_net'] > 0.05)],
+    names(corr[,'Gini_net'])[which(corr[,'Gini_net'] < -0.05)])
+
+data_corr <- ine2[, highcorr]
+doPlots(data_corr, fun = plotCorr, ii = c(2,10,7:9, 13))
+```
+
+https://stackoverflow.com/questions/27214717/calculate-the-growth-rate-for-panel-data
+
+https://rpubs.com/nischalthapa/267813
+
+
+```{r}
+myReturn <- function(x) c(NA, diff(x)/x[-length(x)])
+myReturn5 <- function(x) c(NA, diff(x, lag= 5)/x[-length(x)])
+
+
+library(data.table)
+setDT(ine) # convert to a data.table
+
+ine[, DEB_growth := myReturn(Gov_debt), by=idem] 
+setDT(a)
+a = list(1:10)
+a[, V2 := myReturn(V1)] 
+a[, V3 := myReturn5(V1)]
+
+
+growth_rate = ine %>%
+  arrange(year) %>%
+  mutate(Diff_year = V1 - lag(V1, n=5L), 
+         Diff_growth = route - lag(route),
+         Rate_percent = (Diff_growth / Diff_year)/route * 100)
+```
+
+```{r}
+library(foreign)
+
+write.dta(ine, "C:/Users/magda/Desktop/ine.dta")
+```
+
+Data transformation negative logs
+
+https://discuss.analyticsvidhya.com/t/methods-to-deal-with-zero-values-while-performing-log-transformation-of-variable/2431/8
+
+https://blogs.sas.com/content/iml/2011/04/27/log-transformations-how-to-handle-negative-data-values.html
+
+le_female, net_len_w/i, soc_payable, gov_ex, soc_prot, td_female, tertiary_ed, voice, ruleoflaw, goveff, soc_proc_ex_pen, trade, 
+
+
+Data Panel modelling
+
+```{r}
+attach(inef)
+
+lmg = lm(Gini_net ~ GDP_pc + Soc_payable + Gov_debt+Tertiary_ed_diff+ruleoflaw, data=inef)
+
+coeftest(lmg, vcov. = vcovHC, type = "HC3")
+
+```
+
+```{r}
+library(plm)
+
+#FE
+# markdepth or finadeve
+# TRANSFERS
+#Soc_payable, Social_prot
+# KIND
+# Education_exp
+# PROG
+# mrp_all*ind_tx
+# Deficit+Unempl_rateD
+# Secondary_ed
+
+# finadeve + gro_GDPpc + Gov_ex + Secondary_ed + Trade
+
+E <- pdata.frame(ineD, index=c("idem","year"), drop.index=TRUE, row.names=TRUE)
+
+ine3 = ine
+ine3$idem <- NULL
+ine3$debt_g <- NULL
+ine3$year <- NULL
+ine3$Gini_net <- NULL
+
+na = names(ine3)
+na1 = names(ine3)
+
+na = str_remove_all(na, "Gini_net")
+na = str_remove_all(na, "Gini_market")
+na = str_remove_all(na, "Deciles")
+na = str_remove_all(na, "ba_40%")
+na = str_remove_all(na, "Quantiles")
+na = str_remove_all(na, "idem")
+na = str_remove_all(na, "year")
+na = str_remove_all(na, "debt_g")
+
+na['1']
+
+fm <- as.formula(paste(paste(na, collapse= "+")))
+
+attach(ine)
+
+all <- lm(Gini_net ~ Gov_debt + Life_xpectancy + Health_exp + Wages + HICP + 
+     ac_pop + pop + Education_exp + Social_prot_ex_pen +Family+ Unemp_tra + Unempl_rate+HICP+Wages+Labour_income+Corporate_ta+property_tx+`prod&imp_tx`+
+       ind_tx+ac_pop+pop+ `gro%pop`+`gro%GDP`+
+    Net_mig + Trade + TOT + GDP_curr + GDP_con +  
+    GDP_pc + gro_GDPpc + Net_len_adj + Net_len_wi + Secondary_ed + 
+    Tertiary_ed + Tertiary_ed_diff + leavers + 
+    le_male + le_female + Gov_inv + Gov_ex + Deficit + Soc_payable + 
+    Soc_kind + employ_rate + arp_mid + mrp_all + goveff + regqua + 
+    ruleoflaw + voice + finadeve + fininsti + finmarket + instdepth + 
+    insaccess + ins_effic + markdepth + markaccess + mark_effic
+          , data = ine)
+
+##
+backwardElimination <- function(x, sl) {
+  numVars = 55
+  for (i in c(1:numVars)){
+    regressor = lm(formula = Gini_net ~ Life_xpectancy + Health_exp + HICP + ac_pop + Social_prot_ex_pen +Family+ Unemp_tra + HICP + Corporate_ta + `prod&imp_tx` + ind_tx + `gro%pop` +  Net_mig + Trade + TOT + gro_GDPpc + Net_len_adj + Net_len_wi + leavers + le_male + Gov_inv + Gov_ex + Deficit + Soc_payable + Soc_kind + employ_rate + arp_mid + mrp_all + goveff + voice + fininsti + finmarket + instdepth + insaccess + markdepth + markaccess + mark_effic, data = ine)
+    
+    maxVar = max(coef(summary(regressor))[c(1:numVars), "Pr(>|t|)"])
+    if (maxVar > sl){
+      j = which(coef(summary(regressor))[c(1:numVars), "Pr(>|t|)"] == maxVar)
+      x = x[, -j]
+    }
+    numVars = numVars - 1
+  }
+  return(summary(regressor))
+}
+
+SL = 0.05
+#dataset = ine[, c(1,2,3,4,5)]
+backwardElimination(ine, SL)
+
+##
+
+coeftest(all, vcov. = vcovHC, type = "HC1")
+
+pfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade) + Gov_ex + lag(diff(Net_len_wi)) , data = ine, model = "within", index = 'idem')
+
+coeftest(pfe, vcov. = vcovHC, type = "HC1")
+
+
+
+library(ggplot2)
+ggplot(ine, aes(x = year, y = (Net_len_wi), colour = idem)) +
+  geom_point() +
+  facet_wrap( ~ idem)
+
+
+#DIFF LAG
+ine <- ine %>%
+ group_by(idem) %>% mutate(GDP_D = GDP_con-lag(GDP_con))
+
+
+ine <- ine %>%
+    group_by(idem) %>%
+    mutate(GDP_LD = dplyr::lag(GDP_D, n = 1, default = NA))
+
+# LAG
+
+ine <- ine %>%
+    group_by(idem) %>%
+    mutate(Trade_L = dplyr::lag(Trade, n = 1, default = NA))
+
+ine <- ine %>%
+    group_by(idem) %>%
+    mutate(Sec_L = dplyr::lag(Secondary_ed, n = 1, default = NA))
+
+ine <- ine %>%
+    group_by(idem) %>%
+    mutate(GovX_L = dplyr::lag(Gov_ex, n = 1, default = NA))
+
+ine <- ine %>%
+ group_by(idem) %>% mutate(Netwi_D = Net_len_wi-lag(Net_len_wi))
+
+ine <- ine %>%
+    group_by(idem) %>%
+    mutate(le_male_L = dplyr::lag(le_male, n = 1, default = NA))
+
+
+# OTROS MODELOS
+
+tfe <- plm(Gini_net ~ mark_effic+gro_GDPpc+Gov_ex+
+          Secondary_ed + Trade
+          , data = E, model = "within", effect="twoways")
+
+
+rfe <- plm(Gini_net ~ mark_effic+gro_GDPpc+Gov_ex+
+          Secondary_ed + Trade
+          , data = E, model = "random")
+
+
+summary(fixef(pfe, type = "dfirst"))
+fixef(tfe, effect =  "time")
+
+summary(rfe)
+summary(pfe)
+punbalancedness(pfe)
+summary(tfe)
+
+phtest(pfe, rfe) # hausman test menor que 5% aceptar FE
+pFtest(tfe, pfe)
+
+ercomp(Gini_net ~ mark_effic+gro_GDPpc+Gov_ex+
+          Secondary_ed + Trade, data=E, model='within', effect = "twoways")
+
+
+# solve cross-sectional dependence
+pcdtest(pfe, test = c("lm"))
+pcdtest(pfe, test = c("cd"))
+
+# Serial correlation si menor 5%
+pbgtest(pfe)
+
+# The Dickey-Fuller si pv menor que 5% no unit root
+library(tseries)
+adf.test(inef$Gini_net, k=2)
+
+# Breusch-Pagan si pv menor que 5% heteroscedasticidad
+library(lmtest)
+bptest(Gini_net ~ `gro%GDP` + factor(idem), data = E, studentize=F)
+
+#https://www.princeton.edu/~otorres/Panel101R.pdf - ultimas paginas
+
+coeftest(pfe, vcovHC(pfe, method='white2'))
+
+#FE
+tfe <- plm(Gini_net ~ Trade+`gro%GDP`+Gov_ex, data = inef,
+                    index = c("idem", "year"), 
+                    model = "within", effect = 'twoways')
+
+coeftest(tfe, vcov. = vcovHC, type = "HC1")
+```
+
+```{r}
+linearHypothesis(tfe,test = "F",
+                 c("GDP_pc=0", "ruleoflaw=0", "Gov_debt"), 
+                 vcov. = vcovHC, type = "HC1")
+```
+
+H0 = los betas son igales a cero, si PF tiene estrella RH0
+
+
+```{r}
+library(stargazer)
+
+rob_se <- list(sqrt(diag(vcovHC(pfe, , type = "HC1"))),
+               sqrt(diag(vcovHC(tfe, , type = "HC1"))))
+
+stargazer(pfe, tfe, digits = 3, 
+          se = rob_se, align=TRUE,
+          title = "Linear Panel Regression Models",
+          model.numbers = T,
+          column.labels = c("(1)", "(2)"), ci=TRUE, ci.level=0.90, single.row=TRUE)
+```
+
+```{r}
+#devtools::install_github("joachim-gassen/ExPanDaR")
+library(ExPanDaR)
+
+ExPanD()
+```
+
+```{r}
+E$debt_g <- NULL
+ine2$year <- NULL
+ine2$idem <- NULL
+ine2$debt_g <- NULL
+
+
+data("EmplUK", package="plm")
+data("Produc", package="plm")
+data("Grunfeld", package="plm")
+data("Wages", package="plm")
+
+gmm <- pgmm(GDP_pc ~ Trade+TOT | lag(GDP_pc,0:3)
+               , data = ine, effect = "twoways", model = "twosteps")
+
+summary(gmm)
+```
+
+
+```{r}
+pgmm(formula = log(emp) ~ lag(log(emp), 1:2) + lag(log(wage), 
+   0:1) + log(capital) + lag(log(output), 0:1) | lag(log(emp), 
+    2:99), data = EmplUK, effect = "twoways", model = "twosteps")
+```
+
+```{r}
+data(Cigar)
+ex1_feols <-
+pvarfeols(dependent_vars = c("Gini_net", "Trade"),
+lags = 1,
+exog_vars = c("Family"),
+transformation = "",
+data = ine,
+panel_identifier= c("idem", "year"))
+summary(ex1_feols)
+
+```
+
+```{r}
+
+ex2_abdata <-pvargmm(
+dependent_vars = c("Gini_net", 'GDP_con'),
+lags = 2,
+predet_vars = c("Trade", 'Family'),
+exog_vars = c("TOT"),
+transformation = "fod",
+data = ine,
+panel_identifier = c("idem", "year"),
+steps = c("twostep"),
+system_instruments = TRUE,
+max_instr_dependent_vars = 2,
+max_instr_predet_vars = 2,
+min_instr_dependent_vars = 2L,
+min_instr_predet_vars = 1L,
+collapse = FALSE
+)
+
+
+data("ex2_abdata")
+summary(ex2_abdata)
+```
+
+# Seleccion de variables DEf 1.
+
+https://rpubs.com/lijunjie/pvar
+
+
+```{r}
+install.packages('pacman')
+library(pacman)
+p_load(tidyverse,panelvar)
+
+
+pv1 <- pvargmm(
+  dependent_vars = c("Gini_net"),
+  lags = 3, # Number of lags of dependent variables
+  predet_vars = c(
+      'Trade' , 'gro_GDPpc' , 'Gov_ex' , 'finmarket' ),
+  transformation = "fd",  # First-difference "fd" or forward orthogonal deviations "fod"
+  data = ine,
+  panel_identifier = c("idem", "year"),  # Vector of panel identifiers
+  steps = c("onestep"),   # "onestep", "twostep" or "mstep" estimation
+  system_instruments = TRUE,
+  max_instr_dependent_vars = 99,
+  max_instr_predet_vars = 99,
+  min_instr_dependent_vars = 2L,
+  min_instr_predet_vars = 1L,
+  collapse = FALSE
+)
+
+summary(pv1)
+
+pfe <- plm(Gini_net ~ Life_xpectancy , Health_exp , HICP , ac_pop , `prod&imp_tx`, Social_prot_ex_pen ,Family, Unemp_tra , HICP , Labour_income + Corporate_ta +  `gro%pop` +  Net_mig + Trade + TOT + gro_GDPpc + Net_len_adj + Net_len_wi + leavers + le_male + Gov_inv + Gov_ex + Deficit + Soc_payable + Soc_kind + employ_rate + arp_mid*ind_tx + mrp_all + goveff + fininsti + finmarket + instdepth + insaccess , data = ine, model = "within", index = 'idem')
+
+coeftest(pfe, vcov. = vcovHC, type = "HC1")
+
+```
+
