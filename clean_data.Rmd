@@ -1,0 +1,189 @@
+---
+title: "Clean data"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r, message = off}
+library(tidyverse)
+library(readxl)
+library(lmtest)
+
+#library(psych)
+```
+
+
+```{r}
+ine <- read_excel("D:/ECB/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
+
+ine <-  as.data.frame(ine)
+ine2 <- drop_na(ine)
+
+#inef <- drop_na(ineD)
+```
+
+```{r}
+ine2$year <- NULL
+ine2$idem <- NULL
+ine2$debt_g <- NULL
+# se va el grupo de deuda
+
+inst <- ine[c(1:667), c(1:2,54:66)]
+rest <- ine[c(1:667), c(1:53)]
+```
+
+```{r}
+skewedVars<- NA
+library(moments) # for skewness()
+for(i in names(ine2)){
+       skewVal <- skewness(ine2[,i])
+       print(paste(i, skewVal, sep = ": "))
+       if(abs(skewVal) > 1.15){
+         skewedVars <- c(skewedVars, i)
+       }
+}
+
+# solo tomar td_fe
+# inst en growth y graficos aparte
+```
+
+```{r}
+library(purrr)
+library(tidyr)
+library(ggplot2)
+library(ggthemes)
+
+rest %>% keep(is.numeric) %>% 
+  gather() %>% ggplot(aes(value)) +
+    facet_wrap(~ key , scales = "free") +
+    geom_histogram(colour="blue") + theme_wsj(base_size = 8)
+
+
+# Boxplots
+rest %>% keep(is.numeric) %>% 
+  gather() %>% ggplot(aes(value)) +
+    facet_wrap(~ key , scales = "free") +
+    geom_boxplot(colour="blue", fill='gray') + theme_wsj(base_size = 8)
+
+inst %>% keep(is.numeric) %>% 
+  gather() %>% ggplot(aes(value)) +
+    facet_wrap(~ key , scales = "free") +
+    geom_boxplot(colour="blue", fill='gray') + theme_wsj(base_size = 8)
+```
+
+limpiar: gro_GDPpc
+
+```{r}
+library(corrplot)
+ine %>% keep(is.numeric) -> ine2
+ine2$year <- NULL
+ine2 <- subset(ine2, select=-c(pop, GDP_curr, GDP_con))
+
+corr <- cor(na.omit(ine2))
+
+row_indic <- apply(corr, 1, function(x) sum(x > 0.75 | x < -0.75) > 1)
+row_indic_2 <- apply(corr, 1, function(x) sum(x < 0.25 | x > -0.25) > 1)
+
+corr <- corr[row_indic ,row_indic]
+corr2 <- corr[row_indic_2 ,row_indic_2]
+
+corrplot(corr, method="square", diag = F,order = 'hclust',tl.cex = .8)
+corrplot(corr2, method="ellipse", diag = F,order = 'FPC',tl.cex = .8)
+```
+le_female, net_len_w/i, soc_payable, gov_ex, soc_prot, td_female, tertiary_ed, voice, ruleoflaw, goveff, soc_proc_ex_pen, trade, 
+
+```{r}
+plotHist <- function(data_in, i) {
+    data <- data.frame(x=data_in[[i]])
+    p <- ggplot(data=data, aes(x=factor(x))) + stat_count() + xlab(colnames(data_in)[i]) + theme_grey() + 
+   theme(axis.text.x = element_text(angle = 90, hjust =1))
+    return (p)
+}
+```
+
+```{r}
+library(gridExtra)
+doPlots <- function(data_in, fun, ii, ncol=2) {
+    pp <- list()
+    for (i in ii) {
+        p <- fun(data_in=data_in, i=i)
+        pp <- c(pp, list(p))
+    }
+    do.call("grid.arrange", c(pp, ncol=ncol))
+}
+```
+
+```{r}
+plotDen <- function(data_in, i){
+    data <- data.frame(x=data_in[[i]], y = data_in$Gini_net)
+    p <- ggplot(data= data) + geom_bar(aes(x = x), stat = 'density', size = 1, alpha = 0.7) + xlab(paste0((colnames(data_in)[i]), '\n', 'Skewness:',
+round(skewness(data_in[[i]], na.rm = T), 2))) 
+return(p)
+    }
+```
+
+```{r}
+doPlots(ine2, fun = plotDen, ii = 1:9, ncol = 3)
+```
+```{r}
+plotCorr <- function(data_in, i){
+data <- data.frame(x = data_in[[i]], y= data_in$Gini_net)
+p <- ggplot(data, aes(x = x, y = y)) + geom_point(shape = 1, na.rm = T) +  geom_smooth(method = lm ) + xlab(paste0(colnames(data_in)[i], 
+  '\n', 'R-Squared: ', round(cor(data_in[[i]], data$y, 
+ use = 'complete.obs'), 2))) 
+ return(suppressWarnings(p))
+}
+```
+
+```{r}
+highcorr <- c(names(corr[,'Gini_net'])[which(corr[,'Gini_net'] > 0.05)],
+    names(corr[,'Gini_net'])[which(corr[,'Gini_net'] < -0.05)])
+
+data_corr <- ine2[, highcorr]
+doPlots(data_corr, fun = plotCorr, ii = c(2,10,7:9, 13))
+```
+
+https://stackoverflow.com/questions/27214717/calculate-the-growth-rate-for-panel-data
+
+https://rpubs.com/nischalthapa/267813
+
+
+```{r}
+myReturn <- function(x) c(NA, diff(x)/x[-length(x)])
+myReturn5 <- function(x) c(NA, diff(x, lag= 5)/x[-length(x)])
+
+
+library(data.table)
+setDT(ine) # convert to a data.table
+
+ine[, DEB_growth := myReturn(Gov_debt), by=idem] 
+setDT(a)
+a = list(1:10)
+a[, V2 := myReturn(V1)] 
+a[, V3 := myReturn5(V1)]
+
+
+growth_rate = ine %>%
+  arrange(year) %>%
+  mutate(Diff_year = V1 - lag(V1, n=5L), 
+         Diff_growth = route - lag(route),
+         Rate_percent = (Diff_growth / Diff_year)/route * 100)
+```
+
+```{r}
+library(foreign)
+
+write.dta(ine, "C:/Users/magda/Desktop/ine.dta")
+```
+
+Data transformation negative logs
+
+https://discuss.analyticsvidhya.com/t/methods-to-deal-with-zero-values-while-performing-log-transformation-of-variable/2431/8
+
+https://blogs.sas.com/content/iml/2011/04/27/log-transformations-how-to-handle-negative-data-values.html
+
+le_female, net_len_w/i, soc_payable, gov_ex, soc_prot, td_female, tertiary_ed, voice, ruleoflaw, goveff, soc_proc_ex_pen, trade, 
+
