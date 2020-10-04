@@ -20,7 +20,7 @@ library(lmtest)
 
 
 ```{r}
-ine <- read_excel("D:/ECB/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
+ine <- read_excel("E:/ECB/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
 
 ine <-  as.data.frame(ine)
 ine2 <- drop_na(ine)
@@ -140,7 +140,7 @@ backwardElimination(ine, SL)
 coeftest(all, vcov. = vcovHC, type = "HC1")
 
 pfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
-+ Gov_ex + ((Soc_payable)), data = ine, model = "within", index = 'idem')
++ Gov_ex , data = ine, model = "within", index = 'idem')
 
 coeftest(pfe, vcov. = vcovHC, type = "HC1")
 
@@ -184,29 +184,45 @@ ine <- ine %>%
 
 # OTROS MODELOS
 
-tfe <- plm(Gini_net ~ mark_effic+gro_GDPpc+Gov_ex+
-          Secondary_ed + Trade
-          , data = E, model = "within", effect="twoways")
+tfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
++ Gov_ex , data = E, model = "within", effect="individual")
 
+coeftest(tfe, vcov. = vcovHC, type = "HC1")
 
-rfe <- plm(Gini_net ~ mark_effic+gro_GDPpc+Gov_ex+
-          Secondary_ed + Trade
-          , data = E, model = "random")
+rfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
++ Gov_ex , data = E, model = "random")
 
+coeftest(rfe, vcov. = vcovHC, type = "HC1")
 
+# efectos fijos de cada país
 summary(fixef(pfe, type = "dfirst"))
-fixef(tfe, effect =  "time")
+
+# efectos fijos para cada año
+summary(fixef(tfe, effect =  "time"))
 
 summary(rfe)
 summary(pfe)
 punbalancedness(pfe)
 summary(tfe)
 
-phtest(pfe, rfe) # hausman test menor que 5% aceptar FE
-pFtest(tfe, pfe)
+## TEST FOR THE MODELS
+plmtest(pfe,  effect="individual")
 
-ercomp(Gini_net ~ mark_effic+gro_GDPpc+Gov_ex+
-          Secondary_ed + Trade, data=E, model='within', effect = "twoways")
+tfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
++ Gov_ex , data = E, model = "within", effect="time")
+
+coeftest(tfe, vcov. = vcovHC, type = "HC1")
+
+
+library(texreg)
+screenreg(list(pfe, rfe, tfe), custom.model.names = c('FE', 'RE', 'TE'))
+
+phtest(pfe, rfe) # hausman test menor que 5% aceptar FE
+#phtest(pfe, tfe)
+
+# This function enables the estimation of the variance components of a panel model.
+ercomp(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
++ Gov_ex, data=E, model='within', effect = "twoways")
 
 
 # solve cross-sectional dependence
@@ -215,6 +231,35 @@ pcdtest(pfe, test = c("cd"))
 
 # Serial correlation si menor 5%
 pbgtest(pfe)
+
+# We can correct for serial correlation
+
+pfe_hac <- coeftest(pfe, vcov = vcovHC(pfe, method = "arellano", type = "HC3"))
+
+tfe_hac <- coeftest(tfe, vcov = vcovHC(tfe, method = "arellano", type = "HC3"))
+
+screenreg(list(pfe_hac, tfe_hac), custom.model.names = c('FE-cor', 'TE-cor'))
+
+## cross-sectional dependence and we need to correct it
+
+pfe_cde <- coeftest(pfe, vcov = vcovHC(pfe, type="HC3", cluster = "group"))
+
+tfe_cde <- coeftest(tfe, vcov = vcovHC(pfe, type="HC3", cluster = "group"))
+
+screenreg(list(pfe_cde, tfe_cde), custom.model.names = c('FE-cor', 'TE-cor'))
+
+## The cross-sectional and serial correlation (SCC) 
+
+# Este es el mejor modelo
+
+pfe_scc <- coeftest(pfe, vcov = vcovSCC(pfe, type="HC3", cluster = "group"))
+
+tfe_scc <- coeftest(tfe, vcov = vcovSCC(pfe, type="HC3", cluster = "group"))
+
+screenreg(list(pfe_scc, tfe_scc), custom.model.names = c('FE-cor', 'TE-cor'))
+
+screenreg(list(pfe_scc, tfe_scc, pfe, tfe), custom.model.names = c('FE-cor', 'TE-cor', 'PFE', 'TFE'))
+
 
 # The Dickey-Fuller si pv menor que 5% no unit root
 library(tseries)
