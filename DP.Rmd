@@ -25,7 +25,6 @@ ine <- read_excel("E:/ECB/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
 ine <-  as.data.frame(ine)
 ine2 <- drop_na(ine)
 
-#inef <- drop_na(ineD)
 ```
 
 
@@ -44,9 +43,7 @@ a[, V2 := myReturn(V1)]
 a[, V3 := myReturn5(V1)]
 
 
-growth_rate = ine %>%
-  arrange(year) %>%
-  mutate(Diff_year = V1 - lag(V1, n=5L), 
+growth_rate = ine %>% arrange(year) %>%  mutate(Diff_year = V1 - lag(V1, n=5L), 
          Diff_growth = route - lag(route),
          Rate_percent = (Diff_growth / Diff_year)/route * 100)
 ```
@@ -65,7 +62,6 @@ lmg = lm(Gini_net ~ GDP_pc + Soc_payable + Gov_debt+Tertiary_ed_diff+ruleoflaw, 
 
 
 coeftest(lmg, type = "HC0")
-
 ```
 
 ```{r}
@@ -184,8 +180,8 @@ ine <- ine %>%
 
 # OTROS MODELOS
 
-tfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
-+ Gov_ex , data = E, model = "within", effect="individual")
+pfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
++ Gov_ex , data = E, model = "within", effect = "individual")
 
 coeftest(tfe, vcov. = vcovHC, type = "HC1")
 
@@ -210,6 +206,16 @@ plmtest(pfe,  effect="individual")
 
 tfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
 + Gov_ex , data = E, model = "within", effect="time")
+
+
+### ---------- Modelos mas eficientes sin lags en otra variables inden
+pfe1 <- plm(Gini_net ~ lag(diff(GDP_con), c(0,1)) + (Secondary_ed) + (Trade)
++ Gov_ex , data = E, model = "within", effect = "individual")
+
+tfe1 <- plm(Gini_net ~ lag(diff(GDP_con),c(0,1)) + (Secondary_ed) + (Trade)
++ Gov_ex , data = E, model = "within", effect="time")
+
+# ------------------
 
 coeftest(tfe, vcov. = vcovHC, type = "HC1")
 
@@ -256,10 +262,19 @@ pfe_scc <- coeftest(pfe, vcov = vcovSCC(pfe, type="HC3", cluster = "group"))
 
 tfe_scc <- coeftest(tfe, vcov = vcovSCC(pfe, type="HC3", cluster = "group"))
 
+## MODELO EFICIENTES
+pfe_scc1 <- coeftest(pfe1, vcov = vcovSCC(pfe1, type="HC3", cluster = "group"))
+
+tfe_scc1 <- coeftest(tfe1, vcov = vcovSCC(tfe1, type="HC3", cluster = "group"))
+
+phtest(tfe1, pfe1)
+# -----------------------
+
 screenreg(list(pfe_scc, tfe_scc), custom.model.names = c('FE-cor', 'TE-cor'))
 
 screenreg(list(pfe_scc, tfe_scc, pfe, tfe), custom.model.names = c('FE-cor', 'TE-cor', 'PFE', 'TFE'))
 
+screenreg(list(pfe_scc, tfe_scc, pfe_scc1, tfe_scc1), custom.model.names = c('FE-cor', 'TE-cor', 'PFE', 'TFE'))
 
 # The Dickey-Fuller si pv menor que 5% no unit root
 library(tseries)
@@ -384,28 +399,41 @@ p_load(tidyverse,panelvar)
 
 
 pv1 <- pvargmm(
-  dependent_vars = c("Gini_net"),
-  lags = 3, # Number of lags of dependent variables
-  predet_vars = c(
-      'Trade' , 'gro_GDPpc' , 'Gov_ex' , 'finmarket' ),
-  transformation = "fd",  # First-difference "fd" or forward orthogonal deviations "fod"
+  dependent_vars = c("Gini_net", 'Social_prot', 'gro_GDPpc'),
+  lags = 2, # Number of lags of dependent variables
+  predet_vars = c('Secondary_ed'),
+  exog_vars = c('Trade' , 'Gov_ex'),
+  transformation = "fod",  # First-difference "fd" or forward orthogonal deviations "fod"
   data = ine,
   panel_identifier = c("idem", "year"),  # Vector of panel identifiers
-  steps = c("onestep"),   # "onestep", "twostep" or "mstep" estimation
-  system_instruments = TRUE,
-  max_instr_dependent_vars = 99,
-  max_instr_predet_vars = 99,
+  steps = c("twostep"),   # "onestep", "twostep" or "mstep" estimation
+  system_instruments = FALSE,
+  max_instr_dependent_vars = 3,
+  max_instr_predet_vars = 3,
   min_instr_dependent_vars = 2L,
-  min_instr_predet_vars = 1L,
-  collapse = FALSE
+  min_instr_predet_vars = 2L,
+  collapse = F
 )
 
 summary(pv1)
 
-pfe <- plm(Gini_net ~ Life_xpectancy , Health_exp , HICP , ac_pop , `prod&imp_tx`, Social_prot_ex_pen ,Family, Unemp_tra , HICP , Labour_income + Corporate_ta +  `gro%pop` +  Net_mig + Trade + TOT + gro_GDPpc + Net_len_adj + Net_len_wi + leavers + le_male + Gov_inv + Gov_ex + Deficit + Soc_payable + Soc_kind + employ_rate + arp_mid*ind_tx + mrp_all + goveff + fininsti + finmarket + instdepth + insaccess , data = ine, model = "within", index = 'idem')
+## Necesito lags de variables predert..
 
-coeftest(pfe, vcov. = vcovHC, type = "HC1")
+Andrews_Lu_MMSC(pv1)
+# El resultado suguiere una lag
 
+h1 = stability(pv1)
+h1
+plot(h1)
+
+ex1 = oirf(pv1, n.ahead = 5)
+ex1_i = girf(pv1, n.ahead = 5, ma_approx_steps= 5)
+
+pv_bs <-  bootstrap_irf(
+  pv1,  typeof_irf = c("GIRF"), n.ahead = 5,
+    nof_Nstar_draws = 5,  confidence.band = 0.95)
+
+plot(ex1_i, pv_bs)
 ```
 
 =======
