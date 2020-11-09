@@ -31,5 +31,3 @@ pfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
 pfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
       + Gov_ex + (lag(Soc_payable))
 
-pfe <- plm(Gini_net ~ lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade)
-      + Gov_ex + ((Soc_payable))
