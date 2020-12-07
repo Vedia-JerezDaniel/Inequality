@@ -20,7 +20,7 @@ library(lmtest)
 
 
 ```{r}
-ine <- read_excel("E:/ECB/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
+ine <- read_excel("D:/ECB/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
 
 ine <-  as.data.frame(ine)
 ine2 <- drop_na(ine)
@@ -190,9 +190,13 @@ ine <- ine %>%
 ```{r}
 # OTROS MODELOS
 
-pfe <- plm(Gini_net ~ lag(Gini_net) + lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade) + Gov_ex + Gini_market + lag(Soc_payable, c(0,1)), data = ine, model = "within", effect = "individual")
+pfe <- plm(Gini_net ~ lag(Gini_net) + (diff(GDP_con)) + (Secondary_ed) + (Trade) + Gov_ex + Gini_market + lag(Soc_payable, c(0), data = ine, model = "within", effect = "individual")
 
 coeftest(pfe, vcov. = vcovHC, type = "HC1")
+
+tfe <- plm(Gini_net ~ lag(Gini_net) + (diff(GDP_con)) + (Secondary_ed) + (Trade) + Gov_ex + Gini_market + Soc_payable, data = ine, model = "within", effect = "twoways")
+
+coeftest(tfe, vcov. = vcovHC, type = "HC1")
 
 rfe <- plm(Gini_net ~ lag(Gini_net) + lag(diff(GDP_con)) + lag(Secondary_ed) + lag(Trade) + Gov_ex, data = E, model = "random")
 
@@ -229,7 +233,7 @@ coeftest(pfe1, vcov. = vcovHC, type = "HC1")
 
 library(texreg)
 
-screenreg(list(pfe, rfe, tfe), custom.model.names = c('FE', 'RE', 'TE'))
+screenreg(list(pfe, tfe), custom.model.names = c('FE', 'TE'))
 
 phtest(pfe, rfe) # hausman test menor que 5% aceptar FE
 #phtest(pfe, tfe)
@@ -353,6 +357,8 @@ summary(gmm)
 
 
 ```{r}
+library(plm)
+
 pgmm(formula = log(emp) ~ lag(log(emp), 1:2) + lag(log(wage), 
    0:1) + log(capital) + lag(log(output), 0:1) | lag(log(emp), 
     2:99), data = EmplUK, effect = "twoways", model = "twosteps")
@@ -360,10 +366,24 @@ pgmm(formula = log(emp) ~ lag(log(emp), 1:2) + lag(log(wage),
 
 ```{r}
 
-gr = pgmm(formula = Gini_net ~ lag(Gini_net, 1:2) + lag(diff(GDP_con),0:1) + lag(Soc_kind, 0:1) 
-          + lag(TOT, 0:1) + Trade | lag(Gini_net, 1:2) + lag(diff(GDP_con),1:2), data = ine2, effect = "individual", model = "twosteps")
+gr = pgmm(formula = Gini_net ~ lag(Gini_net, 1:2) + lag(diff(GDP_con),0:1) + lag(Soc_kind, 0:1) + lag(diff(TOT), 0:1) + Trade | 
+  lag(Gini_net, 2:99) + lag(diff(GDP_con),4:99) + lag(Soc_kind, 2:99) , 
+  data = ine, 
+  effect = "individual", model = "twosteps", transformation = 'd', collapse = F,
+)
 
 summary(gr)
+
+
+
+gr1 = pgmm(formula = Gini_net ~ lag(Gini_net, 1:2) + lag(diff(GDP_con),0:1) + (Secondary_ed) + (Trade) + Gov_ex + Gini_market + Soc_payable | 
+  lag(Gini_net, 2:99) + lag(diff(GDP_con),4:99) , 
+  data = ine, 
+  effect = "individual", model = "twosteps", transformation = 'd', collapse = F,
+)
+
+screenreg(list(gr, gr1), custom.model.names = c('FE', 'TE'))
+
 ```
 
 ```{r}
