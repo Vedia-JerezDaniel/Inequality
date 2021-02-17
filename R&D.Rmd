@@ -1,0 +1,193 @@
+---
+title: "R&D__TEST"
+author: "Daniel H."
+date: "4/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is a test for the possible R&D build indicators.
+
+```{r}
+library(readxl)
+
+FINAL_04 <- read_excel("F:/INEQUALITY/2020/FINAL 04.xlsx", 
+    sheet = "R&D__Test")
+View(FINAL_04)
+
+```
+
+```{r, message=FALSE}
+library(ExPanDaR)
+library(knitr)
+library(tidyverse)
+```
+
+```{r}
+FINAL_04 %>% select(-1,-2,-8, -10) -> FN
+FINAL_04 %>% select(1,2,8, 10) -> ID
+
+FN = log(FN)
+
+RD = data.frame(ID, FN)
+```
+
+
+
+```{r}
+prepare_missing_values_graph(RD, ts_id = "Year")
+```
+Las nuevas variables construidas son las que tienen mayores missing data values.
+
+
+```{r}
+library(kableExtra)
+st <- prepare_descriptive_table(RD)
+
+st$kable_ret  %>%
+  kable_styling("condensed", full_width = F, position = "center")
+```
+
+```{r}
+graph <- prepare_trend_graph(RD, ts_id = "Year", "Gini.net.income")
+graph$plot
+
+graph2 <- prepare_trend_graph(RD, ts_id = "Year", "X10D.1D")
+graph2$plot
+```
+
+```{r}
+graph <- prepare_quantile_trend_graph(RD, ts_id = "Year", var= "Gini.net.income", quantiles = c(0.05, 0.25, 0.5, 0.75, 0.95))
+graph$plot
+```
+
+```{r}
+cor <- prepare_correlation_table(RD, bold = 0.01, format="html")
+
+cor$kable_ret  %>%
+  kable_styling("condensed", full_width = F, position = "center")
+```
+
+```{r}
+ret <- prepare_correlation_graph(RD)
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(RD, aes(x=IDX1_1, y=`Gini.net.income`)) + 
+  geom_point(shape=18, color="blue")+
+  geom_smooth(method=lm,  linetype="dashed",
+             color="darkred", fill="blue")  + ylim(0.25,0.45)+ggtitle('Gini & IDX1_1') 
+
+```
+
+```{r}
+ggplot(RD, aes(x=IDX3, y=`Gini.net.income`)) + 
+  geom_point(shape=18, color="blue")+
+  geom_smooth(method=lm,  linetype="dashed",
+             color="darkred", fill="blue") + ylim(0.25,0.45) +
+ggtitle('Gini & IDX3') 
+```
+
+```{r}
+ggplot(RD, aes(x=(IDX3), y=`log.gro.GDP`)) + 
+  geom_point(shape=18, color="blue")+
+  geom_smooth(method=lm,  linetype="dashed",
+             color="darkred", fill="blue") + ylim(-0.02, 0.015) +
+ggtitle('GDP growth & IDX3') 
+```
+
+```{r}
+ggplot(RD, aes(x=(IDX1_1), y=`log.gro.GDP`)) + 
+  geom_point(shape=18, color="blue")+
+  geom_smooth(method=lm,  linetype="dashed",
+             color="darkred", fill="blue") + ylim(-0.02, 0.02) +
+ggtitle('GDP growth & IDX1_1') 
+
+```
+
+```{r}
+ggplot(RD, aes(x=(IDX1_1), y=(`X10D.1D`))) + 
+  geom_point(shape=18, color="blue")+
+  geom_smooth(method=lm,  linetype="dashed",
+             color="darkred", fill="blue")
+
+ggplot(RD, aes(x=(IDX1_1), y=(`G99`))) + 
+  geom_point(shape=18, color="blue")+
+  geom_smooth(method=lm,  linetype="dashed",
+             color="darkred", fill="blue") + ylim(1.5, 2.6)
+```
+
+```{r}
+library(plm, tidyverse)
+# library(broom)
+# library(magrittr)
+```
+
+```{r}
+ix1_plm <- plm((RD$Gini.net.income) ~ (log.gro.GDP) + lag(IDX1_1,3), 
+                 data = RD, 
+                 index = c("Country", "Year"), 
+                 model = "within", 
+                 effect = "individual")
+
+ix3_plm <- plm((RD$Gini.net.income) ~ lag(log.gro.GDP) + lag(IDX3,3), 
+                 data = RD, 
+                 index = c("Country", "Year"), 
+                 model = "within", 
+                 effect = "individual")
+
+
+ix1_plm %>% summary()
+
+ix3_plm %>% summary()
+```
+
+
+We can reject the null hypothesis at the 1% level, presence of autocorrelation.
+
+```{r}
+pwartest(ix1_plm)
+
+```
+
+```{r}
+ix1_plml <- plm((Gini.net.income) ~ diff(lag(Gini.net.income,1)) + lag(log.gro.GDP)
++ lag(IDX1_1,3),   data = RD, 
+                 index = c("Country", "Year"), 
+                 model = "within", 
+                 effect = "individual")
+
+ix1_plml %>% summary()
+```
+
+
+```{r}
+id_plml <- plm(X10D.1D ~ lag(log.gro.GDP) + lag(IDX1_1,3), 
+               data = RD, 
+                 index = c("Country", "Year"), 
+                 model = "within", 
+                 effect = "individual")
+
+id_plml %>% summary()
+```
+
+```{r}
+g9_plml <- plm((G99) ~ lag(log.gro.GDP) + lag(IDX3,3),  
+               data = RD, 
+                 index = c("Country", "Year"), 
+                 model = "within", 
+                 effect = "individual")
+
+g9_plml %>% summary()
+```
+### Summary
+
+Para concluir, podemos tomar la variable de desigualdad D10/D1, (ratio entre el decil 10 y decil 1),
+la variable Gini construida del Gini market del 99% no es significativa. Y la variable IDX1_1 (patentes/high tech firms) per capita es significativa, que IDX3 (high tech value added) per 1 million.
+
+A mi parecer faltaría definir un poco mejor que variables escoger luego de una mejor transformación de las variables.
