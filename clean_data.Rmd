@@ -17,10 +17,10 @@ library(lmtest)
 
 
 ```{r}
-ine <- read_excel("D:/ECB/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
+ine <- read_excel("F:/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
 
-ine <-  as.data.frame(ine)
-ine2 <- drop_na(ine)
+# ine <-  as.data.frame(ine)
+# ine2 <- drop_na(ine)
 
 #inef <- drop_na(ineD)
 ```
@@ -32,14 +32,18 @@ ine2$debt_g <- NULL
 # se va el grupo de deuda
 
 inst <- ine[c(1:667), c(1:2,54:66)]
-rest <- ine[c(1:667), c(1:53)]
+base <- ine[c(1:667), c(1:53)]
+base <- subset(base, select=-c(pop, GDP_curr, GDP_con))
+ineq <- ine[c(1:667), c(74:90)]
+saving_tic <- ine[c(1:667), c(67:73)]
+
 ```
 
 ```{r}
 skewedVars<- NA
 library(moments) # for skewness()
-for(i in names(ine2)){
-       skewVal <- skewness(ine2[,i])
+for(i in names(ine)){
+       skewVal <- skewness(ine[,i])
        print(paste(i, skewVal, sep = ": "))
        if(abs(skewVal) > 1.15){
          skewedVars <- c(skewedVars, i)
@@ -63,35 +67,59 @@ rest %>% keep(is.numeric) %>%
 
 
 # Boxplots
-rest %>% keep(is.numeric) %>% 
-  gather() %>% ggplot(aes(value)) +
-    facet_wrap(~ key , scales = "free") +
-    geom_boxplot(colour="blue", fill='gray') + theme_wsj(base_size = 8)
 
 inst %>% keep(is.numeric) %>% 
   gather() %>% ggplot(aes(value)) +
     facet_wrap(~ key , scales = "free") +
+    geom_histogram(colour="blue", fill='gray') + theme_wsj(base_size = 8)
+
+saving_tic %>% keep(is.numeric) %>% 
+  gather() %>% ggplot(aes(value)) +
+    facet_wrap(~ key , scales = "free") +
+    geom_histogram(colour="blue", fill='gray') + theme_wsj(base_size = 8)
+
+ineq %>% keep(is.numeric) %>% 
+  gather() %>% ggplot(aes(value)) +
+    facet_wrap(~ key , scales = "free") +
     geom_boxplot(colour="blue", fill='gray') + theme_wsj(base_size = 8)
+
 ```
 
 limpiar: gro_GDPpc
 
 ```{r}
 library(corrplot)
-ine %>% keep(is.numeric) -> ine2
+
 ine2$year <- NULL
-ine2 <- subset(ine2, select=-c(pop, GDP_curr, GDP_con))
+ine2 <- subset(ine, select=-c(pop, GDP_curr, GDP_con))
 
-corr <- cor(na.omit(ine2))
+base %>% keep(is.numeric) -> base_cor
+inst %>% keep(is.numeric) -> inst_cor
 
-row_indic <- apply(corr, 1, function(x) sum(x > 0.75 | x < -0.75) > 1)
-row_indic_2 <- apply(corr, 1, function(x) sum(x < 0.25 | x > -0.25) > 1)
+# adding Gini_net
+inst_cor$Gini_net = ine$Gini_net
+saving_tic$Gini_net = ine$Gini_net
+ineq$Gini_net = ine$Gini_net
 
-corr <- corr[row_indic ,row_indic]
-corr2 <- corr[row_indic_2 ,row_indic_2]
+corr_b <- cor(na.omit(base_cor))
+corr_ins <- cor(na.omit(inst_cor))
+corr_sa <- cor(na.omit(saving_tic))
+corr_ineq <- cor(na.omit(ineq))
 
-corrplot(corr, method="square", diag = F,order = 'hclust',tl.cex = .8)
-corrplot(corr2, method="ellipse", diag = F,order = 'FPC',tl.cex = .8)
+row_indic <- apply(corr_b, 1, function(x) sum(x > 0.60 | x < -0.60) > 1)
+row_indic2 <- apply(corr_ins, 1, function(x) sum(x > 0.50 | x < -0.50) > 1)
+row_indic3 <- apply(corr_sa, 1, function(x) sum(x > 0.50 | x < -0.50) > 1)
+row_indic4 <- apply(corr_ineq, 1, function(x) sum(x > 0.75 | x < -0.75) > 1)
+
+corr <- corr_b[row_indic ,row_indic]
+corr2 <- corr_ins[row_indic2 ,row_indic2]
+corr3 <- corr_sa[row_indic3 ,row_indic3]
+corr4 <- corr_ineq[row_indic4 ,row_indic4]
+
+corrplot(corr, method="square", diag = F,order = 'hclust', tl.cex = .8)
+corrplot(corr2, method="ellipse", diag = F,order = 'hclust', tl.cex = .8)
+corrplot(corr3, method="ellipse", diag = F,order = 'hclust', tl.cex = .8)
+corrplot(corr4, method="ellipse", diag = F,order = 'hclust', tl.cex = .8)
 ```
 le_female, net_len_w/i, soc_payable, gov_ex, soc_prot, td_female, tertiary_ed, voice, ruleoflaw, goveff, soc_proc_ex_pen, trade, 
 
@@ -126,8 +154,9 @@ return(p)
 ```
 
 ```{r}
-doPlots(ine2, fun = plotDen, ii = 1:9, ncol = 3)
+doPlots(ine2, fun = plotDen, ii = 11:19, ncol = 3)
 ```
+
 ```{r}
 plotCorr <- function(data_in, i){
 data <- data.frame(x = data_in[[i]], y= data_in$Gini_net)
@@ -139,45 +168,46 @@ p <- ggplot(data, aes(x = x, y = y)) + geom_point(shape = 1, na.rm = T) +  geom_
 ```
 
 ```{r}
-highcorr <- c(names(corr[,'Gini_net'])[which(corr[,'Gini_net'] > 0.05)],
-    names(corr[,'Gini_net'])[which(corr[,'Gini_net'] < -0.05)])
+highcorr_b <- c(names(corr_b[,'Gini_net'])[which(corr_b[,'Gini_net'] > 0.05)],
+    names(corr_b[,'Gini_net'])[which(corr_b[,'Gini_net'] < -0.05)])
 
-data_corr <- ine2[, highcorr]
+highcorr_ins <- c(names(corr_ins[,'Gini_net'])[which(corr_ins[,'Gini_net'] > 0.15)],
+    names(corr_ins[,'Gini_net'])[which(corr_ins[,'Gini_net'] < -0.15)])
+
+highcorr_ineq <- c(names(corr_ineq[,'Gini_net'])[which(corr_ineq[,'Gini_net'] > 0.75)],
+    names(corr_ineq[,'Gini_net'])[which(corr_ineq[,'Gini_net'] < -0.75)])
+
+highcorr_sa <- c(names(corr_sa[,'Gini_net'])[which(corr_sa[,'Gini_net'] > 0.15)],
+    names(corr_sa[,'Gini_net'])[which(corr_sa[,'Gini_net'] < -0.15)])
+
+data_corr <- ine2[, highcorr_b]
 doPlots(data_corr, fun = plotCorr, ii = c(2,10,7:9, 13))
-```
 
-https://stackoverflow.com/questions/27214717/calculate-the-growth-rate-for-panel-data
+data_corr_ins <- ine2[, highcorr_ins]
+doPlots(data_corr_ins, fun = plotCorr, ii = c(1,4:8))
+
+data_corr_sa <- ine2[, highcorr_sa]
+doPlots(data_corr_sa, fun = plotCorr, ii = c(2:6))
+
+```
 
 https://rpubs.com/nischalthapa/267813
 
 
 ```{r}
-myReturn <- function(x) c(NA, diff(x)/x[-length(x)])
-myReturn5 <- function(x) c(NA, diff(x, lag= 5)/x[-length(x)])
+# PANEL GROWTH RATE
 
+library(tidyverse)  # Love dplyr!
 
-library(data.table)
-setDT(ine) # convert to a data.table
-
-ine[, DEB_growth := myReturn(Gov_debt), by=idem] 
-setDT(a)
-a = list(1:10)
-a[, V2 := myReturn(V1)] 
-a[, V3 := myReturn5(V1)]
-
-
-growth_rate = ine %>%
-  arrange(year) %>%
-  mutate(Diff_year = V1 - lag(V1, n=5L), 
-         Diff_growth = route - lag(route),
-         Rate_percent = (Diff_growth / Diff_year)/route * 100)
+my.panel.df <- ine%>%
+  arrange(idem, year) %>%  # Sort by firm and then by year
+  group_by(idem) %>%  # Tell dplyr to go within each firm
+  mutate(sg.diff = G99 - lag(G99), 
+         sgr = (100*(sg.diff/lag(G99))),
+         dgr.diff = G99 - lag(AVGTOP), 
+         dgr = (100*(dgr.diff/lag(AVGTOP)))) 
 ```
 
-```{r}
-library(foreign)
-
-write.dta(ine, "C:/Users/magda/Desktop/ine.dta")
-```
 
 Data transformation negative logs
 

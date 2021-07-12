@@ -28,27 +28,6 @@ ine2 <- drop_na(ine)
 ```
 
 
-```{r}
-myReturn <- function(x) c(NA, diff(x)/x[-length(x)])
-myReturn5 <- function(x) c(NA, diff(x, lag= 5)/x[-length(x)])
-
-
-library(data.table)
-setDT(ine) # convert to a data.table
-
-ine[, DEB_growth := myReturn(Gov_debt), by=idem] 
-setDT(a)
-a = list(1:10)
-a[, V2 := myReturn(V1)] 
-a[, V3 := myReturn5(V1)]
-
-
-growth_rate = ine %>% arrange(year) %>%  mutate(Diff_year = V1 - lag(V1, n=5L), 
-         Diff_growth = route - lag(route),
-         Rate_percent = (Diff_growth / Diff_year)/route * 100)
-```
-
-
 le_female, net_len_w/i, soc_payable, gov_ex, soc_prot, td_female, tertiary_ed, voice, ruleoflaw, goveff, soc_proc_ex_pen, trade, 
 
 
@@ -481,8 +460,6 @@ ex2 = oirf(pv2, n.ahead = 9)
 ex2_i = girf(pv2, n.ahead = 9, ma_approx_steps= 9)
 
 plot(ex2_i)
-
-
 
 ```
 
