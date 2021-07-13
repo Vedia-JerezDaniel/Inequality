@@ -26,9 +26,9 @@ ine <- read_excel("F:/INEQUALITY/2020/FINAL 04.xlsx", sheet = "log (2)")
 ```
 
 ```{r}
-ine2$year <- NULL
-ine2$idem <- NULL
-ine2$debt_g <- NULL
+# ine2$year <- NULL
+# ine2$idem <- NULL
+# ine2$debt_g <- NULL
 # se va el grupo de deuda
 
 inst <- ine[c(1:667), c(1:2,54:66)]
@@ -90,7 +90,7 @@ limpiar: gro_GDPpc
 ```{r}
 library(corrplot)
 
-ine2$year <- NULL
+# ine2$year <- NULL
 ine2 <- subset(ine, select=-c(pop, GDP_curr, GDP_con))
 
 base %>% keep(is.numeric) -> base_cor
@@ -107,7 +107,7 @@ corr_sa <- cor(na.omit(saving_tic))
 corr_ineq <- cor(na.omit(ineq))
 
 row_indic <- apply(corr_b, 1, function(x) sum(x > 0.60 | x < -0.60) > 1)
-row_indic2 <- apply(corr_ins, 1, function(x) sum(x > 0.50 | x < -0.50) > 1)
+row_indic2 <- apply(corr_ins, 1, function(x) sum(x > 0.40 | x < -0.40) > 1)
 row_indic3 <- apply(corr_sa, 1, function(x) sum(x > 0.50 | x < -0.50) > 1)
 row_indic4 <- apply(corr_ineq, 1, function(x) sum(x > 0.75 | x < -0.75) > 1)
 
@@ -190,6 +190,26 @@ data_corr_sa <- ine2[, highcorr_sa]
 doPlots(data_corr_sa, fun = plotCorr, ii = c(2:6))
 
 ```
+
+```{r}
+a <- c(names(data_corr))
+a = a[a!= 'year'] 
+b <- c(names(data_corr_ins)) 
+b = b[b!= 'Gini_net'] 
+c = c(names(data_corr_sa))
+c = c[c!= 'Gini_net'] 
+
+da = c(a,b,c)
+final <- ine %>% select(1:3)
+final <- cbind(final,ine[, da])
+```
+
+```{r}
+library("xlsx")
+
+write.xlsx(final, file = "final.xlsx", sheetName="DAN", col.names = T)
+```
+
 
 https://rpubs.com/nischalthapa/267813
 
