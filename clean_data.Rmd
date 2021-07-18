@@ -237,3 +237,118 @@ https://blogs.sas.com/content/iml/2011/04/27/log-transformations-how-to-handle-n
 
 le_female, net_len_w/i, soc_payable, gov_ex, soc_prot, td_female, tertiary_ed, voice, ruleoflaw, goveff, soc_proc_ex_pen, trade, 
 
+
+### FEATURE SELECTION
+
+https://www.machinelearningplus.com/machine-learning/feature-selection/
+
+```{r}
+library(readxl)
+final <- read_excel("final.xlsx")
+
+
+```
+
+```{r}
+final %>% keep(is.numeric) -> db
+db %>% keep(is.numeric) -> db
+
+db %>% dplyr::select(where(is.numeric)) -> db2
+db2 = na.omit(db2)
+
+db2$year <- NULL
+db2$Quantiles <-NULL
+```
+
+```{r}
+base.mod <- lm(Gini_net ~ Wages , data=db2)  
+all.mod <- lm(Gini_net ~ . , data=db2) 
+
+stepMod <- step(base.mod, scope = list(lower = base.mod, upper = all.mod), direction = "both", trace = 0, steps = 1000)
+
+shortlistedVars <- names(unlist(stepMod[[1]]))
+shortlistedVars <- shortlistedVars[!shortlistedVars %in% "(Intercept)"] # remove intercept
+
+print(shortlistedVars)
+```
+```{r}
+# install.packages('relaimpo')
+library(relaimpo)
+
+model_formula = Gini_net ~ Wages + Corporate_ta+mrp_all+instdepth+employ_rate+Net_len_wi+Tertiary_ed+GDP_pc+Family+Social_prot+Soc_kind
+
+md = Gini_net ~ Wages + Corporate_ta  + Unempl_rate+Trade  + arp_mid+ mrp_all +Family + Net_len_wi  +    instdepth+ Secondary_ed  + Gov_debt+ins_effic + Savings_percapit + Deficit   + Social_prot +    Soc_kind       + employ_rate+  Tertiary_ed + TOT+ property_tx+ GDP_pc         
+
+lmMod <- lm(md, data=db2)
+
+relImportance <- calc.relimp(lmMod, type = "lmg", rela = F)
+
+cat('Relative Importances: \n')
+sort(round(relImportance$lmg, 3), decreasing=TRUE)
+
+bootsub <- boot.relimp(lmMod, data=db2, b = 1, type = 'lmg', rank = TRUE, diff = TRUE)
+
+plot(booteval.relimp(bootsub, level=.95))
+
+```
+
+```{r}
+i = i[i!= 'Gini_net'] 
+i1 = paste(i, collapse='+')
+
+md2 = Gini_net ~ Gov_debt+Unempl_rate+Wages+HICP+property_tx+Net_mig+Gini_market+Net_len_wi+le_male+le_female+Deciles+Health_exp+Education_exp+Social_prot_ex_pen+Social_prot+Family+Unemp_tra+Corporate_ta+ind_tx+`gro%pop`+Trade+TOT+GDP_pc+Secondary_ed+Tertiary_ed+td_male+td_female+leavers+Gov_ex+Deficit+Soc_payable+Soc_kind+employ_rate+arp_mid+mrp_all+insaccess+goveff+regqua+ruleoflaw+voice+instdepth+ins_effic+`R&D%GDP\r\n`+`Researchers_(1mill_Pop)\r\n`+`Savings % GDP`+Savings_percapit+ICT
+
+pform <- pFormula(Gini_net ~ Gov_debt+Unempl_rate+Wages+HICP+property_tx+Net_mig+Gini_market+Net_len_wi+le_male+le_female+Deciles+Health_exp+Education_exp+Social_prot_ex_pen+Social_prot+Family+Unemp_tra+Corporate_ta+ind_tx+Trade+TOT+GDP_pc+Secondary_ed+Tertiary_ed+td_male+td_female+leavers+Gov_ex+Deficit+Soc_payable+Soc_kind+employ_rate+arp_mid+mrp_all+insaccess+goveff+regqua+ruleoflaw+voice+instdepth+ins_effic+Savings_percapit+ICT)
+
+mf <- model.frame(pform, data=pdata.frame(db2))
+
+# no linear dependent columns in original data/pooling model
+modmat_pool <- model.matrix(pform, data = mf, model="pooling")
+detect.lindep(modmat_pool)
+mod_pool <- plm(pform, data = db2, model = "pooling")
+(mod_pool)
+
+modmat_FE <- model.matrix(pform, data = mf, model="within")
+detect.lindep(modmat_FE)
+mod_FE <- plm(pform, data = db2, model = "within")
+detect.lindep(mod_FE)
+alias(mod_FE)
+```
+
+
+
+
+```{r}
+sa_ctrl <- safsControl(functions = rfSA,
+                        method = "repeatedcv",
+                        repeats = 3,
+                        improve = 5)
+
+sa_obj <- safs(x=db2[, -c(8)], 
+               y=db2$Gini_net,
+               safsControl = sa_ctrl)
+
+sa_obj
+
+print(sa_obj$optVariables)
+```
+
+```{r}
+library(randomForest)
+library(DALEX)
+
+rf_mod <- randomForest(Gini_net ~ Wages + Corporate_ta+mrp_all+instdepth+employ_rate+Net_len_wi+Tertiary_ed+GDP_pc+Family+Social_prot+Soc_kind, data=db2, ntree=100)
+
+rf_mod
+
+explainer_ranger <- explain(rf_mod, data = db2[,-8],
+y= db2$Gini_net, label = "Ranger Apartments")
+
+explained_rf <- model_parts(explainer_ranger, type = "raw")
+
+head(explained_rf, 10)
+plot(explained_rf)
+
+
+```
+
