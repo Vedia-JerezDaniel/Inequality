@@ -245,8 +245,6 @@ https://www.machinelearningplus.com/machine-learning/feature-selection/
 ```{r}
 library(readxl)
 final <- read_excel("final.xlsx")
-
-
 ```
 
 ```{r}
@@ -256,6 +254,7 @@ db %>% keep(is.numeric) -> db
 db %>% dplyr::select(where(is.numeric)) -> db2
 db2 = na.omit(db2)
 
+db3 = select_if(final, is.numeric)
 db2$year <- NULL
 db2$Quantiles <-NULL
 ```
@@ -275,21 +274,38 @@ print(shortlistedVars)
 # install.packages('relaimpo')
 library(relaimpo)
 
-model_formula = Gini_net ~ Wages + Corporate_ta+mrp_all+instdepth+employ_rate+Net_len_wi+Tertiary_ed+GDP_pc+Family+Social_prot+Soc_kind
+model_formula = Gini_net ~ gro_pop + Trade  + arp_mid + mrp_all + Family
 
-md = Gini_net ~ Wages + Corporate_ta  + Unempl_rate+Trade  + arp_mid+ mrp_all +Family + Net_len_wi  +    instdepth+ Secondary_ed  + Gov_debt+ins_effic + Savings_percapit + Deficit   + Social_prot +    Soc_kind       + employ_rate+  Tertiary_ed + TOT+ property_tx+ GDP_pc         
+# 20 vAR
+md = Gini_net ~ Wages + Corporate_ta + Unempl_rate + Net_len_wi + instdepth + Secondary_ed + Gov_debt + ins_effic + Savings_percapit + Deficit + Social_prot + Soc_kind  + employ_rate + Tertiary_ed + TOT + property_tx + GDP_pc + HICP + Health_exp +  Gov_ex + regqua 
 
-lmMod <- lm(md, data=db2)
+# 20 vAR
+md2 = Gini_net ~ ICT + Education_exp + pr_im_tx + Deficit + insaccess + ruleoflaw + ins_effic + sav_gdp + Net_mig + Social_prot_ex_pen + ind_tx + Soc_payable + voice  + gro_pop + Trade  + arp_mid + mrp_all + Family + re_1mill
+
+mdf = Gini_net ~ Social_prot + Secondary_ed + Savings_percapit +Gov_ex + Soc_kind + Wages + employ_rate +
+GDP_pc + TOT + Corporate_ta + Social_prot_ex_pen + insaccess+ arp_mid + Trade + sav_gdp +
+ re_1mill + rd_gdp + Net_mig + ICT + Family + ind_tx
+
+mdb = Gini_net ~ Tertiary_ed +  Health_exp+ property_tx +  Unempl_rate + regqua + Gov_debt +     Net_len_wi +  instdepth  +  HICP + ruleoflaw +voice + pr_im_tx + Soc_payable +  mrp_all  +  Education_exp + gro_pop + Deficit + ins_effic
+
+lmMod <- lm(mdb, data=db2)
 
 relImportance <- calc.relimp(lmMod, type = "lmg", rela = F)
+relImportance2 <- calc.relimp(lmMod, type = "lmg", rela = F)
+relImportancef <- calc.relimp(lmMod, type = "lmg", rela = F)
+relImportanceb <- calc.relimp(lmMod, type = "lmg", rela = F)
 
 cat('Relative Importances: \n')
-sort(round(relImportance$lmg, 3), decreasing=TRUE)
+sort(round(relImportancef$lmg, 3), decreasing=TRUE)
 
-bootsub <- boot.relimp(lmMod, data=db2, b = 1000, type = 'lmg', rank = TRUE, diff = TRUE)
+# bootsub <- boot.relimp(lmMod, data=db2, b = 1000, type = 'lmg', rank = TRUE, diff = TRUE)
+# 
+# plot(booteval.relimp(bootsub, level=.95))
 
-plot(booteval.relimp(bootsub, level=.95))
 
+library("xlsx")
+
+write.xlsx(db2, file = "db.xlsx", sheetName="DAN", col.names = T)
 ```
 
 ```{r}
@@ -319,12 +335,13 @@ alias(mod_FE)
 
 
 ```{r}
+library(caret)
 sa_ctrl <- safsControl(functions = rfSA,
                         method = "repeatedcv",
                         repeats = 3,
                         improve = 5)
 
-sa_obj <- safs(x=db2[, -c(8)], 
+sa_obj <- safs(x=db2[, -c(7,10,11)], 
                y=db2$Gini_net,
                safsControl = sa_ctrl)
 
@@ -337,18 +354,72 @@ print(sa_obj$optVariables)
 library(randomForest)
 library(DALEX)
 
-rf_mod <- randomForest(Gini_net ~ Wages + Corporate_ta+mrp_all+instdepth+employ_rate+Net_len_wi+Tertiary_ed+GDP_pc+Family+Social_prot+Soc_kind, data=db2, ntree=100)
+rf_mod_selected <- randomForest(Gini_net ~ ICT + Education_exp + db2$`prod&imp_tx` + Deficit + insaccess + ruleoflaw + ins_effic + db2$`Savings % GDP` + Net_mig + Social_prot_ex_pen + ind_tx + Soc_payable + voice  + db2$`gro%pop` + Trade  + arp_mid + mrp_all + Family + Gov_debt + db2$`Researchers_(1mill_Pop)\r\r\n` + db2$`R&D%GDP\r\r\n`, data=db2, ntree=500)
 
+selected <- randomForest(Gini_net ~ Savings_percapit +Soc_kind+Secondary_ed+employ_rate+GDP_pc+Social_prot+Wages+property_tx+ Gov_ex+Tertiary_ed+Gov_debt+
+  Social_prot_ex_pen+Trade+insaccess+Net_mig+Education_exp+voice+arp_mid+ruleoflaw+ind_tx+ICT+mrp_all,
+  data=db2, ntree=500)
+  
 rf_mod
 
-explainer_ranger <- explain(rf_mod, data = db2[,-8],
-y= db2$Gini_net, label = "Ranger Apartments")
+selected
 
-explained_rf <- model_parts(explainer_ranger, type = "raw")
+explainer_ranger <- explain(selected, data = db2[,-c(7,10,11)], y= db2$Gini_net, label = "Higher sample")
 
-head(explained_rf, 10)
-plot(explained_rf)
+explained_rf <- model_parts(explainer_ranger, type = "variable_importance")
 
+plot(explained_rf, max_vars=15, bar_width=6)
+
+explained_rf
+```
+
+```{r}
+library(Boruta)
+
+boruta_1 <- Boruta(md , data = db2, doTrace = 2)
+
+boruta_2 <- Boruta(md2 , data = db2, doTrace = 2)
+
+print(boruta_1)
+
+plot(boruta_1, xlab = "", xaxt = "n")
+k <-lapply(1:ncol(boruta_1$ImpHistory),function(i)
+  boruta_1$ImpHistory[is.finite(boruta_1$ImpHistory[,i]),i])
+names(k) <- colnames(boruta_1$ImpHistory)
+Labels <- sort(sapply(k,median))
+axis(side = 1,las=2,labels = names(Labels), at = 1:ncol(boruta_1$ImpHistory), cex.axis = 0.7)
+```
+
+```{r}
+attStats(boruta_1)
 
 ```
+
+
+```{r}
+print(boruta_2)
+
+plot(boruta_2, xlab = "", xaxt = "n")
+k <-lapply(1:ncol(boruta_2$ImpHistory),function(i)
+  boruta_2$ImpHistory[is.finite(boruta_2$ImpHistory[,i]),i])
+names(k) <- colnames(boruta_2$ImpHistory)
+Labels <- sort(sapply(k,median))
+axis(side = 1,las=2,labels = names(Labels), at = 1:ncol(boruta_2$ImpHistory), cex.axis = 0.7)
+```
+
+
+```{r}
+library(caret)
+control <- rfeControl(functions=lmFuncs, method="cv", number=10 )
+x = db2[,-c(7,10,11)]
+y = as.matrix(db2[7])
+rfe <- rfe(x, y, rfeControl=control)
+print(rfe, top=20)
+plot(rfe, type=c("g", "o"), cex = 1.0)
+predictors(rfe)
+head(rfe$resample,20)
+
+```
+
+
 
