@@ -244,7 +244,11 @@ https://www.machinelearningplus.com/machine-learning/feature-selection/
 
 ```{r}
 library(readxl)
+
 final <- read_excel("final.xlsx")
+
+final$...1 <- NULL
+final$...2 <- NULL
 ```
 
 ```{r}

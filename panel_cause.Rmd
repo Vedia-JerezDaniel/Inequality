@@ -1,0 +1,41 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(tidyverse)
+library(plm)
+```
+```{r}
+library(tidyverse)  # Love dplyr!
+final <- final %>%
+  arrange(idem, year) %>%  # Sort by firm and then by year
+  group_by(idem) %>%  # Tell dplyr to go within each firm
+  mutate(gdp_gro = GDP_pc/lag(GDP_pc-1)*100, insde_d = ins_effic/lag(ins_effic-1)*100,
+         tot_d = TOT/lag(TOT-1)*100, debt_d = Gov_debt/lag(Gov_debt-1)*100,
+         redis = Gini_market - Gini_net/Gini_net)
+```
+
+```{r}
+panel.plm.df <- pdata.frame(final, index=c("idem","year"), drop.index=TRUE)
+attach(panel.plm.df)
+
+fixed.year.model <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + sav_gdp + Gov_ex + Secondary_ed ,
+                        data = panel.plm.df, 
+                        index=c("idem", "year"), model="within", effect = c("twoways"))
+summary(fixed.year.model)
+```
+
+```{r}
+panel.head <- final %>% select(gdp_gro, insde_d, tot_d, debt_d)
+head(panel.head, 10)
+
+```
+
+
+
