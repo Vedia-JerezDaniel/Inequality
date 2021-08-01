@@ -1,41 +1,188 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Base sample"
+output:
+  html_document:
+    df_print: paged
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+```{r, message=FALSE}
+library(readxl)
 
-```{r}
+final <- read_excel("final.xlsx")
+
+final$...1 <- NULL
+final$...2 <- NULL
+```
+
+
+
+```{r,message=FALSE}
 library(tidyverse)
 library(plm)
+
+library(tidyverse)
+library(lfe)
+library(lmtest)
+
+panel.plm.df <- pdata.frame(final, index=c("idem","year"), drop.index=TRUE)
+attach(panel.plm.df)
 ```
 ```{r}
-library(tidyverse)  # Love dplyr!
+library(tidyverse)  
 final <- final %>%
   arrange(idem, year) %>%  # Sort by firm and then by year
-  group_by(idem) %>%  # Tell dplyr to go within each firm
+  group_by(idem) %>%      # Tell dplyr to go within each firm
   mutate(gdp_gro = GDP_pc/lag(GDP_pc-1)*100, insde_d = ins_effic/lag(ins_effic-1)*100,
          tot_d = TOT/lag(TOT-1)*100, debt_d = Gov_debt/lag(Gov_debt-1)*100,
          redis = Gini_market - Gini_net/Gini_net)
 ```
 
-```{r}
-panel.plm.df <- pdata.frame(final, index=c("idem","year"), drop.index=TRUE)
-attach(panel.plm.df)
+Resultados de un modelo con fixed effects y pooling
 
-fixed.year.model <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + sav_gdp + Gov_ex + Secondary_ed ,
+```{r}
+fe_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
+                        data = panel.plm.df, 
+                        index=c("idem", "year"), model="within", effect = c("individual"))
+summary(fe_lm)
+
+
+pl_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
+                        data = panel.plm.df, 
+                        index=c("idem", "year"), model="pooling", effect = c("individual"))
+
+summary(pl_lm)
+```
+
+
+```{r}
+pFtest(fe_lm, pl_lm)
+
+# In both cases the null hypothesis is rejected in favor of the alternative that there are significant fixed effects.
+
+```
+```{r}
+wi_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
                         data = panel.plm.df, 
                         index=c("idem", "year"), model="within", effect = c("twoways"))
-summary(fixed.year.model)
+
+summary(wi_lm)
+
+pFtest(fe_lm, wi_lm) 
+
+# There is evidence that time fixed effects should be taken into account.
+```
+
+```{r, eval=FALSE}
+ra_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
+                        data = panel.plm.df, 
+                        index=c("idem", "year"), model="random", effect = c("individual"))
+
+summary(ra_lm)
+summary(fe_lm)
+
+phtest(fe_lm, ra_lm)
+
+# The null hypothesis cannot be rejected here, hence we should use a FE model.
+```
+```{r}
+lmtest::bptest(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed + factor(idem), 
+               studentize = F, data = final)
+
+# here is strong evidence for the presense of heteroskedasticity. Hence, the use of robust standard errors is advised.
+
+pbgtest(fe_lm)
+
+# There is strong evidence that the residuals are serially correlated.
+```
+```{r}
+fe_s =coeftest(fe_lm, vcov = (vcovHC(fe_lm, method='arellano',type = "HC1",cluster = "group")))
+
+fe_s
+# summary(fe_lm)
+
+# fe_s2 <- lfe::felm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed | idem | 0 | idem, data = final)
+# 
+# summary(fe_s2)
+
+wi_s =coeftest(wi_lm, vcov = (vcovHC(wi_lm, method='arellano',type = "HC2",cluster = "group")))
+
+wi_s
+
+# ercomp(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed, data=final, 
+       # method = "nerlove", effect = "twoways")
+
+```
+
+De los resultados anteriores solucionando los problemas de autocorrelación y heteroscedasticidad, vemos que controlando el modelo por tiempo y fixed effects es mejor que sólo con FE.
+
+## LOCAL IMPULSE ESTIMATIONS
+
+```{r}
+library(lpirfs)
+library(dplyr)
 ```
 
 ```{r}
-panel.head <- final %>% select(gdp_gro, insde_d, tot_d, debt_d)
-head(panel.head, 10)
+ln <- final %>%
+             dplyr::select(idem, year, Gini_net, GDP_pc, Trade, instdepth, Gov_ex, Secondary_ed)
+```
 
+```{r}
+results_panel <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = "Gini_net",
+                               cumul_mult        = TRUE,
+                               shock             = "Gov_ex",
+                               diff_shock        = T,
+                               panel_model       = "within",
+                               panel_effect      = "twoways",
+                               robust_cov        = "vcovSCC",
+                               # c_exog_data       = "Gov_ex",
+                               c_fd_exog_data    = colnames(ln)[c(seq(4,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(4,8))],
+                               lags_fd_exog_data = 1,
+                               confint           = 1.67,
+                               hor               = 10)
 ```
 
 
+```{r}
+plot_lin_panel <- plot_lin(results_panel)
 
+plot(plot_lin_panel[[1]])
+
+## Government exp shock on Gini_net
+```
+
+```{r}
+en = ln %>% select(-idem, -year)
+en$idem <- NULL
+
+results_lin <- lp_lin(en, 
+                           lags_endog_lin = 1,    # Number of lags for endogenous data
+                           trend          = 0,    # 0 = no trend, 1 = trend, 2 = trend & trend^2    
+                           shock_type     = 1,    # 0 = standard deviation shock, 1 = unit shock
+                           confint        = 1.96, # Width of confidence bands: 
+                                                  # 1 = 68%, 1.67 = 90%, 1.96 = 95%
+                           hor            = 5)   # Number of cores to use. When NULL, the number of cores 
+                                                  # is chosen automatically 
+```
+
+```{r}
+ linear_plots <- plot_lin(results_lin)
+  library(ggpubr)
+  library(gridExtra)
+
+# Show all plots
+
+lin_plots_all <- sapply(linear_plots[1:6], ggplotGrob)
+marrangeGrob(lin_plots_all, nrow = 2, ncol = 3, top = NULL)
+```
+
+Efectos locales sobre el Gini-net, solo es una muestra (no definitivo) falta mejorar los parámetros de la estimación.
+Y que otras opciones arrojan los resultados... y lo más importante theory!!!
+
+Yo me quedaría con el de arriba que es la de Panel y se puede modificar las variables, solo que tenemos que tener claro que shocks deben afectar al Gini.
+
+Ningún modelo es dinámico, ya va tomando forma.
