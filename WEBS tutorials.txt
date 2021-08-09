@@ -1,0 +1,5 @@
+https://rdrr.io/cran/lpirfs/man/lp_lin_iv.html
+https://adaemmerp.github.io/lpirfs/README_docs.html
+https://cran.r-project.org/web/packages/lpirfs/lpirfs.pdf
+https://cran.r-project.org/web/packages/plm/vignettes/A_plmPackage.html
+https://www.princeton.edu/~otorres/Panel101R.pdf
