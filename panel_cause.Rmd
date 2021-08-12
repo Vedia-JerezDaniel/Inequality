@@ -18,40 +18,52 @@ final$...2 <- NULL
 
 
 ```{r,message=FALSE}
-library(tidyverse)
-library(plm)
 
+library(plm)
 library(tidyverse)
 library(lfe)
 library(lmtest)
 
-panel.plm.df <- pdata.frame(final, index=c("idem","year"), drop.index=TRUE)
-attach(panel.plm.df)
+
 ```
+
 ```{r}
-library(tidyverse)  
 final <- final %>%
   arrange(idem, year) %>%  # Sort by firm and then by year
   group_by(idem) %>%      # Tell dplyr to go within each firm
-  mutate(gdp_gro = GDP_pc/lag(GDP_pc-1)*100, insde_d = ins_effic/lag(ins_effic-1)*100,
-         tot_d = TOT/lag(TOT-1)*100, debt_d = Gov_debt/lag(Gov_debt-1)*100,
+  mutate(gdp_gro = GDP_pc/(lag(GDP_pc)-1),
+         insde_d = ins_effic/(lag(ins_effic)-1),
+         tot_d = TOT/(lag(TOT)-1), 
+         debt_d = Gov_debt/(lag(Gov_debt)-1),
          redis = Gini_market - Gini_net/Gini_net)
+
+
+panel.plm.df <- pdata.frame(final, index=c("idem","year"), drop.index=TRUE)
+attach(panel.plm.df)
 ```
 
 Resultados de un modelo con fixed effects y pooling
 
 ```{r}
-fe_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
+fe_lm <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed ,
                         data = panel.plm.df, 
                         index=c("idem", "year"), model="within", effect = c("individual"))
 summary(fe_lm)
 
+yhat <- fe_lm$fitted
+plot(final$gdp_gro, final$Gini_net, pch=19, xlab="x1", ylab="y")
+abline(lm(final$Gini_net~final$gdp_gro),lwd=3, col="red")
 
 pl_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
                         data = panel.plm.df, 
                         index=c("idem", "year"), model="pooling", effect = c("individual"))
 
 summary(pl_lm)
+```
+
+```{r}
+library(gplots)
+plotmeans(Gini_net ~ idem, main="Heterogeineity across countries", data=final, bars=T, lwd=2)
 ```
 
 
@@ -61,9 +73,9 @@ pFtest(fe_lm, pl_lm)
 # In both cases the null hypothesis is rejected in favor of the alternative that there are significant fixed effects.
 
 ```
+
 ```{r}
-wi_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
-                        data = panel.plm.df, 
+wi_lm <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed ,          data = panel.plm.df, 
                         index=c("idem", "year"), model="within", effect = c("twoways"))
 
 summary(wi_lm)
@@ -72,6 +84,7 @@ pFtest(fe_lm, wi_lm)
 
 # There is evidence that time fixed effects should be taken into account.
 ```
+
 
 ```{r, eval=FALSE}
 ra_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
@@ -85,9 +98,9 @@ phtest(fe_lm, ra_lm)
 
 # The null hypothesis cannot be rejected here, hence we should use a FE model.
 ```
+
 ```{r}
-lmtest::bptest(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed + factor(idem), 
-               studentize = F, data = final)
+lmtest::bptest(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed + factor(idem), studentize = F, data = final)
 
 # here is strong evidence for the presense of heteroskedasticity. Hence, the use of robust standard errors is advised.
 
@@ -95,6 +108,7 @@ pbgtest(fe_lm)
 
 # There is strong evidence that the residuals are serially correlated.
 ```
+
 ```{r}
 fe_s =coeftest(fe_lm, vcov = (vcovHC(fe_lm, method='arellano',type = "HC1",cluster = "group")))
 
@@ -115,6 +129,49 @@ wi_s
 ```
 
 De los resultados anteriores solucionando los problemas de autocorrelación y heteroscedasticidad, vemos que controlando el modelo por tiempo y fixed effects es mejor que sólo con FE.
+
+
+```{r}
+ftime <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade  + Gov_ex + Secondary_ed  + factor(year),    data = final, index=c("idem","year"), model="within")
+
+summary(ftime)
+
+pFtest(wi_lm, fe_lm)
+plmtest(fe_lm, c("time"), type=("bp"))
+
+# If this number is < 0.05 then use time-fixed effects. In this example, no need to use
+# time-fixed effects.
+```
+
+```{r}
+# Testing for cross-sectional dependence
+
+# Evidence of CS dependence and Correlation
+
+pcdtest(fe_lm, test = c("lm"))
+pcdtest(fe_lm, test = c("cd"))
+
+pbgtest(fe_lm)
+
+# Presence of heteroskedasticity
+bptest(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed  + factor(idem), data = final, studentize=F)
+
+coeftest(fe_lm)
+
+fe_so1 <- coeftest(fe_lm, vcovHC(fe_lm, method = "arellano",  type = "HC3"))
+fe_so2 <- coeftest(fe_lm, vcovHC(fe_lm, cluster = "group",  type = "HC3"))
+
+wi_so1 <- coeftest(wi_lm, vcovHC(wi_lm, method = "arellano",  type = "HC3"))
+wi_so2 <- coeftest(wi_lm, vcovHC(wi_lm, type = "HC3", cluster = "group"))
+
+
+screenreg(list(fe_so1, fe_so2, wi_so2),
+          custom.model.names = c("FE_au", "FE_cd", "Two"))
+
+wi_so2[,1] / diff(range(final$Gini_net, na.rm = TRUE))
+```
+
+
 
 ## LOCAL IMPULSE ESTIMATIONS
 
