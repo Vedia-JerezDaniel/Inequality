@@ -10,9 +10,9 @@ output:
 library(readxl)
 
 final <- read_excel("final.xlsx")
-
-final$...1 <- NULL
-final$...2 <- NULL
+# 
+# final$...1 <- NULL
+# final$...2 <- NULL
 ```
 
 
@@ -31,7 +31,8 @@ library(lmtest)
 final <- final %>%
   arrange(idem, year) %>%  # Sort by firm and then by year
   group_by(idem) %>%      # Tell dplyr to go within each firm
-  mutate(gdp_gro = GDP_pc/(lag(GDP_pc)-1),
+  mutate(gdppc_gro = GDP_pc/(lag(GDP_pc)-1),
+         gdp_gro = GDP/(lag(GDP)-1),
          insde_d = ins_effic/(lag(ins_effic)-1),
          tot_d = TOT/(lag(TOT)-1), 
          debt_d = Gov_debt/(lag(Gov_debt)-1),
