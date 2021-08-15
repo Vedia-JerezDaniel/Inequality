@@ -76,8 +76,8 @@ pFtest(fe_lm, pl_lm)
 ```
 
 ```{r}
-wi_lm <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed ,          data = panel.plm.df, 
-                        index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_lm <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed ,  data = panel.plm.df, 
+   index=c("idem", "year"), model="within", effect = c("twoways"))
 
 summary(wi_lm)
 
@@ -170,6 +170,44 @@ screenreg(list(fe_so1, fe_so2, wi_so2),
           custom.model.names = c("FE_au", "FE_cd", "Two"))
 
 wi_so2[,1] / diff(range(final$Gini_net, na.rm = TRUE))
+```
+
+## Adding external variables
+
+## leer para estimacion final
+https://cran.r-project.org/web/packages/plm/vignettes/A_plmPackage.html
+
+
+```{r}
+fe_1 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed +
+                Soc_payable,
+                        data = panel.plm.df, 
+                        index=c("idem", "year"), model="within", effect = c("individual"))
+fe_2 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed +
+                Soc_kind,
+                        data = panel.plm.df, 
+                        index=c("idem", "year"), model="within", effect = c("individual"))
+
+wi_1 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Soc_payable,  data = panel.plm.df, 
+   index=c("idem", "year"), model="within", effect = c("twoways"))
+
+wi_2 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Soc_kind,  data = panel.plm.df, 
+   index=c("idem", "year"), model="within", effect = c("twoways"))
+
+
+fe_ex1 <- coeftest(fe_1, vcovHC(fe_1, method = "arellano", cluster = 'time',type = "HC3"))
+fe_ex2 <- coeftest(fe_2, vcovHC(fe_2, method  = "arellano", cluster = 'time', type = "HC3"))
+
+wi_ex1 <- coeftest(wi_1, vcovHC(wi_1, method = "arellano",  cluster = 'time', type = "HC3"))
+wi_ex2 <- coeftest(wi_2, vcovHC(wi_2, type = "HC3", cluster = 'time', method  = "arellano"))
+
+
+library(texreg)
+screenreg(list(fe_ex1, fe_ex2,wi_ex1, wi_ex2),
+          custom.model.names = c("FE_1", "FE_2", "TI_1", "TI_2"))
+
+# Analizando resultados (obteniendo parámetros)
+fe_ex2[,1] / diff(range(final$Gini_net, na.rm = T))
 ```
 
 
