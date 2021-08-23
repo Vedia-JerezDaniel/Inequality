@@ -40,6 +40,7 @@ final <- final %>%
 
 
 panel.plm.df <- pdata.frame(final, index=c("idem","year"), drop.index=TRUE)
+
 attach(panel.plm.df)
 ```
 
@@ -52,7 +53,7 @@ fe_lm <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed 
 summary(fe_lm)
 
 yhat <- fe_lm$fitted
-plot(final$gdp_gro, final$Gini_net, pch=19, xlab="x1", ylab="y")
+plot(final$gdp_gro, final$Gini_net, pch=19, xlab="GDP growth", ylab="Gini_net")
 abline(lm(final$Gini_net~final$gdp_gro),lwd=3, col="red")
 
 pl_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
@@ -65,6 +66,8 @@ summary(pl_lm)
 ```{r}
 library(gplots)
 plotmeans(Gini_net ~ idem, main="Heterogeineity across countries", data=final, bars=T, lwd=2)
+
+# Mejorar por 3 grupos
 ```
 
 
@@ -165,6 +168,7 @@ fe_so2 <- coeftest(fe_lm, vcovHC(fe_lm, cluster = "group",  type = "HC3"))
 wi_so1 <- coeftest(wi_lm, vcovHC(wi_lm, method = "arellano",  type = "HC3"))
 wi_so2 <- coeftest(wi_lm, vcovHC(wi_lm, type = "HC3", cluster = "group"))
 
+library(texreg)
 
 screenreg(list(fe_so1, fe_so2, wi_so2),
           custom.model.names = c("FE_au", "FE_cd", "Two"))
@@ -188,6 +192,7 @@ fe_2 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed +
                         data = panel.plm.df, 
                         index=c("idem", "year"), model="within", effect = c("individual"))
 
+
 wi_1 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Soc_payable,  data = panel.plm.df, 
    index=c("idem", "year"), model="within", effect = c("twoways"))
 
@@ -202,12 +207,11 @@ wi_ex1 <- coeftest(wi_1, vcovHC(wi_1, method = "arellano",  cluster = 'time', ty
 wi_ex2 <- coeftest(wi_2, vcovHC(wi_2, type = "HC3", cluster = 'time', method  = "arellano"))
 
 
-library(texreg)
 screenreg(list(fe_ex1, fe_ex2,wi_ex1, wi_ex2),
           custom.model.names = c("FE_1", "FE_2", "TI_1", "TI_2"))
 
 # Analizando resultados (obteniendo parámetros)
-fe_ex2[,1] / diff(range(final$Gini_net, na.rm = T))
+wi_ex1[,1] / diff(range(final$Gini_net, na.rm = T))
 ```
 
 
