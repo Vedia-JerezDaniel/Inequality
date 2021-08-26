@@ -10,21 +10,16 @@ output:
 library(readxl)
 
 final <- read_excel("final.xlsx")
-# 
-# final$...1 <- NULL
-# final$...2 <- NULL
+
 ```
 
 
 
 ```{r,message=FALSE}
-
 library(plm)
 library(tidyverse)
 library(lfe)
 library(lmtest)
-
-
 ```
 
 ```{r}
@@ -191,6 +186,12 @@ fe_2 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed +
                 Soc_kind,
                         data = panel.plm.df, 
                         index=c("idem", "year"), model="within", effect = c("individual"))
+fe_3 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Education_exp,  data = panel.plm.df, 
+   index=c("idem", "year"), model="within", effect = c("individual"))
+fe_4 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Secondary_ed + Health_exp,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("individual"))
+fe_5 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Secondary_ed + Social_prot,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("individual"))
+fe_6 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Secondary_ed + Family,  data = panel.plm.df, 
+   index=c("idem", "year"), model="within", effect = c("individual"))
 
 
 wi_1 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Soc_payable,  data = panel.plm.df, 
@@ -198,23 +199,100 @@ wi_1 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed +
 
 wi_2 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Soc_kind,  data = panel.plm.df, 
    index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_3 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Education_exp,  data = panel.plm.df, 
+   index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_4 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Health_exp,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_5 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Social_prot,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_6 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Family,  data = panel.plm.df, 
+   index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_7 <- plm(Gini_net ~ (gdp_gro) +employ_rate +Trade +  Gov_ex + Secondary_ed + Wages,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
 
+wi_8 <- plm(Gini_net ~ (gdp_gro) +employ_rate +Trade +  Gov_ex + Secondary_ed + arp_mid*PIT,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_9 <- plm(Gini_net ~ (gdp_gro) +employ_rate +Trade +  Gov_ex + Secondary_ed + mrp_all*PIT,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
 
-fe_ex1 <- coeftest(fe_1, vcovHC(fe_1, method = "arellano", cluster = 'time',type = "HC3"))
-fe_ex2 <- coeftest(fe_2, vcovHC(fe_2, method  = "arellano", cluster = 'time', type = "HC3"))
+fe_ex1 <- coeftest(fe_1, vcovHC(fe_1, method = "arellano", cluster = 'group',type = "HC3"))
+fe_ex2 <- coeftest(fe_2, vcovHC(fe_2, method  = "arellano", cluster = 'group', type = "HC3"))
+fe_ex3 <- coeftest(fe_3, vcovHC(fe_3, method = "arellano", cluster = 'group',type = "HC3"))
+fe_ex4 <- coeftest(fe_4, vcovHC(fe_4, method  = "arellano", cluster = 'group', type = "HC3"))
+fe_ex5 <- coeftest(fe_5, vcovHC(fe_5, method = "arellano", cluster = 'group',type = "HC3"))
+fe_ex6 <- coeftest(fe_6, vcovHC(fe_6, method  = "arellano", cluster = 'group', type = "HC3"))
+
 
 wi_ex1 <- coeftest(wi_1, vcovHC(wi_1, method = "arellano",  cluster = 'time', type = "HC3"))
 wi_ex2 <- coeftest(wi_2, vcovHC(wi_2, type = "HC3", cluster = 'time', method  = "arellano"))
+wi_ex3 <- coeftest(wi_3, vcovHC(wi_3, method = "arellano",  cluster = 'time', type = "HC3"))
+wi_ex4 <- coeftest(wi_4, vcovHC(wi_4, type = "HC3", cluster = 'time', method  = "arellano"))
+wi_ex5 <- coeftest(wi_5, vcovHC(wi_5, method = "arellano",  cluster = 'time', type = "HC3"))
+wi_ex6 <- coeftest(wi_6, vcovHC(wi_6, type = "HC3", cluster = 'time', method  = "arellano"))
 
+wi_ex8 <- coeftest(wi_8, vcovHC(wi_8, method = "arellano",  cluster = 'time', type = "HC3"))
+wi_ex9 <- coeftest(wi_9, vcovHC(wi_9, type = "HC3", cluster = 'time', method  = "arellano"))
 
-screenreg(list(fe_ex1, fe_ex2,wi_ex1, wi_ex2),
-          custom.model.names = c("FE_1", "FE_2", "TI_1", "TI_2"))
+screenreg(list(fe_ex1, fe_ex2,fe_ex3, fe_ex4,fe_ex5, fe_ex6),
+          custom.model.names = c("FE_1", "FE_2", "FE_3", "FE_4","FE_5","FE_6"))
+
+screenreg(list(wi_ex1, wi_ex2, wi_ex3, wi_ex4, wi_ex5, wi_ex6, wi_ex9),
+          custom.model.names = c("TE_1", "TE_2", "TE_3", "TE_4", "TE_5", "TE_6", "TE_9"))
 
 # Analizando resultados (obteniendo parámetros)
 wi_ex1[,1] / diff(range(final$Gini_net, na.rm = T))
 ```
 
+##  ASSESING TECH
 
+```{r}
+wi_rd <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed +  res_1mill,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+
+wi_rd1 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + res_1mill*pro_imp_tx,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+
+summary(wi_rd1)
+
+plot(final$PIT, final$Gini_net)
+abline(lm(final$Gini_net~final$PIT), col="red") # regression line (y~x)
+
+plot(final$pro_imp_tx, final$Gini_net)
+abline(lm(final$Gini_net~final$pro_imp_tx), col="blue")
+
+library("car")
+scatterplot(final$Gini_net ~ final$pro_imp_tx | debt_g, data = final, smooth=T, col=c('blue','orange'))
+
+scatterplot(final$Gini_net ~ final$PIT | debt_g, data = final, smooth=F, col=c('blue','orange'))
+
+scatterplot(final$Gini_net ~ final$PIT, data = final, smooth=list(smoother=quantregLine, var=T, span=1, lwd=4, lwd.var=2, border=F),regLine=F)
+```
+
+
+##  ASSESING SAVINGS + TECH
+
+```{r}
+wi_sv <- plm(Gini_net ~ gdp_gro + employ_rate +Trade + Gov_ex + Secondary_ed + Savings_percapit*res_1mill,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
+summary(wi_sv)
+
+plot(final$Savings_percapit, final$Gini_net)
+abline(lm(final$Gini_net~final$Savings_percapit), col="red") # regression line (y~x)
+
+plot(final$pro_imp_tx, final$Gini_net)
+abline(lm(final$Gini_net~final$pro_imp_tx), col="blue")
+
+library("car")
+scatterplot(final$Gini_net ~ final$pro_imp_tx | debt_g, data = final, smooth=T, col=c('blue','orange'))
+
+scatterplot(final$res_1mill ~ final$Savings_percapit | debt_g, data = final, smooth=T, col=c('blue','orange'))
+
+scatter3d(x = final$Savings_percapit, y = final$Gini_net, z = final$res_1mill, point.col = "blue", surface=FALSE)
+
+LETTER2num <- function(x) {utf8ToInt(x) - utf8ToInt("A") + 1L}
+
+colors <- unname(sapply(final$debt_g, LETTER2num))
+
+sd <- scatterplot3d(x = Savings_percapit, z = Gini_net, y = res_1mill, color=colors,pch = 16)
+legend('bottomright', legend = levels(lev), col =  c("1", "2"), pch = 15, xpd = TRUE, horiz = TRUE, inset = 0.025)
+
+my.lm <- lm(final$Gini_net ~ final$Savings_percapit + final$res_1mill )
+sd$plane3d(my.lm, col='blue')
+
+lev = factor(final$debt_g, levels= c("A", "B"))
+```
 
 ## LOCAL IMPULSE ESTIMATIONS
 
