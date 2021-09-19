@@ -224,15 +224,15 @@ wi_ex3 <- coeftest(wi_3, vcovHC(wi_3, method = "arellano",  cluster = 'time', ty
 wi_ex4 <- coeftest(wi_4, vcovHC(wi_4, type = "HC3", cluster = 'time', method  = "arellano"))
 wi_ex5 <- coeftest(wi_5, vcovHC(wi_5, method = "arellano",  cluster = 'time', type = "HC3"))
 wi_ex6 <- coeftest(wi_6, vcovHC(wi_6, type = "HC3", cluster = 'time', method  = "arellano"))
-
+wi_ex7 <- coeftest(wi_7, vcovHC(wi_7, type = "HC3", cluster = 'time', method  = "arellano")) 
 wi_ex8 <- coeftest(wi_8, vcovHC(wi_8, method = "arellano",  cluster = 'time', type = "HC3"))
 wi_ex9 <- coeftest(wi_9, vcovHC(wi_9, type = "HC3", cluster = 'time', method  = "arellano"))
 
 screenreg(list(fe_ex1, fe_ex2,fe_ex3, fe_ex4,fe_ex5, fe_ex6),
           custom.model.names = c("FE_1", "FE_2", "FE_3", "FE_4","FE_5","FE_6"))
 
-screenreg(list(wi_ex1, wi_ex2, wi_ex3, wi_ex4, wi_ex5, wi_ex6, wi_ex9),
-          custom.model.names = c("TE_1", "TE_2", "TE_3", "TE_4", "TE_5", "TE_6", "TE_9"))
+ta1 = screenreg(list(wi_ex1, wi_ex2, wi_ex3, wi_ex4, wi_ex5, wi_ex6, wi_ex7, wi_ex8, wi_ex9),
+          custom.model.names = c("TE_1","TE_2","TE_3","TE_4","TE_5","TE_6","TE_7","TE_8","TE_9"))
 
 # Analizando resultados (obteniendo parámetros)
 wi_ex1[,1] / diff(range(final$Gini_net, na.rm = T))
