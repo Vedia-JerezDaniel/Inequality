@@ -10,9 +10,7 @@ output:
 library(readxl)
 
 final <- read_excel("final.xlsx")
-
 ```
-
 
 
 ```{r,message=FALSE}
@@ -20,6 +18,7 @@ library(plm)
 library(tidyverse)
 library(lfe)
 library(lmtest)
+library(texreg)
 ```
 
 ```{r}
@@ -42,7 +41,7 @@ attach(panel.plm.df)
 Resultados de un modelo con fixed effects y pooling
 
 ```{r}
-fe_lm <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed ,
+fe_lm <- plm(Gini_net ~ lag(gdp_gro, 1) + Unempl_rate + Trade + Gov_ex + Secondary_ed ,
                         data = panel.plm.df, 
                         index=c("idem", "year"), model="within", effect = c("individual"))
 summary(fe_lm)
@@ -83,7 +82,6 @@ pFtest(fe_lm, wi_lm)
 
 # There is evidence that time fixed effects should be taken into account.
 ```
-
 
 ```{r, eval=FALSE}
 ra_lm <- plm(Gini_net ~ lag(GDP_pc) + lag(Gini_market) + Trade + instdepth + Gov_ex + Secondary_ed ,
@@ -163,8 +161,6 @@ fe_so2 <- coeftest(fe_lm, vcovHC(fe_lm, cluster = "group",  type = "HC3"))
 wi_so1 <- coeftest(wi_lm, vcovHC(wi_lm, method = "arellano",  type = "HC3"))
 wi_so2 <- coeftest(wi_lm, vcovHC(wi_lm, type = "HC3", cluster = "group"))
 
-library(texreg)
-
 screenreg(list(fe_so1, fe_so2, wi_so2),
           custom.model.names = c("FE_au", "FE_cd", "Two"))
 
@@ -194,21 +190,18 @@ fe_6 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Secondary_ed +
    index=c("idem", "year"), model="within", effect = c("individual"))
 
 
-wi_1 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Soc_payable,  data = panel.plm.df, 
-   index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_1 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Soc_payable,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
 
-wi_2 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Soc_kind,  data = panel.plm.df, 
+wi_2 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Soc_kind,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_3 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Education_exp,  data = panel.plm.df, 
    index=c("idem", "year"), model="within", effect = c("twoways"))
-wi_3 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Education_exp,  data = panel.plm.df, 
-   index=c("idem", "year"), model="within", effect = c("twoways"))
-wi_4 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Health_exp,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
-wi_5 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Social_prot,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
-wi_6 <- plm(Gini_net ~ (gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Family,  data = panel.plm.df, 
-   index=c("idem", "year"), model="within", effect = c("twoways"))
-wi_7 <- plm(Gini_net ~ (gdp_gro) +employ_rate +Trade +  Gov_ex + Secondary_ed + Wages,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_4 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Health_exp,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_5 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Social_prot,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_6 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + Family,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_7 <- plm(Gini_net ~ lag(gdp_gro) +employ_rate +Trade +  Gov_ex + Secondary_ed + Wages,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
 
-wi_8 <- plm(Gini_net ~ (gdp_gro) +employ_rate +Trade +  Gov_ex + Secondary_ed + arp_mid*PIT,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
-wi_9 <- plm(Gini_net ~ (gdp_gro) +employ_rate +Trade +  Gov_ex + Secondary_ed + mrp_all*PIT,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_8 <- plm(Gini_net ~ lag(gdp_gro) +employ_rate +Trade +  Gov_ex + Secondary_ed + arp_mid*PIT,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+wi_9 <- plm(Gini_net ~ lag(gdp_gro) +employ_rate +Trade +  Gov_ex + Secondary_ed + mrp_all*PIT,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
 
 fe_ex1 <- coeftest(fe_1, vcovHC(fe_1, method = "arellano", cluster = 'group',type = "HC3"))
 fe_ex2 <- coeftest(fe_2, vcovHC(fe_2, method  = "arellano", cluster = 'group', type = "HC3"))
