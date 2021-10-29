@@ -1,0 +1,137 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r,message=FALSE}
+
+library(tidyverse)
+
+```
+
+```{r, message=FALSE}
+library(readxl)
+
+final <- read_excel("final.xlsx")
+```
+
+```{r}
+final <- as.data.frame(final %>%
+  arrange(idem, year) %>%  # Sort by firm and then by year
+  group_by(idem) %>%      # Tell dplyr to go within each firm
+  mutate(gdppc_gro = GDP_pc/(lag(GDP_pc)-1),
+         gdp_gro = GDP/(lag(GDP)-1),
+         insde_d = ins_effic/(lag(ins_effic)-1),
+         tot_d = TOT/(lag(TOT)-1), 
+         debt_d = Gov_debt/(lag(Gov_debt)-1),
+         redis = Gini_market - Gini_net/Gini_net))
+
+
+```
+
+
+## LOCAL IMPULSE ESTIMATIONS
+
+```{r}
+library(lpirfs)
+library(dplyr)
+```
+
+```{r}
+# Exclude observations
+data_sample <- seq(1990, 2018)[which(!(seq(1990, 2018) %in% c(seq(1991, 1992),seq(2000, 2001), seq(2008, 2009), seq(2011, 2013))))]
+
+```
+
+
+```{r}
+ln <- final %>%
+             dplyr::select(id, year, Gini_net, gdp_gro, Trade, Gov_ex, Secondary_ed, Education_exp)
+```
+
+## WITHOUT RECESSION
+
+```{r, warning=FALSE}
+results_panel <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "Education_exp",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                               # robust_cov        = "vcovSCC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex', "Secondary_ed","Education_exp"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               use_gmm = T, gmm_model = 'onestep', gmm_transformation='ld',
+                               lags_fd_exog_data = 1,
+                               confint           = 1.65,
+                               hor               = 5)
+```
+
+## RECESSION
+```{r, warning=FALSE}
+panel_re <-  lp_lin_panel(data_set          = ln,
+                              data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "Education_exp",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                               # robust_cov        = "vcovSCC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex', "Secondary_ed","Education_exp"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               use_gmm = T, gmm_model = 'onestep', gmm_transformation='ld',
+                               lags_fd_exog_data = 1,
+                               confint           = 1.65,
+                               hor               = 5)
+```
+
+```{r}
+plot(results_panel)
+plot(panel_re)
+
+```
+
+
+
+```{r}
+en = ln %>% select(-idem, -year)
+en$idem <- NULL
+
+results_lin <- lp_lin(en, 
+                           lags_endog_lin = 1,    # Number of lags for endogenous data
+                           trend          = 0,    # 0 = no trend, 1 = trend, 2 = trend & trend^2    
+                           shock_type     = 1,    # 0 = standard deviation shock, 1 = unit shock
+                           confint        = 1.96, # Width of confidence bands: 
+                                                  # 1 = 68%, 1.67 = 90%, 1.96 = 95%
+                           hor            = 5)   # Number of cores to use. When NULL, the number of cores 
+                                                  # is chosen automatically 
+```
+
+```{r}
+linear_plots <- plot_lin(results_lin)
+  library(ggpubr)
+  library(gridExtra)
+
+# Show all plots
+
+lin_plots_all <- sapply(linear_plots[1:6], ggplotGrob)
+marrangeGrob(lin_plots_all, nrow = 2, ncol = 3, top = NULL)
+```
+
+Efectos locales sobre el Gini-net, solo es una muestra (no definitivo) falta mejorar los parámetros de la estimación.
+Y que otras opciones arrojan los resultados... y lo más importante theory!!!
+
+Yo me quedaría con el de arriba que es la de Panel y se puede modificar las variables, solo que tenemos que tener claro que shocks deben afectar al Gini.
+
+Ningún modelo es dinámico, ya va tomando forma.
+
+
+
+
