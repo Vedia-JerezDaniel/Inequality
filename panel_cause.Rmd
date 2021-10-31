@@ -13,7 +13,7 @@ final <- read_excel("final.xlsx")
 ```
 
 
-```{r,message=FALSE}
+```{r,message=FALSE, warning=FALSE}
 library(plm)
 library(tidyverse)
 library(lfe)
@@ -32,6 +32,9 @@ final <- final %>%
          debt_d = Gov_debt/(lag(Gov_debt)-1),
          redis = Gini_market - Gini_net/Gini_net)
 
+final <- final %>% group_by(idem) %>% mutate(lgdp_g = lag(gdp_gro))
+
+final <- as.data.frame(final)
 
 panel.plm.df <- pdata.frame(final, index=c("idem","year"), drop.index=TRUE)
 
@@ -175,26 +178,33 @@ https://cran.r-project.org/web/packages/plm/vignettes/A_plmPackage.html
 
 ```{r}
 fe_1 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed +
-                Soc_payable,
-                        data = panel.plm.df, 
-                        index=c("idem", "year"), model="within", effect = c("individual"))
+  Soc_payable,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("individual"))
+
 fe_2 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed +
                 Soc_kind,
                         data = panel.plm.df, 
                         index=c("idem", "year"), model="within", effect = c("individual"))
-fe_3 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Education_exp,  data = panel.plm.df, 
-   index=c("idem", "year"), model="within", effect = c("individual"))
+
+fe_3 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Education_exp,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("individual"))
+
 fe_4 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Secondary_ed + Health_exp,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("individual"))
+
 fe_5 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Secondary_ed + Social_prot,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("individual"))
+
 fe_6 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Secondary_ed + Family,  data = panel.plm.df, 
    index=c("idem", "year"), model="within", effect = c("individual"))
 
 ## DIRECT POLICY VARIABLES
 wi_1 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed +  + Soc_payable,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
+
 wi_2 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed + + Soc_kind,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
+
 wi_3 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex +  + Education_exp,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+
 wi_4 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed +  + Health_exp,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
+
 wi_5 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed +  + Social_prot,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("twoways"))
+
 wi_6 <- plm(Gini_net ~ lag(gdp_gro) + employ_rate +Trade +  Gov_ex + Secondary_ed +  + Family,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
 
 # PUBLIC REVENUES VAR.
@@ -250,21 +260,61 @@ wi_ex1[,1] / diff(range(final$Gini_net, na.rm = T))
 ```
 
 ```{r}
-"GDP_pc", "employ_rate", "Trade",'Gov_ex', "Education_exp"
-## DIRECT POLICY VARIABLES
 library(pacman)
 library(panelvar)
+```
 
+"GDP_pc", "employ_rate", "Trade",'Gov_ex', "Education_exp"
+
+## DIRECT POLICY VARIABLES
+Soc_payable, "Soc_kind", "Education_exp", "Health_exp", "Social_prot", "Family"
+
+
+```{r}
 data <- fn %>% drop_na()
 fn <- as.data.frame(final %>% select("GDP_pc", "employ_rate", "Trade",'Gov_ex', "Education_exp",'idem','year'))
+
 final <- as.data.frame(final)
 
-wl_1 <- pvargmm(dependent_vars = c("Gini_net","Education_exp"), predet_vars = c("gdp_gro",'Gov_ex', "Trade"),  lags = 1, exog_vars = c("employ_rate", 'Secondary_ed'), max_instr_predet_vars = 4, 
-  transformation = "fd",  data =final, panel_identifier = c('idem','year'),
-  steps = c("onestep"),  system_instruments = FALSE, max_instr_dependent_vars =4,  
-  min_instr_dependent_vars = 1L,  collapse = FALSE)
+## DIRECT POLICY VARIABLES
+
+wl_1 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", "lgdp_g",'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_payable'),  max_instr_predet_vars = 99, transformation = "fd", data = final, 
+       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 99,       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_1)
+
+wl_2 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_kind'),  max_instr_predet_vars = 9, transformation = "fd", data = final, 
+       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wl_2)
+
+wl_3 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Health_exp'),  max_instr_predet_vars = 9, transformation = "fd", data = final, 
+       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wl_3)
+
+wl_4 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", "lgdp_g",'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Education_exp'),        max_instr_predet_vars = 9, transformation = "fd", data = final, 
+       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,
+       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wl_4)
+
+wl_5 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Social_prot_ex_pen'),  max_instr_predet_vars = 9, transformation = "fd", data = final, 
+       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,
+       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wl_5)
+
+wl_6 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Unemp_tra'),  max_instr_predet_vars = 9, transformation = "fd", data = final, 
+       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,
+       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wl_6)
+```
+
+```{r}
+
+## DIRECT POLICY VARIABLES
 
 wl_stab = stability(wl_1)
 plot(wl_stab)
