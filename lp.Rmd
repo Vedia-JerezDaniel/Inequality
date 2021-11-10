@@ -8,17 +8,19 @@ output: html_notebook
 ```{r,message=FALSE}
 
 library(tidyverse)
-
+library(lpirfs)
+library(dplyr)
 ```
 
 ```{r, message=FALSE}
-library(readxl)
 
-final <- read_excel("final.xlsx")
+library(readxl)
+lpf <- read_excel("final.xlsx")
+
 ```
 
 ```{r}
-final <- as.data.frame(final %>%
+fd <- as.data.frame(lpf %>%
   arrange(idem, year) %>%  # Sort by firm and then by year
   group_by(idem) %>%      # Tell dplyr to go within each firm
   mutate(gdppc_gro = GDP_pc/(lag(GDP_pc)-1),
@@ -26,18 +28,16 @@ final <- as.data.frame(final %>%
          insde_d = ins_effic/(lag(ins_effic)-1),
          tot_d = TOT/(lag(TOT)-1), 
          debt_d = Gov_debt/(lag(Gov_debt)-1),
-         redis = Gini_market - Gini_net/Gini_net))
-
-
+         redis = Gini_market - Gini_net/Gini_net,
+         pi_m = PIT*mrp_all,
+         pi_a = PIT*arp_mid, 
+         rd = sav_gdp*res_1mill,
+         rd1= sav_gdp*RD_gdp))
 ```
 
 
 ## LOCAL IMPULSE ESTIMATIONS
 
-```{r}
-library(lpirfs)
-library(dplyr)
-```
 
 ```{r}
 # Exclude observations
@@ -47,14 +47,17 @@ data_sample <- seq(1990, 2018)[which(!(seq(1990, 2018) %in% c(seq(1991, 1992),se
 
 
 ```{r}
-ln <- final %>%
-             dplyr::select(id, year, Gini_net, gdp_gro, Trade, Gov_ex, Secondary_ed, Education_exp)
+ln <- fd %>%
+          dplyr::select(id, year, Gini_net, gdp_gro, Trade, Gov_ex, Secondary_ed, employ_rate,
+                        Education_exp,  Health_exp,  Soc_kind, Soc_payable, Social_prot_ex_pen, Unemp_tra, 
+                         Property_taxes, PIT, ind_tx, Corporate_ta, pi_a, pi_m,
+                          sav_gdp, RD_gdp, res_1mill, rd, rd1)
 ```
 
 ## WITHOUT RECESSION
 
 ```{r, warning=FALSE}
-results_panel <-  lp_lin_panel(data_set          = ln,
+p1 <-  lp_lin_panel(data_set          = ln,
                               # data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
                                cumul_mult        = TRUE,
@@ -62,14 +65,150 @@ results_panel <-  lp_lin_panel(data_set          = ln,
                                diff_shock        = TRUE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               # robust_cov        = "vcovSCC",
-                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex', "Secondary_ed","Education_exp"),
+                                robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex',    "Secondary_ed","Education_exp"),
                                c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
                                l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
-                               use_gmm = T, gmm_model = 'onestep', gmm_transformation='ld',
+                               lags_fd_exog_data = 1,  confint  = 1.65, hor = 5)
+
+p2 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "Health_exp",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                                robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex',    "Secondary_ed","Health_exp"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1,  confint  = 1.65, hor = 5)
+
+p3 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "Soc_kind",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                                robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex',    "Secondary_ed","Soc_kind"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1,  confint  = 1.65, hor = 5)
+
+p4 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "Soc_payable",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                               robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex', "Secondary_ed","Soc_payable"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1,  confint  = 1.65, hor = 5)
+
+p5 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "Social_prot_ex_pen",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                               robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex', "Secondary_ed"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1,  confint  = 1.65, hor = 5)
+```
+
+## TAXES
+
+```{r}
+t1 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "Property_taxes",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                                robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex', "Secondary_ed"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1,  confint  = 1.65, hor = 5)
+
+p2 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "PIT",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                                robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex', "Secondary_ed", 'PIT'),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1, confint = 1.65, hor = 5)
+
+p3 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "ind_tx",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                                robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade','Gov_ex',"Secondary_ed","ind_tx"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1, confint = 1.65, hor = 5)
+
+```
+
+## R&D
+
+```{r}
+rds1 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "RD_gdp",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                              iv_reg = TRUE, instrum = 'rd',
+                                robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex', 'sav_gdp'),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
                                lags_fd_exog_data = 1,
                                confint           = 1.65,
                                hor               = 5)
+
+rds2 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = data_sample,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "res_1mill",
+                               iv_reg = TRUE, instrum = 'rd1',
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                               robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','Trade', 'Gov_ex', "Secondary_ed", 'sav_gdp',"res_1mill"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1, confint = 1.65, hor = 5)
 ```
 
 ## RECESSION
@@ -93,8 +232,8 @@ panel_re <-  lp_lin_panel(data_set          = ln,
 ```
 
 ```{r}
-plot(results_panel)
-plot(panel_re)
+plot(rd1)
+plot(rd2)
 
 ```
 

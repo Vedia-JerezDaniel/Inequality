@@ -7,9 +7,9 @@ output:
 
 
 ```{r, message=FALSE}
-library(readxl)
 
-final <- read_excel("final.xlsx")
+library(readxl)
+final <- read_excel("long.xlsx")
 ```
 
 
@@ -271,46 +271,81 @@ Soc_payable, "Soc_kind", "Education_exp", "Health_exp", "Social_prot", "Family"
 
 
 ```{r}
-data <- fn %>% drop_na()
-fn <- as.data.frame(final %>% select("GDP_pc", "employ_rate", "Trade",'Gov_ex', "Education_exp",'idem','year'))
+# data <- fn %>% drop_na()
+# 
+# fn <- as.data.frame(final %>% select("GDP_pc", "employ_rate", "Trade",'Gov_ex', "Education_exp",'idem','year'))
 
 final <- as.data.frame(final)
 
 ## DIRECT POLICY VARIABLES
 
-wl_1 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", "lgdp_g",'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_payable'),  max_instr_predet_vars = 99, transformation = "fd", data = final, 
-       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 99,       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+wl_1 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_payable'),  max_instr_predet_vars = 9, transformation = "fd", data = final,  panel_identifier = c('idem','year'), steps = c("onestep"),  system_instruments = FALSE, max_instr_dependent_vars = 9,  min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_1)
 
-wl_2 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_kind'),  max_instr_predet_vars = 9, transformation = "fd", data = final, 
-       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+wl_2 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_kind'),  max_instr_predet_vars = 9, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"),   system_instruments = FALSE, max_instr_dependent_vars = 9,  min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_2)
 
-wl_3 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Health_exp'),  max_instr_predet_vars = 9, transformation = "fd", data = final, 
-       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+wl_3 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Health_exp'),  max_instr_predet_vars = 9, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = FALSE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_3)
 
-wl_4 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", "lgdp_g",'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Education_exp'),        max_instr_predet_vars = 9, transformation = "fd", data = final, 
-       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,
-       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+wl_4 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", "lgdp_g",'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Education_exp'),  max_instr_predet_vars = 9, transformation = "fd", data = final,  panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = TRUE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_4)
 
-wl_5 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Social_prot_ex_pen'),  max_instr_predet_vars = 9, transformation = "fd", data = final, 
-       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,
-       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+wl_5 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Social_prot'),  max_instr_predet_vars = 9, transformation = "fd", data = final,  panel_identifier = c('idem','year'), steps = c("onestep"),  system_instruments = FALSE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_5)
 
-wl_6 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Unemp_tra'),  max_instr_predet_vars = 9, transformation = "fd", data = final, 
-       panel_identifier = c('idem','year'), steps = c("onestep"),         system_instruments = FALSE, max_instr_dependent_vars = 9,
-       min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+wl_6 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Unemp_tra'),  max_instr_predet_vars = 9, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = FALSE, max_instr_dependent_vars = 9,  min_instr_dependent_vars = 1L, min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_6)
 ```
+
+
+```{r}
+final <- as.data.frame(final %>%
+  arrange(idem, year) %>%  # Sort by firm and then by year
+  group_by(idem) %>%      # Tell dplyr to go within each firm
+  mutate(pi_m = PIT*mrp_all,
+         pi_a = PIT*arp_mid, 
+         rd = sav_gdp*res_1mill,
+         rd1= sav_gdp*RD_gdp))
+```
+
+
+```{r}
+## TAXING
+
+wt_1 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Property_taxes'),  max_instr_predet_vars = 3, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"),  system_instruments = FALSE, max_instr_dependent_vars = 3,  min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wt_1)
+
+wt_2 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade", 'PIT'), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'pi_a', 'mrp_all'),  max_instr_predet_vars = 9, transformation = "fod", data = final, panel_identifier = c('idem','year'), steps = c("onestep"),  system_instruments = FALSE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wt_2)
+
+wt_3 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'ind_tx'),  max_instr_predet_vars = 9, transformation = "fod", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = FALSE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wt_3)
+
+wt_4 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Corporate_ta'), max_instr_predet_vars = 9, transformation = "fod", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = FALSE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L, min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wt_4)
+
+```
+
+
+```{r}
+# R&D SAVINGS
+
+wr_1 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade" ), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed','RD_gdp', 'sav_gdp', 'rd1'),  max_instr_predet_vars = 9, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = TRUE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L, min_instr_predet_vars = 1L, collapse = FALSE)
+
+summary(wr_1)
+```
+
 
 ```{r}
 
@@ -328,6 +363,7 @@ wl1_bs <-  bootstrap_irf(wl_1,  typeof_irf = c("GIRF"),
 plot(gi_w1,wl1_bs)
     
 Andrews_Lu_MMSC(wl_1)
+
 
 wl_1 <- plm(Gini_net ~ lag(gdp_gro) + lag(Gini_net,2) + employ_rate +Trade +  Gov_ex + Secondary_ed +  + Soc_payable,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
 wl_2 <- plm(Gini_net ~ lag(gdp_gro)+ lag(Gini_net,2) + employ_rate +Trade +  Gov_ex + Secondary_ed + + Soc_kind,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("twoways"))
@@ -392,7 +428,8 @@ scatterplot(final$Gini_net ~ final$pro_imp_tx | debt_g, data = final, smooth=T, 
 
 scatterplot(final$res_1mill ~ final$Savings_percapit | debt_g, data = final, smooth=T, col=c('blue','orange'))
 
-scatter3d(x = final$Savings_percapit, y = final$Gini_net, z = final$res_1mill, point.col = "blue", surface=FALSE)
+scatter3d(x = final$Savings_percapit, y = final$Gini_net, z = final$res_1mill, point.col = "blue", surface=FALSE, groups=lev, grid = FALSE, ellipsoid = TRUE)
+
 
 LETTER2num <- function(x) {utf8ToInt(x) - utf8ToInt("A") + 1L}
 
