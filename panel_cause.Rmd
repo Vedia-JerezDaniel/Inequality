@@ -6,14 +6,10 @@ output:
 ---
 
 
-```{r, message=FALSE}
-
+```{r, message=FALSE, warning=FALSE}
 library(readxl)
 final <- read_excel("long.xlsx")
-```
 
-
-```{r,message=FALSE, warning=FALSE}
 library(plm)
 library(tidyverse)
 library(lfe)
@@ -35,10 +31,10 @@ final <- final %>%
 final <- final %>% group_by(idem) %>% mutate(lgdp_g = lag(gdp_gro))
 
 final <- as.data.frame(final)
-
-panel.plm.df <- pdata.frame(final, index=c("idem","year"), drop.index=TRUE)
-
-attach(panel.plm.df)
+# 
+# panel.plm.df <- pdata.frame(final, index=c("idem","year"), drop.index=TRUE)
+# 
+# attach(panel.plm.df)
 ```
 
 Resultados de un modelo con fixed effects y pooling
@@ -264,26 +260,15 @@ library(pacman)
 library(panelvar)
 ```
 
-"GDP_pc", "employ_rate", "Trade",'Gov_ex', "Education_exp"
-
-## DIRECT POLICY VARIABLES
-Soc_payable, "Soc_kind", "Education_exp", "Health_exp", "Social_prot", "Family"
-
-
 ```{r}
-# data <- fn %>% drop_na()
-# 
-# fn <- as.data.frame(final %>% select("GDP_pc", "employ_rate", "Trade",'Gov_ex', "Education_exp",'idem','year'))
-
-final <- as.data.frame(final)
 
 ## DIRECT POLICY VARIABLES
 
-wl_1 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_payable'),  max_instr_predet_vars = 9, transformation = "fd", data = final,  panel_identifier = c('idem','year'), steps = c("onestep"),  system_instruments = FALSE, max_instr_dependent_vars = 9,  min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+wl_1 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_payable'),  max_instr_predet_vars = 9, transformation = "fd", data = final,  panel_identifier = c('idem','year'), steps = c("onestep"),  system_instruments =FALSE, max_instr_dependent_vars = 9,  min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_1)
 
-wl_2 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_kind'),  max_instr_predet_vars = 9, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"),   system_instruments = FALSE, max_instr_dependent_vars = 9,  min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+wl_2 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Soc_kind'),  max_instr_predet_vars = 9, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"),   system_instruments = TRUE, max_instr_dependent_vars = 9,  min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_2)
 
@@ -299,9 +284,9 @@ wl_5 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_
 
 summary(wl_5)
 
-wl_6 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Unemp_tra'),  max_instr_predet_vars = 9, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = FALSE, max_instr_dependent_vars = 9,  min_instr_dependent_vars = 1L, min_instr_predet_vars = 1L, collapse = FALSE)
-
-summary(wl_6)
+# wl_6 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Unemp_tra'),  max_instr_predet_vars = 9, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = TRUE, max_instr_dependent_vars = 9,  min_instr_dependent_vars = 1L, min_instr_predet_vars = 1L, collapse = FALSE)
+# 
+# summary(wl_6)
 ```
 
 
@@ -331,9 +316,9 @@ wt_3 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_
 
 summary(wt_3)
 
-wt_4 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Corporate_ta'), max_instr_predet_vars = 9, transformation = "fod", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = FALSE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L, min_instr_predet_vars = 1L, collapse = FALSE)
-
-summary(wt_4)
+# wt_4 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Corporate_ta'), max_instr_predet_vars = 9, transformation = "fod", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = FALSE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L, min_instr_predet_vars = 1L, collapse = FALSE)
+# 
+# summary(wt_4)
 
 ```
 
@@ -344,6 +329,7 @@ summary(wt_4)
 wr_1 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_ex', "Trade" ), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed','RD_gdp', 'sav_gdp', 'rd1'),  max_instr_predet_vars = 9, transformation = "fd", data = final, panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = TRUE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L, min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wr_1)
+
 ```
 
 
@@ -378,10 +364,10 @@ wl_ex2 <- coeftest(wl_2, vcovHC(wl_2, type = "HC3", cluster = 'time', method  = 
 wl_ex3 <- coeftest(wl_3, vcovHC(wl_3, method = "arellano",  cluster = 'time', type = "HC3"))
 wl_ex4 <- coeftest(wl_4, vcovHC(wl_4, type = "HC3", cluster = 'time', method  = "arellano"))
 wl_ex5 <- coeftest(wl_5, vcovHC(wl_5, method = "arellano",  cluster = 'time', type = "HC3"))
-wl_ex6 <- coeftest(wl_6, vcovHC(wl_6, type = "HC3", cluster = 'time', method  = "arellano"))
+# wl_ex6 <- coeftest(wl_6, vcovHC(wl_6, type = "HC3", cluster = 'time', method  = "arellano"))
 
-tl1 = screenreg(list(wl_ex1, wl_ex2, wl_ex3, wl_ex4, wl_ex5, wl_ex6),
-          custom.model.names = c("TE_1","TE_2","TE_3","TE_4","TE_5","TE_6"))
+tl1 = screenreg(list(wl_ex1, wl_ex2, wl_ex3, wl_ex4, wl_ex5),
+          custom.model.names = c("TE_1","TE_2","TE_3","TE_4","TE_5"))
 tl1
 
 ```
