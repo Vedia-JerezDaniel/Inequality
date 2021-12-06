@@ -276,7 +276,7 @@ wl_3 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", 'Gov_
 
 summary(wl_3)
 
-wl_4 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro", "lgdp_g",'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Education_exp'),  max_instr_predet_vars = 9, transformation = "fd", data = final,  panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = TRUE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
+wl_4 <- pvargmm(dependent_vars = c("Gini_net"), predet_vars = c("gdp_gro",'Gov_ex', "Trade"), lags = 1, exog_vars = c("employ_rate", 'Secondary_ed', 'Education_exp'),  max_instr_predet_vars = 9, transformation = "fd", data = final,  panel_identifier = c('idem','year'), steps = c("onestep"), system_instruments = TRUE, max_instr_dependent_vars = 9, min_instr_dependent_vars = 1L,  min_instr_predet_vars = 1L, collapse = FALSE)
 
 summary(wl_4)
 
