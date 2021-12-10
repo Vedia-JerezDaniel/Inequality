@@ -216,8 +216,7 @@ lpr5 = data.frame(x =1:5,mean=c(pr5[["irf_panel_mean"]]),low=c(pr5[["irf_panel_l
 
 ```{r}
 cfi <- function(x, m, l, u, c, t) {
-  plot(x, m, ylim = c(y2,y1), type = "l",main = t,
-     xlab = "years", ylab = "Integrity",)
+  plot(x, m, ylim = c(y2,y1), type = "l",main = t, xlab = "horizon", ylab= '')
   polygon(c(x,rev(x)),c(l,rev(u)),density=15, col = 'pink', border = NA)
   lines(x, m, lwd = 2,col = c)
   lines(x, u, lty = 'dashed',col="pink")
