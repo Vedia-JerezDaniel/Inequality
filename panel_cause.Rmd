@@ -334,7 +334,6 @@ summary(wr_1)
 
 
 ```{r}
-
 ## DIRECT POLICY VARIABLES
 
 wl_stab = stability(wl_1)
@@ -431,4 +430,34 @@ lev = factor(final$debt_g, levels= c("A", "B"))
 ```
 
 
+```{r}
+wi_dm <- plm(Gini_net ~ gdp_gro + employ_rate +Trade + Gov_ex + Secondary_ed + Savings_percapit*res_1mill+factor(idem),  data = final, index=c("idem", "year"), model="within", effect = c("twoways"))
+summary(wi_dm)
+
+## wi_dm es un modelo resttringido pero talvez no aporta nada util!!!
+
+wi_sv <- plm(Gini_net ~ gdp_gro + employ_rate +Trade + Gov_ex + Secondary_ed + Savings_percapit*res_1mill,  data = final, index=c("idem", "year"), model="within", effect = c("twoways"))
+summary(wi_sv)
+```
+
+```{r}
+e.gmm <- pgmm(Gini_net ~ lag(Gini_net)+(gdp_gro) + employ_rate +Trade + Gov_ex + Secondary_ed +(Soc_payable)| lag(gdp_gro, 2:9) + lag( Gov_ex,2:9),
+                data = final, effect = "individual", model = "onestep", transformation = 'ld')
+summary(e.gmm)
+
+# emp.gmm <- pgmm(log(emp)~lag(log(emp), 1:2)+lag(log(wage), 0:1)+log(capital)+
+#                 lag(log(output), 0:1) | lag(log(emp), 2:99),
+#                 data = EmplUK, effect = "twoways", model = "twosteps")
+# summary(emp.gmm)
+```
+```{r}
+F = exp(-1.5*scale(final$Health_exp)/(1+scale(exp(-1.5*final$Health_exp))))
+library(Hmisc)
+
+F1 = preProcess(as.data.frame(final$Health_exp), method=c("range"))
+norm_scale <- predict(F1, as.data.frame(final$Health_exp))
+
+F = exp(-1.5*norm_scale/(1+exp(-1.5*norm_scale)))
+describe(F)
+```
 

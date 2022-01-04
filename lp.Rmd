@@ -585,3 +585,69 @@ cfi(ld3$x,ld3$mean,ld3$low,ld3$up, 'blue', 'Normal')
 
 cfi(ldr3$x,ldr3$mean,ldr3$low,ldr3$up, 'orange', 'Recession')
 ```
+
+
+```{r}
+p1 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = gd,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "Education_exp",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                               instrum = 'gd',
+                               robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','employ_rate', 'Gov_ex',"Secondary_ed"),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1, confint  = 1.96, hor = 5)
+
+lp1 = data.frame(x =1:5,mean=c(p1[["irf_panel_mean"]]),low=c(p1[["irf_panel_low"]]),up=c(p1[["irf_panel_up"]]))
+
+p2 <-  lp_lin_panel(data_set          = ln,
+                              # data_sample       = gd,
+                               endog_data        = c("Gini_net"),
+                               cumul_mult        = TRUE,
+                               shock             = "Education_exp",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                               robust_cov        = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
+                               c_exog_data       = c('gdp_gro','employ_rate', 'Gov_ex',"Secondary_ed"
+                                                     ,'f_ed'),
+                               c_fd_exog_data    = colnames(ln)[c(seq(5,8))],
+                               l_fd_exog_data    = colnames(ln)[c(seq(3,4))],
+                               lags_fd_exog_data = 1, confint  = 1.96, hor = 5)
+
+# lp1 = data.frame(x =1:5,mean=c(p1[["irf_panel_mean"]]),low=c(p1[["irf_panel_low"]]),up=c(p1[["irf_panel_up"]]))
+
+plot(p1)
+plot(p2)
+```
+
+
+```{r}
+fz <- lpf %>%
+          dplyr::select(idem,id, year, Gov_ex, Education_exp,  Health_exp,  Soc_kind, Soc_payable, Social_prot_ex_pen, Unemp_tra,Property_taxes, PIT, ind_tx, Corporate_ta, mrp_all, arp_mid, sav_gdp, RD_gdp, res_1mill)
+```
+
+```{r}
+library(caret)
+sc = as.data.frame(scale(fz[c(seq(5,8))]))
+
+sc1 = exp(1.5*sc)/(1+exp(1.5*sc))
+
+library("xlsx")
+write.xlsx(sc1, file = "sc1.xlsx", sheetName = 'sc1',append = FALSE)
+
+```
+
+```{r}
+ln = cbind(ln,sc1$Education_exp)
+ln$`sc1$Education_exp` = replace(ln$`sc1$Education_exp`, ln$`sc1$Education_exp`<0.5,NA)
+
+names(ln$`sc1$Education_exp`)<-'f_ed'
+names(ln)[names(ln) == "sc1$Education_exp"] <- "f_ed"
+```
+
