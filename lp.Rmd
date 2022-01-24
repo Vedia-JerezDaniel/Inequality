@@ -31,6 +31,26 @@ fd <- as.data.frame(lpf %>%
 ```
 
 
+```{r}
+fd <- as.data.frame(lpf %>%
+  arrange(idem, year) %>%  # Sort by firm and then by year
+  group_by(year) %>%      # Tell dplyr to go within each firm
+  mutate(fegdp = GDP_pc/(lag(GDP_pc)-1),
+         gdp_gro = GDP/(lag(GDP)-1),
+         insde_d = ins_effic/(lag(ins_effic)-1),
+         tot_d = TOT/(lag(TOT)-1), 
+         debt_d = Gov_debt/(lag(Gov_debt)-1),
+         redis = Gini_market - Gini_net/Gini_net,
+         pi_m = PIT*mrp_all,
+         pi_a = PIT*arp_mid, 
+         rd = sav_gdp*res_1mill,
+         rd1= sav_gdp*RD_gdp))
+
+demean(lpf, select = c("GDP_pc", "Gini_net"), group = "idem")
+
+```
+
+
 ## LOCAL IMPULSE ESTIMATIONS
 
 
