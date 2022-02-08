@@ -8,7 +8,7 @@ output:
 
 ```{r, message=FALSE, warning=FALSE}
 library(readxl)
-final <- read_excel("long.xlsx")
+final <- read_excel("final.xlsx")
 
 library(plm)
 library(tidyverse)
@@ -460,4 +460,46 @@ norm_scale <- predict(F1, as.data.frame(final$Health_exp))
 F = exp(-1.5*norm_scale/(1+exp(-1.5*norm_scale)))
 describe(F)
 ```
+## SUMMARY TABLE
+
+```{r}
+temp <- final %>%
+          dplyr::select(id, year, Gini_net, gdp_gro, Trade, Gov_ex, Soc_kind, Soc_payable, Secondary_ed, employ_rate, Education_exp,  Health_exp, Social_prot_ex_pen, Unemp_tra, Property_taxes, PIT, ind_tx, Corporate_ta, sav_gdp, RD_gdp)
+```
+
+```{r}
+library("xlsx")
+library(psych)
+describe(temp) -> suma
+
+
+library(haven)
+library("xlsx")
+# Write the first data set in a new workbook
+write.xlsx(final, file = "final.xlsx",
+      sheetName = "final", append = FALSE)
+
+write_dta(final, file.path(getwd(), "stata.dta"))
+
+pu <- pdata.frame(final, index = c("idem", "year"))
+make.pbalanced(pu, balance.type = "shared.individuals")-> f1
+
+write_dta(final, file.path(getwd(), "final.dta"))
+
+drop_na(final) -> tesp
+
+unb <- pdata.frame(final[-c(195:200), ], index = c("idem", "year"))
+
+library(imputeTS)
+unb = na_mean(unb)
+
+purtest(final$Gini_net, pmax = 10, exo = "trend", test = "levinlin")
+
+purtest(Gini_net , data = tesp, pmax = 4, test = "levinlin")
+
+object <- as.data.frame(split(Gini_market, year))
+
+tesp[tesp == 0] <- 0.015
+```
+
 
