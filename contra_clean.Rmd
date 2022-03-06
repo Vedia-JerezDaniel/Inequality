@@ -319,5 +319,16 @@ dc %>% select('net_wealth_inc','Net_savings','voice','Savings_GDP', 'regqua', 'i
               'goveff', 'Researchers_1millPop',"finadeve",  "fininsti",  "finmarket", "ins_effic", '10D/12D', 'AVGTOP', 'G99') -> ect
 ```
 
+```{r}
+final <- read_excel("final.xlsx")
+
+contraf = data.frame(final, ect)
+
+
+library("xlsx")
+
+write.xlsx(contraf, file = "contra_f.xlsx", sheetName="contr", col.names = T)
+```
+
 
 
