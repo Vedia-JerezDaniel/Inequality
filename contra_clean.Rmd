@@ -1,0 +1,323 @@
+---
+title: "Clean data"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r, message = off}
+library(tidyverse)
+library(readxl)
+library(lmtest)
+#library(psych)
+```
+
+
+```{r}
+contra <- read_excel("contra.xlsx")
+dc = contra
+attach(dc)
+dc$debt_g <- NULL
+dc$year <- NULL
+dc$idem <- NULL
+dc$pre = dc$`Pre_taxnatiincTop10%`/dc$`Pre_taxnatiincTop50%`
+
+dna = na.omit(dc)
+```
+
+```{r}
+inst <- dc[c(1:667), c(1:18,24)]
+base <- dc[c(1:667), c(19:24)]
+ineq <- dc[c(1:667), c(24:32,39)]
+rd <- dc[c(1:667), c(24,33:38)]
+```
+
+NO GRAFICAR
+
+```{r}
+library(purrr)
+library(tidyr)
+library(ggplot2)
+library(ggthemes)
+
+ineq %>% keep(is.numeric) %>% 
+  gather() %>% ggplot(aes(value)) +
+    facet_wrap(~ key , scales = "free") +
+    geom_histogram(colour="blue", bins=20) + theme_wsj(base_size = 13)
+
+```
+
+
+```{r}
+library(corrplot)
+
+corr_b <- cor(na.omit(base))
+corr_ins <- cor(na.omit(inst))
+corr_rd <- cor(na.omit(rd))
+corr_ineq <- cor(na.omit(ineq))
+
+row_indic <- apply(corr_b, 1, function(x) sum(x > 0.50 | x < -0.50) > 1)
+row_indic2 <- apply(corr_ins, 1, function(x) sum(x > 0.40 | x < -0.40) > 1)
+row_indic3 <- apply(corr_rd, 1, function(x) sum(x > 0.50 | x < -0.50) > 1)
+row_indic4 <- apply(corr_ineq, 1, function(x) sum(x > 0.50 | x < -0.5) > 1)
+
+corr <- corr_b[row_indic ,row_indic]
+corr2 <- corr_ins[row_indic2 ,row_indic2]
+corr3 <- corr_rd[row_indic3 ,row_indic3]
+corr4 <- corr_ineq[row_indic4 ,row_indic4]
+
+corrplot(corr, method="square", diag = F,order = 'hclust', tl.cex = .8)
+corrplot(corr2, method="ellipse", diag = F,order = 'hclust', tl.cex = .8)
+corrplot(corr3, method="ellipse", diag = F,order = 'hclust', tl.cex = .8)
+corrplot(corr4, method="ellipse", diag = F,order = 'hclust', tl.cex = .8)
+```
+
+
+```{r}
+plotHist <- function(data_in, i) {
+    data <- data.frame(x=data_in[[i]])
+    p <- ggplot(data=data, aes(x=factor(x))) + stat_count() + xlab(colnames(data_in)[i]) + theme_grey() + 
+   theme(axis.text.x = element_text(angle = 90, hjust =1))
+    return (p)
+}
+```
+
+```{r}
+skewedVars<- NA
+library(moments) # for skewness()
+for(i in names(dc)){
+       skewVal <- skewness(dc[,i])
+       print(paste(i, skewVal, sep = ": "))
+       if(abs(skewVal) > 1.15){
+         skewedVars <- c(skewedVars, i)
+       }
+}
+
+# solo tomar td_fe
+# inst en growth y graficos aparte
+```
+
+```{r}
+library(gridExtra)
+doPlots <- function(data_in, fun, ii, ncol=2) {
+    pp <- list()
+    for (i in ii) {
+        p <- fun(data_in=data_in, i=i)
+        pp <- c(pp, list(p))
+    }
+    do.call("grid.arrange", c(pp, ncol=ncol))
+}
+```
+
+```{r}
+plotDen <- function(data_in, i){
+    data <- data.frame(x=data_in[[i]], y = data_in$Gini_net)
+    p <- ggplot(data= data) + geom_bar(aes(x = x), stat = 'density', size = 1, alpha = 0.7) + xlab(paste0((colnames(data_in)[i]), '\n', 'Skewness:',
+round(skewness(data_in[[i]], na.rm = T), 2))) 
+return(p)
+    }
+```
+
+```{r}
+doPlots(dc, fun = plotDen, ii = c(24:31,39), ncol = 3)
+```
+
+```{r}
+plotCorr <- function(data_in, i){
+data <- data.frame(x = data_in[[i]], y= data_in$Gini_net)
+p <- ggplot(data, aes(x = x, y = y)) + geom_point(shape = 1, na.rm = T) +  geom_smooth(method = lm ) + xlab(paste0(colnames(data_in)[i], 
+  '\n', 'R-Squared: ', round(cor(data_in[[i]], data$y, 
+ use = 'complete.obs'), 2))) 
+ return(suppressWarnings(p))
+}
+```
+
+```{r}
+highcorr_b <- c(names(corr_b[,'Gini_net'])[which(corr_b[,'Gini_net'] > 0.05)],
+    names(corr_b[,'Gini_net'])[which(corr_b[,'Gini_net'] < -0.05)])
+
+highcorr_ins <- c(names(corr_ins[,'Gini_net'])[which(corr_ins[,'Gini_net'] > 0.15)],
+    names(corr_ins[,'Gini_net'])[which(corr_ins[,'Gini_net'] < -0.15)])
+
+highcorr_ineq <- c(names(corr_ineq[,'Gini_net'])[which(corr_ineq[,'Gini_net'] > 0.75)],
+    names(corr_ineq[,'Gini_net'])[which(corr_ineq[,'Gini_net'] < -0.75)])
+
+highcorr_rd <- c(names(corr_rd[,'Gini_net'])[which(corr_rd[,'Gini_net'] > 0.15)],
+    names(corr_rd[,'Gini_net'])[which(corr_rd[,'Gini_net'] < -0.15)])
+
+data_corr <- dc[, highcorr_b]
+doPlots(data_corr, fun = plotCorr, ii = c(1,3,5))
+
+data_corr_ins <- dc[, highcorr_ins]
+doPlots(data_corr_ins, fun = plotCorr, ii = c(7,9:11))
+
+data_corr_rd <- dc[, highcorr_rd]
+doPlots(data_corr_rd, fun = plotCorr, ii = c(2:4))
+
+# Que es G99 es una medida de desigualdad
+
+```
+
+
+https://rpubs.com/nischalthapa/267813
+
+Data transformation negative logs
+
+https://discuss.analyticsvidhya.com/t/methods-to-deal-with-zero-values-while-performing-log-transformation-of-variable/2431/8
+
+https://blogs.sas.com/content/iml/2011/04/27/log-transformations-how-to-handle-negative-data-values.html
+
+le_female, net_len_w/i, soc_payable, gov_ex, soc_prot, td_female, tertiary_ed, voice, ruleoflaw, goveff, soc_proc_ex_pen, trade, 
+
+
+### FEATURE SELECTION
+
+https://www.machinelearningplus.com/machine-learning/feature-selection/
+
+
+
+```{r}
+# install.packages('relaimpo')
+library(relaimpo)
+
+# 20 vAR
+md = Gini_net ~  Net_savings +  net_wealth_inc
+
+# 20 vAR
+md2 = Gini_net ~  insaccess + goveff+ regqua+ ruleoflaw + voice + instdepth + ins_effic + RD_GDP + Researchers_1millPop + Savings_GDP +  Savings_percapit + ICT
+
+mdf = Gini_net ~ G99 + IDX1_1 + IDX3
+
+lmMod <- lm(md, data=dc)
+lmMod2 <- lm(md2, data=dc)
+lmMod3 <- lm(mdf, data=dc)
+
+relImportance <- calc.relimp(lmMod, type = "lmg", rela = F)
+relImportance2 <- calc.relimp(lmMod2, type = "lmg", rela = F)
+relImportancef <- calc.relimp(lmMod3, type = "lmg", rela = F)
+
+cat('Relative Importances: \n')
+b1 = sort(round(relImportance$lmg, 3), decreasing=TRUE)
+b2 = sort(round(relImportance2$lmg, 3), decreasing=TRUE)
+b3 = sort(round(relImportancef$lmg, 3), decreasing=TRUE)
+
+
+
+
+```
+Relative importance:
+b1 = net_wealth_inc    Net_savings
+b2 = voice          Savings_GDP regqua            insaccess            ins_effic
+b3 = IDX1_1   IDX3
+
+
+
+```{r}
+library(caret)
+
+sa_ctrl <- safsControl(functions = rfSA,
+                        method = "repeatedcv",
+                        repeats = 5,
+                        improve = 10)
+
+sa_obj <- safs(x=dna[, -c(21,22,24:31,38)], 
+               y=dna$Gini_net,
+               safsControl = sa_ctrl)
+
+sa_obj
+
+print(sa_obj$optVariables)
+```
+
+pre (48%), ins_effic (46%), RD_GDP (42%), IDX1_1 (38%), markdepth (38%)
+
+```{r}
+library(randomForest)
+library(DALEX)
+
+rf_mod_selected <- randomForest(Gini_net ~ Net_savings + net_wealth_inc + insaccess + goveff+ regqua+ ruleoflaw + voice + instdepth + ins_effic + RD_GDP +Researchers_1millPop + Savings_GDP +  Savings_percapit + ICT+  G99 + IDX1_1 + IDX3, data=dc, ntree=1000, na.action = na.omit)
+
+rf_mod_selected
+
+explainer_ranger <- explain(rf_mod_selected, data = dc[,-c(21,22,24:31,38)], y= dc$Gini_net, label = "Higher sample")
+
+explained_rf <- model_parts(explainer_ranger, type = "variable_importance")
+
+plot(explained_rf, max_vars=15, bar_width=6)
+
+explained_rf
+
+
+
+```
+
+```{r}
+library(Boruta)
+
+boruta_1 <- Boruta(md, data = dna, doTrace = 2)
+
+boruta_2 <- Boruta(md2 , data = dna, doTrace = 2)
+
+print(boruta_1)
+print(boruta_2)
+
+plot(boruta_2, xlab = "", xaxt = "n")
+k <-lapply(1:ncol(boruta_2$ImpHistory),function(i)
+  boruta_2$ImpHistory[is.finite(boruta_2$ImpHistory[,i]),i])
+names(k) <- colnames(boruta_2$ImpHistory)
+Labels <- sort(sapply(k,median))
+axis(side = 1,las=2,labels = names(Labels), at = 1:ncol(boruta_2$ImpHistory), cex.axis = 0.6)
+```
+
+```{r}
+rl = attStats(boruta_2)
+
+rl1  <- filter(rl, decision=='Confirmed')
+
+# par(mar = c(6.1, 4.1, 4.1, 4.1), # change the margins
+#     lwd = 2, # increase the line thickness
+#     cex.axis = 1.2 # increase default axis label size
+#     )
+
+barplot(height=rl1$meanImp, col="#69b3a2",border="red", las=1, srt=60)
+
+## Draw the x-axis labels.
+text(x = 1:nrow(rl1),
+     ## Move labels to just below bottom of chart.
+     y = par("usr")[3] - 0.45,
+     labels = row.names(rl1),
+     ## Change the clipping region.
+     xpd = NA,
+     ## Rotate the labels by 35 degrees.
+     srt = 25,
+     ## Adjust the labels to almost 100% right-justified.
+     adj = .79,
+     ## Increase label size.
+     cex = 0.8)
+
+
+```
+
+```{r}
+
+control <- rfeControl(functions=lmFuncs, method="cv", number=10 )
+x = dna[,-c(21,22,24:31,38)]
+y = as.matrix(dna[24])
+rfe <- rfe(x, y, rfeControl=control)
+print(rfe, top=20)
+plot(rfe, type=c("g", "o"), cex = 1.0)
+predictors(rfe)
+head(rfe$resample,20)
+
+```
+
+```{r}
+dc %>% select('net_wealth_inc','Net_savings','voice','Savings_GDP', 'regqua', 'insaccess','ins_effic',
+              'IDX1_1',  'IDX3', 'pre', 'ins_effic', 'RD_GDP', 'markdepth' , 'Savings_percapit',
+              'goveff', 'Researchers_1millPop',"finadeve",  "fininsti",  "finmarket", "ins_effic", '10D/12D', 'AVGTOP', 'G99') -> ect
+```
+
+
+
