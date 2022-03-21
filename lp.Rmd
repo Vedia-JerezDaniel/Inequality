@@ -274,8 +274,8 @@ lpr5 = data.frame(x =1:5,estm=c(pr5[["irf_panel_mean"]]),low=c(pr5[["irf_panel_l
 ```{r}
 cfi <- function(hori, me, low, up, color, tit) {
   plot(hori, me, ylim = c(y2,y1), type = "l", main = tit, xlab = "horizon", ylab= '')
-  polygon(c(hori,rev(hori)),c(low,rev(up)),density=7, col = 'azure4', border = NA)
-  lines(hori, me, lwd = 2, col = color)
+  polygon(c(hori,rev(hori)),c(low,rev(up)), col = adjustcolor("azure3",alpha.f=0.7) , border = NA)
+  lines(hori, me, lwd = 3, col = color)
   lines(hori, up, lty = 'dashed', col="azure4")
   lines(hori, low, lty = 'dashed', col="azure4")
 }
@@ -294,7 +294,7 @@ cfi(lp1$x, lp1$estm,lp1$low,lp1$up, 'blue', 'Normal')
 y1 = max(lpr1$up) + 0.05
 y2 = min(lpr1$low) - 0.05
 
-cfi(lpr1$x,lpr1$estm,lpr1$low,lpr1$up, 'orange', 'Recession')
+cfi(lpr1$x,lpr1$estm,lpr1$low,lpr1$up, 'firebrick', 'Recession')
 ```
 
 ```{r}
@@ -309,7 +309,7 @@ cfi(lp2$x,lp2$estm,lp2$low,lp2$up, 'blue', 'Normal')
 y1 = 0.1
 y2 = -0.2 
 
-cfi(lpr2$x,lpr2$estm,lpr2$low,lpr2$up, 'orange', 'Recession')
+cfi(lpr2$x,lpr2$estm,lpr2$low,lpr2$up, 'firebrick', 'Recession')
 ```
 
 ```{r}
@@ -324,7 +324,7 @@ cfi(lp3$x,lp3$estm,lp3$low,lp3$up, 'blue', 'Normal')
 y1 = max(lpr3$up) + 0.05
 y2 = min(lpr3$low) - 0.05
 
-cfi(lpr3$x,lpr3$estm,lpr3$low,lpr3$up, 'orange', 'Recession')
+cfi(lpr3$x,lpr3$estm,lpr3$low,lpr3$up, 'firebrick', 'Recession')
 ```
 
 ```{r}
@@ -339,7 +339,7 @@ cfi(lp4$x,lp4$estm,lp4$low,lp4$up, 'blue', 'Normal')
 y1 = max(lpr4$up) + 0.05
 y2 = min(lpr4$low) - 0.05
 
-cfi(lpr4$x,lpr4$estm,lpr4$low,lpr4$up, 'orange', 'Recession')
+cfi(lpr4$x,lpr4$estm,lpr4$low,lpr4$up, 'firebrick', 'Recession')
 ```
 
 ```{r}
@@ -352,7 +352,7 @@ par(mfrow=c(1,2))
 
 cfi(lp5$x,lp5$estm,lp5$low,lp5$up, 'blue', 'Normal')
 
-cfi(lpr5$x,lpr5$estm,lpr5$low,lpr5$up, 'orange', 'Recession')
+cfi(lpr5$x,lpr5$estm,lpr5$low,lpr5$up, 'firebrick', 'Recession')
 ```
 
 ## TAXES
@@ -487,7 +487,7 @@ par(mfrow=c(1,2))
 
 cfi(lt1$x,lt1$estm,lt1$low,lt1$up, 'blue', 'Normal')
 
-cfi(ltr1$x,ltr1$estm,ltr1$low,ltr1$up, 'orange', 'Recession')
+cfi(ltr1$x,ltr1$estm,ltr1$low,ltr1$up, 'firebrick', 'Recession')
 ```
 
 ```{r}
@@ -500,7 +500,7 @@ par(mfrow=c(1,2))
 
 cfi(lt2$x,lt2$estm,lt2$low,lt2$up, 'blue', 'Normal')
 
-cfi(ltr2$x,ltr2$estm,ltr2$low,ltr2$up, 'orange', 'Recession')
+cfi(ltr2$x,ltr2$estm,ltr2$low,ltr2$up, 'firebrick', 'Recession')
 ```
 
 ```{r}
@@ -513,7 +513,7 @@ par(mfrow=c(1,2))
 
 cfi(lt3$x,lt3$estm,lt3$low,lt3$up, 'blue', 'Normal')
 
-cfi(ltr3$x,ltr3$estm,ltr3$low,ltr3$up, 'orange', 'Recession')
+cfi(ltr3$x,ltr3$estm,ltr3$low,ltr3$up, 'firebrick', 'Recession')
 ```
 
 ## R&D ESTO ES CORRECTO
@@ -648,7 +648,7 @@ par(mfrow=c(1,2))
 
 cfi(ld1$x,ld1$estm,ld1$low,ld1$up, 'blue', 'Normal')
 
-cfi(ldr1$x,ldr1$estm,ldr1$low,ldr1$up, 'orange', 'Recession')
+cfi(ldr1$x,ldr1$estm,ldr1$low,ldr1$up, 'firebrick', 'Recession')
 ```
 
 ```{r}
@@ -661,7 +661,7 @@ par(mfrow=c(1,2))
 
 cfi(ld2$x,ld2$estm,ld2$low,ld2$up, 'blue', 'Normal')
 
-cfi(ldr2$x,ldr2$estm,ldr2$low,ldr2$up, 'orange', 'Recession')
+cfi(ldr2$x,ldr2$estm,ldr2$low,ldr2$up, 'firebrick', 'Recession')
 ```
 
 ```{r}
@@ -673,8 +673,9 @@ par(mfrow=c(1,2))
 
 cfi(ld3$x,ld3$estm,ld3$low,ld3$up, 'blue', 'Normal')
 
-cfi(ldr3$x,ldr3$estm,ldr3$low,ldr3$up, 'orange', 'Recession')
+cfi(ldr3$x,ldr3$estm,ldr3$low,ldr3$up, 'firebrick', 'Recession')
 ```
+
 ```{r}
 library(clipr)
 
