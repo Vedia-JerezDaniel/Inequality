@@ -37,6 +37,51 @@ fd <- as.data.frame(lpf %>%
          lkind = lag(Soc_kind), lpay=lag(Soc_payable)))
 ```
 
+
+```{r}
+library(mFilter)
+hp <- as.data.frame(lpf %>%
+  arrange(idem, year) %>%  # Sort by firm and then by year
+  group_by(idem) %>%      # Tell dplyr to go within each firm
+  mutate_at(vars(Gini_net),~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x)))
+```
+
+```{r}
+gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
+
+out <- cbind.data.frame(gi$cycle, gi$trend, gi$x, hp$idem, hp$year)
+colnames(out) <- c("cycle", "trend",'x','idem','year')
+
+write.csv(out, "hp.csv",  row.names = FALSE)
+```
+
+
+```{r}
+# READ HP
+out1 <- read_delim("hp.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
+out1 <- out1 %>% mutate( booms = case_when(cycle > 0 ~ 1),
+                bust = case_when(cycle < 0 ~ 1),
+                gi_bb = case_when((cycle > 0 ~ 1), (cycle < 0 ~ 0)))
+
+summary(out1)
+
+sp =  data=subset(out1, idem=="Spain")
+
+par(mfrow = c(2, 1), mar = c(3, 2, 2, 1))
+plot(sp$year,sp$x, main = "Spain: Hodrick-Prescott filter Gini disp. income)")
+lines(sp$year,sp$x, col = "steelblue")
+lines(sp$year,sp$trend, col = "red")
+plot(sp$year,sp$cycle, main = "Cyclical component (deviations from trend)")
+lines(sp$year,sp$cycle, col = "steelblue")
+
+```
+
+```{r}
+
+```
+
+
 ```{r}
 library(datawizard)
 
@@ -66,7 +111,35 @@ data_sample <- seq(1990, 2018)[which(!(seq(1990, 2018) %in% c(seq(1991, 1992),se
 
 ```{r}
 ln <- fd %>%
-dplyr::select(idem, year, Gini_net, gdp_gro, Trade, Gov_ex, Secondary_ed, employ_rate,          Education_exp,  Health_exp,  Soc_kind, Soc_payable, Social_prot_ex_pen, Unemp_tra,Property_taxes, PIT, ind_tx, Corporate_ta, mrp_all, arp_mid, pi_a, pi_m, sav_gdp, RD_gdp, res_1mill, rd, rd1)
+dplyr::select(idem, year, Gini_net, gdp_gro, Trade, Gov_ex, Secondary_ed, employ_rate,          Education_exp,  Health_exp,  Soc_kind, Soc_payable, Social_prot_ex_pen, Unemp_tra,Property_taxes, PIT, ind_tx, Corporate_ta, mrp_all, arp_mid, pi_a, pi_m, sav_gdp, RD_gdp, res_1mill, rd, rd1, Gov_debt)
+
+ln <- cbind(ln, out1[c("cycle", "trend", "booms", "bust", "gi_bb")])
+
+attach(ln)
+```
+
+
+```{r}
+library(pROC)
+
+sample <- sample(c(TRUE, FALSE), nrow(ln), replace=TRUE, prob=c(0.75,0.25))
+train <- ln[sample, ]
+test <- ln[!sample, ] 
+
+prob <- glm(lead(gi_bb,1) ~ Gov_ex + lag(gdp_gro,1) + lag(Gini_net,1) + sav_gdp + Secondary_ed , data=train, family=binomial(link="probit"))
+summary(prob)
+
+prob1 <- glm(lead(gi_bb,1) ~ Gov_ex + lag(gdp_gro,1) + lag(Gini_net,1) + Secondary_ed + sav_gdp + Soc_kind , data=train, family=binomial(link="probit"))
+summary(prob1)
+
+prob2 <- glm(lead(gi_bb,1) ~ Gov_ex + lag(gdp_gro,1) + lag(Gini_net,1)+ Secondary_ed + sav_gdp + ind_tx , data=train, family=binomial(link="probit"))
+summary(prob2)
+
+predicted <- predict(prob1, test, type="response")
+#calculate AUC
+auc(test$gi_bb, predicted)
+
+
 ```
 
 ## WITHOUT RECESSION
@@ -274,10 +347,10 @@ lpr5 = data.frame(x =1:5,estm=c(pr5[["irf_panel_mean"]]),low=c(pr5[["irf_panel_l
 ```{r}
 cfi <- function(hori, me, low, up, color, tit) {
   plot(hori, me, ylim = c(y2,y1), type = "l", main = tit, xlab = "horizon", ylab= '')
-  polygon(c(hori,rev(hori)),c(low,rev(up)), col = adjustcolor("azure3",alpha.f=0.7) , border = NA)
-  lines(hori, me, lwd = 3, col = color)
-  lines(hori, up, lty = 'dashed', col="azure4")
-  lines(hori, low, lty = 'dashed', col="azure4")
+  polygon(c(hori,rev(hori)),c(low,rev(up)), col = adjustcolor("gray70" ,alpha.f=0.3) , border = NA)
+  lines(hori, me, lwd = 2, col = color)
+  lines(hori, up, lty = 'dashed', col="gray")
+  lines(hori, low, lty = 'dashed', col="gray")
 }
 
 ```

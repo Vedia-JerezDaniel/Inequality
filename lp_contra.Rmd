@@ -295,10 +295,10 @@ lpr5 = data.frame(x =1:5,estm=c(pr5[["irf_panel_mean"]]),low=c(pr5[["irf_panel_l
 ```{r}
 cfi <- function(hori, me, low, up, color, tit) {
   plot(hori, me, ylim = c(y2,y1), type = "l", main = tit, xlab = "horizon", ylab= '')
-  polygon(c(hori,rev(hori)),c(low,rev(up)), col = adjustcolor("azure3",alpha.f=0.7) , border = NA)
-  lines(hori, me, lwd = 3, col = color)
-  lines(hori, up, lty = 'dashed', col="azure4")
-  lines(hori, low, lty = 'dashed', col="azure4")
+  polygon(c(hori,rev(hori)),c(low,rev(up)), col = adjustcolor("gray70" ,alpha.f=0.3) , border = NA)
+  lines(hori, me, lwd = 2, col = color)
+  lines(hori, up, lty = 'dashed', col="gray")
+  lines(hori, low, lty = 'dashed', col="gray")
 }
 
 ```
