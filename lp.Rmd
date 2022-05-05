@@ -52,20 +52,16 @@ gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
 out <- cbind.data.frame(gi$cycle, gi$trend, gi$x, hp$idem, hp$year)
 colnames(out) <- c("cycle", "trend",'x','idem','year')
 
+out <- out %>% mutate( booms = case_when(cycle > 0 ~ 1),
+                bust = case_when(cycle < 0 ~ 1),
+                gi_bb = case_when((cycle > 0 ~ 1), (cycle < 0 ~ 0)))
+
 write.csv(out, "hp.csv",  row.names = FALSE)
 ```
 
 
 ```{r}
 # READ HP
-out1 <- read_delim("hp.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
-
-out1 <- out1 %>% mutate( booms = case_when(cycle > 0 ~ 1),
-                bust = case_when(cycle < 0 ~ 1),
-                gi_bb = case_when((cycle > 0 ~ 1), (cycle < 0 ~ 0)))
-
-summary(out1)
-
 sp =  data=subset(out1, idem=="Spain")
 
 par(mfrow = c(2, 1), mar = c(3, 2, 2, 1))
@@ -77,9 +73,6 @@ lines(sp$year,sp$cycle, col = "steelblue")
 
 ```
 
-```{r}
-
-```
 
 
 ```{r}
@@ -113,9 +106,11 @@ data_sample <- seq(1990, 2018)[which(!(seq(1990, 2018) %in% c(seq(1991, 1992),se
 ln <- fd %>%
 dplyr::select(idem, year, Gini_net, gdp_gro, Trade, Gov_ex, Secondary_ed, employ_rate,          Education_exp,  Health_exp,  Soc_kind, Soc_payable, Social_prot_ex_pen, Unemp_tra,Property_taxes, PIT, ind_tx, Corporate_ta, mrp_all, arp_mid, pi_a, pi_m, sav_gdp, RD_gdp, res_1mill, rd, rd1, Gov_debt)
 
-ln <- cbind(ln, out1[c("cycle", "trend", "booms", "bust", "gi_bb")])
+ln <- cbind(ln, out[c("cycle", "trend", "gi_bb")])
 
 attach(ln)
+
+write.csv(ln,"iapw.csv",row.names = FALSE)
 ```
 
 
@@ -141,6 +136,90 @@ auc(test$gi_bb, predicted)
 
 
 ```
+
+
+```{r}
+ln1 <- ln
+# ln1 <- ln %>% drop_na()
+
+prob <- glm(gi_bb ~ lag(Gini_net,1) + gdp_gro + Gov_ex , data=ln1, family=binomial(link="probit"), na.action = na.exclude)
+summary(prob)
+
+phat0 = predict(prob, type = 'response')
+
+phat = phat0
+phat[phat>.9] <- .9
+phat[phat<.1] <- .1
+summary(phat)
+a = ln$gi_bb
+
+ln1['invwt']=a/phat0 + (1-a)/(1-phat0)
+
+summary(ln1$invwt)
+
+```
+
+```{r}
+forvalues i=1/6 {
+	* SAME OUTCOME REG IN BOTH T&C THIS TIME, REST ALL THE SAME
+	/*qui*/ reg ly`i' ftreatment hply dml0dly  dml1dly dmdumiso1-dmdumiso16 [pweight=invwt] ///
+		if year>=1980 & year<=2007,  cluster(iso)
+	gen samp=e(sample) // set sample
+	predict mu0 if samp==1 & ftreatment==0 // actual
+	predict mu1 if samp==1 & ftreatment==1 // actual
+	replace mu0 = mu1 -  [ftreatment] if samp==1 & ftreatment==1 // ghost
+	replace mu1 = mu0 + _b[ftreatment] if samp==1 & ftreatment==0 // ghost
+	*from Lunt et al
+	generate mdiff1=(-(a-pihat0)*mu1/pihat0)-((a-pihat0)*mu0/(1-pihat0))
+	generate iptw=(2*a-1)*ly`i'*invwt
+	generate dr1=iptw+mdiff1
+	qui gen ATE_IPWRA=1 // constant for convenience in next reg to get mean
+	qui reg dr1 ATE_IPWRA, nocons cluster(iso)
+	eststo DR1_`i'
+	sum dr1
+	local dr1m = r(mean)
+	gen Isq  = (dr1-`dr1m')^2
+	sum Isq
+	estadd scalar RobustSE = sqrt(r(mean)/r(N))
+	estadd scalar pvalue = normal(`dr1m'/sqrt(r(mean)/r(N)))	
+	capture drop iptw Isq mdiff1 dr1 mu1 mu0 samp ATE_IPWRA
+	capture scalar drop dr1m
+	}
+```
+
+```{r}
+library(lmtest)
+library(sandwich)
+library(plm)
+
+
+po = plm(Gini_net ~ gdp_gro + Secondary_ed + employ_rate + Gov_ex + Trade, weights = ln1$invmt, data = ln1, na.action = na.exclude, model = "within")
+
+summary(po)
+
+tmr = coeftest(p, vcov = vcovHC(p, "white1"))
+mu0 = predict(p, type = 'response')
+
+ln1['mu'] = mu0*ln1$trend/ln1$trend
+
+ln1 <- ln1 %>% mutate(mu0 = if_else(ln1$gi_bb == 0, 1, 0))
+ln1['mu0'] = ln1$mu0*ln1$mu
+
+ln1 <- ln1 %>% mutate(mu1 = if_else(ln1$gi_bb == 1, 1, 0))
+ln1['mu1'] = ln1$mu1*ln1$mu
+
+mdiff1=(-(a-phat0)*ln1$mu1/phat0)-((a-phat0)*ln1$mu0/(1-phat0))
+iptw = (2*a-1)*ln1$Gini_net*ln1$invwt
+dr1=iptw+mdiff1
+
+mdr = mean(dr1, na.rm = TRUE)
+isq = (dr1 - mdr)^2
+sqrt(mdr/length(dr1))
+z = mdr/sqrt(mdr/length(dr1))
+2*pnorm(-abs(z))
+
+```
+
 
 ## WITHOUT RECESSION
 
