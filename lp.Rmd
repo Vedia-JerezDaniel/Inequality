@@ -210,7 +210,7 @@ forvalues i=1/6 {
 	gen Isq  = (dr1-`dr1m')^2
 	sum Isq
 	estadd scalar RobustSE = sqrt(r(mean)/r(N))
-	estadd scalar pvalue = normal(`dr1m'/sqrt(r(mean)/r(N)))	
+	estadd scalar pvalue = normal(`dr1m'/sqrt(r(mean)/r(N)))
 	capture drop iptw Isq mdiff1 dr1 mu1 mu0 samp ATE_IPWRA
 	capture scalar drop dr1m
 	}
@@ -237,25 +237,102 @@ invr6 = plm(ia6$Gini_net ~ ia6$gdp_gro + ia6$Secondary_ed + ia6$employ_rate + ia
 
 summary(invr)
 
-tmr = coeftest(pror2, vcov = vcovHC(pror2, "white1"))
-mu0 = predict(pror2, type = 'response')
+z2 = list(invr1, invr2)
+
+tmr = coeftest(invr, vcov = vcovHC(invr, "white1"))
+tmr1 = coeftest(invr1)
+
+# PREDICTION
+
+mu0 = predict(invr, type = 'response')
+mu01 = predict(invr1, type = 'response')
+mu02 = predict(invr2, type = 'response')
+mu03 = predict(invr3, type = 'response')
+mu04 = predict(invr4, type = 'response')
+mu05 = predict(invr5, type = 'response')
+mu06 = predict(invr6, type = 'response')
+
 
 ln1['mu'] = mu0*ln1$trend/ln1$trend
+ia1['mu'] = mu01*ia1$trend/ia1$trend
+ia2['mu'] = mu02*ia2$trend/ia2$trend
+ia3['mu'] = mu03*ia3$trend/ia3$trend
+ia4['mu'] = mu04*ia4$trend/ia4$trend
+ia5['mu'] = mu05*ia5$trend/ia5$trend
+ia6['mu'] = mu06*ia6$trend/ia6$trend
+
 
 ln1 <- ln1 %>% mutate(mu0 = if_else(ln1$gi_bb == 0, 1, 0))
 ln1['mu0'] = ln1$mu0*ln1$mu
-
 ln1 <- ln1 %>% mutate(mu1 = if_else(ln1$gi_bb == 1, 1, 0))
 ln1['mu1'] = ln1$mu1*ln1$mu
+
+ia1 <- ia1 %>% mutate(mu0 = if_else(ia1$gi_bb == 0, 1, 0))
+ia1['mu0'] = ia1$mu0*ia1$mu
+ia1 <- ia1 %>% mutate(mu1 = if_else(ia1$gi_bb == 1, 1, 0))
+ia1['mu1'] = ia1$mu1*ia1$mu
+
+ia2 <- ia2 %>% mutate(mu0 = if_else(ia2$gi_bb == 0, 1, 0))
+ia2['mu0'] = ia2$mu0*ia2$mu
+ia2 <- ia2 %>% mutate(mu1 = if_else(ia2$gi_bb == 1, 1, 0))
+ia2['mu2'] = ia2$mu1*ia2$mu
+
+ia3 <- ia3 %>% mutate(mu0 = if_else(ia3$gi_bb == 0, 1, 0))
+ia3['mu0'] = ia3$mu0*ia3$mu
+ia3 <- ia3 %>% mutate(mu1 = if_else(ia3$gi_bb == 1, 1, 0))
+ia3['mu3'] = ia3$mu1*ia3$mu
+
+ia4 <- ia4 %>% mutate(mu0 = if_else(ia4$gi_bb == 0, 1, 0))
+ia4['mu0'] = ia4$mu0*ia4$mu
+ia4 <- ia4 %>% mutate(mu1 = if_else(ia4$gi_bb == 1, 1, 0))
+ia4['mu4'] = ia4$mu1*ia4$mu
+
+ia5 <- ia5 %>% mutate(mu0 = if_else(ia5$gi_bb == 0, 1, 0))
+ia5['mu0'] = ia5$mu0*ia5$mu
+ia5 <- ia5 %>% mutate(mu1 = if_else(ia5$gi_bb == 1, 1, 0))
+ia5['mu5'] = ia5$mu1*ia5$mu
+
+ia6 <- ia6 %>% mutate(mu0 = if_else(ia6$gi_bb == 0, 1, 0))
+ia6['mu0'] = ia6$mu0*ia6$mu
+ia6 <- ia6 %>% mutate(mu1 = if_else(ia6$gi_bb == 1, 1, 0))
+ia6['mu6'] = ia6$mu1*ia6$mu
+
 
 ln1['mdiff1']=(-(ln1$gi_bb -ln1$phat0)*ln1$mu1/ln1$phat0)-((ln1$gi_bb -ln1$phat0)*ln1$mu0/(1-ln1$phat0))
 ln1['iptw'] = (2*ln1$gi_bb-1)*ln1$Gini_net*ln1$invwt
 ln1['dr1']=ln1$iptw + ln1$mdiff1
 
-attach(ln1)
+ia1['mdiff1']=(-(ia1$gi_bb -ia1$phat0)*ia1$mu1/ia1$phat0)-((ia1$gi_bb -ia1$phat0)*ia1$mu0/(1-ia1$phat0))
+ia1['iptw'] = (2*ia1$gi_bb-1)*ia1$Gini_net*ia1$invwt
+ia1['dr1']=ia1$iptw + ia1$mdiff1
 
-summary(plm(ln1$Gini_net ~ ln1$dr1 + gdp_gro + Secondary_ed + employ_rate + Gov_ex + Trade, data = ln1, na.action = na.exclude, model = "within"))
+ia2['mdiff1']=(-(ia2$gi_bb -ia2$phat0)*ia2$mu1/ia2$phat0)-((ia2$gi_bb -ia2$phat0)*ia2$mu0/(1-ia2$phat0))
+ia2['iptw'] = (2*ia2$gi_bb-1)*ia2$Gini_net*ia2$invwt
+ia2['dr1']=ia2$iptw + ia2$mdiff1
 
+ia3['mdiff1']=(-(ia3$gi_bb -ia3$phat0)*ia3$mu1/ia3$phat0)-((ia3$gi_bb -ia3$phat0)*ia3$mu0/(1-ia3$phat0))
+ia3['iptw'] = (2*ia3$gi_bb-1)*ia3$Gini_net*ia3$invwt
+ia3['dr1']=ia3$iptw + ia3$mdiff1
+
+ia4['mdiff1']=(-(ia4$gi_bb -ia4$phat0)*ia4$mu1/ia4$phat0)-((ia4$gi_bb -ia4$phat0)*ia4$mu0/(1-ia4$phat0))
+ia4['iptw'] = (2*ia4$gi_bb-1)*ia4$Gini_net*ia4$invwt
+ia4['dr1']=ia4$iptw + ia4$mdiff1
+
+ia5['mdiff1']=(-(ia5$gi_bb -ia5$phat0)*ia5$mu1/ia5$phat0)-((ia5$gi_bb -ia5$phat0)*ia5$mu0/(1-ia5$phat0))
+ia5['iptw'] = (2*ia5$gi_bb-1)*ia5$Gini_net*ia5$invwt
+ia5['dr1']=ia5$iptw + ia5$mdiff1
+
+ia6['mdiff1']=(-(ia6$gi_bb -ia6$phat0)*ia6$mu1/ia6$phat0)-((ia6$gi_bb -ia6$phat0)*ia6$mu0/(1-ia6$phat0))
+ia6['iptw'] = (2*ia6$gi_bb-1)*ia6$Gini_net*ia6$invwt
+ia6['dr1']=ia6$iptw + ia6$mdiff1
+
+write.csv(ln1,"ln1.csv",row.names = FALSE)
+write.csv(ia1,"ia1.csv",row.names = FALSE)
+write.csv(ia2,"ia2.csv",row.names = FALSE)
+write.csv(ia3,"ia3.csv",row.names = FALSE)
+write.csv(ia4,"ia4.csv",row.names = FALSE)
+write.csv(ia5,"ia5.csv",row.names = FALSE)
+write.csv(ia6,"ia6.csv",row.names = FALSE)
 ```
 
 ```{r}
