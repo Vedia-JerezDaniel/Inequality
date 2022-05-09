@@ -40,13 +40,19 @@ fd <- as.data.frame(lpf %>%
 
 ```{r}
 library(mFilter)
+
 hp <- as.data.frame(lpf %>%
-  arrange(idem, year) %>%  # Sort by firm and then by year
-  group_by(idem) %>%      # Tell dplyr to go within each firm
-  mutate_at(vars(Gini_net),~ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x)))
+  arrange(idem, year) %>%  
+  group_by(idem) %>%      
+  mutate_at(vars(Gini_net, Education_exp, Health_exp, Soc_payable, Soc_kind, Property_taxes, ind_tx, PIT),~ ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x)))
+
+temp = as.data.frame(hp )
 ```
 
 ```{r}
+gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
+gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
+gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
 gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
 
 out <- cbind.data.frame(gi$cycle, gi$trend, gi$x, hp$idem, hp$year)
