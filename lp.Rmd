@@ -9,6 +9,7 @@ output:
 library(tidyverse)
 library(lpirfs)
 library(dplyr)
+library(OrthoPanels)
 ```
 
 ```{r, message=FALSE}
@@ -46,23 +47,54 @@ hp <- as.data.frame(lpf %>%
   group_by(idem) %>%      
   mutate_at(vars(Gini_net, Education_exp, Health_exp, Soc_payable, Soc_kind, Property_taxes, ind_tx, PIT),~ ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x)))
 
-temp = as.data.frame(hp )
+temp = as.data.frame(hp %>% select(year, idem, Gini_net, Education_exp, Health_exp, Soc_payable, Soc_kind, Property_taxes, ind_tx, PIT))
 ```
 
 ```{r}
-gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
-gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
-gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
-gi = hpfilter(na.omit(hp$Gini_net), freq = 6.25, type = 'frequency')
 
-out <- cbind.data.frame(gi$cycle, gi$trend, gi$x, hp$idem, hp$year)
-colnames(out) <- c("cycle", "trend",'x','idem','year')
+fh <- temp %>% arrange(idem, year) %>% group_by(idem) %>% 
+  filter(!is.na(Gini_net)) %>% 
+  mutate(gi_trend = mFilter::hpfilter(Gini_net, type = "lambda", freq = 6.25)$trend,
+         ed_trend = mFilter::hpfilter(Education_exp, type = "lambda", freq = 6.25)$trend,
+         he_trend = mFilter::hpfilter(Health_exp, type = "lambda", freq = 6.25)$trend,
+         soc_trend = mFilter::hpfilter(Soc_payable, type = "lambda", freq = 6.25)$trend,
+         kind_trend = mFilter::hpfilter(Soc_kind, type = "lambda", freq = 6.25)$trend,
+         prt_trend = mFilter::hpfilter(Property_taxes, type = "lambda", freq = 6.25)$trend,
+         indt_trend = mFilter::hpfilter(ind_tx, type = "lambda", freq = 6.25)$trend,
+         pit_trend = mFilter::hpfilter(PIT, type = "lambda", freq = 6.25)$trend)
 
-out <- out %>% mutate( booms = case_when(cycle > 0 ~ 1),
-                bust = case_when(cycle < 0 ~ 1),
-                gi_bb = case_when((cycle > 0 ~ 1), (cycle < 0 ~ 0)))
+fh <- fh %>% arrange(idem, year) %>% group_by(idem) %>% 
+  filter(!is.na(Gini_net)) %>% 
+  mutate(gi_cycle = mFilter::hpfilter(Gini_net, type = "lambda", freq = 6.25)$cycle,
+         ed_cycle = mFilter::hpfilter(Education_exp, type = "lambda", freq = 6.25)$cycle,
+         he_cycle = mFilter::hpfilter(Health_exp, type = "lambda", freq = 6.25)$cycle,
+         soc_cycle = mFilter::hpfilter(Soc_payable, type = "lambda", freq = 6.25)$cycle,
+         kind_cycle = mFilter::hpfilter(Soc_kind, type = "lambda", freq = 6.25)$cycle,
+         prt_cycle = mFilter::hpfilter(Property_taxes, type = "lambda", freq = 6.25)$cycle,
+         indt_cycle = mFilter::hpfilter(ind_tx, type = "lambda", freq = 6.25)$cycle,
+         pit_cycle = mFilter::hpfilter(PIT, type = "lambda", freq = 6.25)$cycle)
 
-write.csv(out, "hp.csv",  row.names = FALSE)
+
+fh <- fh %>% mutate(gi_bb = case_when((gi_cycle > 0 ~ 1), (gi_cycle < 0 ~ 0)),
+                    ed_bb = case_when((ed_cycle > 0 ~ 1), (ed_cycle < 0 ~ 0)),
+                    he_bb = case_when((he_cycle > 0 ~ 1), (he_cycle < 0 ~ 0)),
+                    soc_bb = case_when((soc_cycle > 0 ~ 1), (soc_cycle < 0 ~ 0)),
+                    kind_bb = case_when((kind_cycle > 0 ~ 1), (kind_cycle < 0 ~ 0)),
+                    prt_bb = case_when((prt_cycle > 0 ~ 1), (prt_cycle < 0 ~ 0)),
+                    indt_bb = case_when((indt_cycle > 0 ~ 1), (indt_cycle < 0 ~ 0)),
+                    pit_bb = case_when((pit_cycle > 0 ~ 1), (pit_cycle < 0 ~ 0)))
+
+rm(temp)
+
+temp <- fh %>% arrange(idem, year) %>% group_by(idem) %>% select(c(1,2,11:34))
+
+ln1 = merge.data.frame(lpf, temp, by=c("idem","year"), all.x = T)
+
+ln1['id'] = as.numeric(as.factor(ln1$idem))
+
+ln1 <- ln1 %>% select(idem,id, year, c(3:83) )
+
+write.csv(ln1, "ln1.csv",  row.names = FALSE)
 ```
 
 

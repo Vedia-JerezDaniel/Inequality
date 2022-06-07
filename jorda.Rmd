@@ -9,56 +9,118 @@ date: '2022-05-07'
 library(tidyverse)
 library(lpirfs)
 library(dplyr)
+library(OrthoPanels)
+library(jtools)
 ```
 
 ```{r}
 library(readr)
 
-ln1 <- read_delim("ln1.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia1 <- read_delim("ia1.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia2 <- read_delim("ia2.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia3 <- read_delim("ia3.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia4 <- read_delim("ia4.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia5 <- read_delim("ia5.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia6 <- read_delim("ia6.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ln1 <- read_delim("ln1.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia1 <- read_delim("ia1.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia2 <- read_delim("ia2.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia3 <- read_delim("ia3.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia4 <- read_delim("ia4.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia5 <- read_delim("ia5.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia6 <- read_delim("ia6.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
+attach(ia1)
+```
 
-z = list(ia1,ia2,ia3,ia4,ia5,ia6)
+```{r}
+ia6 <- as.data.frame(ia6 %>%
+  arrange(idem, year) %>%  # Sort by firm and tsocn by year
+  group_by(idem) %>%      # Tell dplyr to go within each firm
+  mutate(gdppc_gro = GDP_pc/(lag(GDP_pc)-1),
+         gdp_gro = GDP/(lag(GDP)-1),
+         insde_d = ins_effic/(lag(ins_effic)-1),
+         tot_d = TOT/(lag(TOT)-1),
+         debt_d = Gov_debt/(lag(Gov_debt)-1),
+         redis = Gini_market - Gini_net/Gini_net,
+         pi_m = PIT*mrp_all,
+         pi_a = PIT*arp_mid,
+         rd = sav_gdp*res_1mill,
+         rd1= sav_gdp*RD_gdp,
+         dtrade = Trade-lag(Trade),
+         lgini = lag(Gini_net),
+         lgdpg = lag(gdp_gro),
+         leduc = lag(Education_exp),
+         lkind = lag(Soc_kind), lpay=lag(Soc_payable)))
+```
 
-ln1['id'] = as.numeric(as.factor(ln1$idem))
-ia1['id'] = as.numeric(as.factor(ia1$idem))
-ia2['id'] = as.numeric(as.factor(ia2$idem))
-ia3['id'] = as.numeric(as.factor(ia3$idem))
-ia4['id'] = as.numeric(as.factor(ia4$idem))
-ia5['id'] = as.numeric(as.factor(ia5$idem))
-ia6['id'] = as.numeric(as.factor(ia6$idem))
+```{r}
+library(datawizard)
+
+dm = demean(ia6, select = ~ Gini_net+ gdp_gro, group = "idem", suffix_demean = "_within")
+
+dm <- dm %>% select(ends_with('_within'))
+
+colnames(dm)<-gsub("_within","dm",colnames(dm))
+
+ia1 = cbind(ia1, dm)
+ia2 = cbind(ia2, dm)
+ia3 = cbind(ia3, dm)
+ia4 = cbind(ia4, dm)
+ia5 = cbind(ia5, dm)
+ia6 = cbind(ia6, dm)
 
 ```
 
 ```{r}
-# ln1 <- ln %>% drop_na()
-# pror = glm(gi_bb ~ lag(Gini_net,1) + gdp_gro + Gov_ex , data=ln1, family=binomial(link="probit"), na.action = na.exclude)
+# ln1 <- ln1 %>%
+#   mutate(dumm = ifelse( year %in% c(1991, 1992, 2000, 2001, 2008, 2009, 2011, 2013), 1, NA))
+# 
+# ia1 <- ia1 %>%
+#   mutate(dumm = ifelse( year %in% c(1991, 1992,2000, 2001, 2008, 2009, 2011, 2013), 1, 0))
+# 
+# ia2 <- ia2 %>%
+#   mutate(dumm = ifelse( year %in% c(1991, 1992,2000, 2001, 2008, 2009, 2011, 2013), 1, 0))
 
-pror1 = glm(gi_bb ~ lag(Gini_net,1) + gdp_gro + Gov_ex , data=ia1, family=binomial(link="probit"), na.action = na.exclude)
-# 
-# pror2 = glm(gi_bb ~ lag(Gini_net,1) + gdp_gro + Gov_ex , data=ia2, family=binomial(link="probit"), na.action = na.exclude)
-# 
-# pror3 = glm(gi_bb ~ lag(Gini_net,1) + gdp_gro + Gov_ex , data=ia3, family=binomial(link="probit"), na.action = na.exclude)
-# 
-# pror4 = glm(gi_bb ~ lag(Gini_net,1) + gdp_gro + Gov_ex , data=ia4, family=binomial(link="probit"), na.action = na.exclude)
-# 
-# pror5 = glm(gi_bb ~ lag(Gini_net,1) + gdp_gro + Gov_ex , data=ia5, family=binomial(link="probit"), na.action = na.exclude)
-# 
-# pror6 = glm(gi_bb ~ lag(Gini_net,1) + gdp_gro + Gov_ex , data=ia6, family=binomial(link="probit"), na.action = na.exclude)
+b1 = ia1 %>% filter(year %in% c(1991, 1992, 1993, 2000, 2001, 2008, 2009, 2011, 2012, 2013))
+b2 = ia2 %>% filter(year %in% c(1991, 1992, 1993, 2000, 2001, 2008, 2009, 2011, 2012, 2013))
+b3 = ia3 %>% filter(year %in% c(1991, 1992, 1993, 2000, 2001, 2008, 2009, 2011, 2012, 2013))
+b4 = ia4 %>% filter(year %in% c(2008, 2009, 2011, 2012, 2013))
 
+bo1 = ia1 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+bo2 = ia2 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+bo3 = ia3 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+bo4 = ia4 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+bo5 = ia5 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+
+```
+
+
+```{r}
+pror1 = glm(ed_bb ~ lag(Gini_net,1) + Education_exp + employ_rate + Trade, data=b1, family=binomial(link="probit"), na.action = na.exclude)
+summ(pror1)
+# # 
+# pror1 = glm(he_bb ~ Gini_net + Health_exp +(gdp_gro)+ employ_rate , data=ia6, family=binomial(link="probit"), na.action = na.exclude)
+# summ(pror1)
+
+# pror1 = glm(soc_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) +(Soc_payable) + Gov_ex + Secondary_ed, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+# summ(pror1)
+# 
+# pror1 = glm(kind_bb ~ lag(Gini_net,1) + gdp_gro + Soc_kind +Secondary_ed + Gov_ex , data=gr5 , family=binomial(link="probit"), na.action = na.exclude)
+# summ(pror1)
+
+# pror1 = glm(prt_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) + Property_taxes + Secondary_ed + Gov_ex , data=ia6 , family=binomial(link="probit"), na.action = na.exclude)
+# summ(pror1)
+
+# pror1 = glm(indt_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) + ind_tx + Secondary_ed + Gov_ex , data=ia1 , family=binomial(link="probit"), na.action = na.exclude)
+# summ(pror1)
+
+# pror1 = glm(pit_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) + PIT+mrp_all + Secondary_ed + Gov_ex , data=ia6 , family=binomial(link="probit"), na.action = na.exclude)
+# summ(pror1)
 
 # ln1['phat0'] = predict(pror, type = 'response')
 ia1['phat0'] = predict(pror1, type = 'response')
-ia2['phat0'] = ia1$phat0
-ia3['phat0'] = ia1$phat0
-ia4['phat0'] = ia1$phat0
-ia5['phat0'] = ia1$phat0
-ia6['phat0'] = ia1$phat0
+ia2['phat0'] = predict(pror1, type = 'response')
+ia3['phat0'] = predict(pror1, type = 'response')
+ia4['phat0'] = predict(pror1, type = 'response')
+ia5['phat0'] = predict(pror1, type = 'response')
+ia6['phat0'] = predict(pror1, type = 'response')
+
+plot(ia2$phat0, ia6$phat0)
 
 ```
 
@@ -70,137 +132,129 @@ summary(ia1$phat0)
 
 ia1['phat'] = ia1$phat0
 
-ia1 <- ia1 %>% mutate(phat = ifelse(ia1['phat'] > 0.55, 0.55, ia1$phat))
-ia1 <- ia1 %>% mutate(phat = ifelse(ia1['phat'] < 0.4, 0.4, ia1$phat))
+lo = summary(ia1$phat0)[1]*1.1
+up = .9*summary(ia1$phat0)[6]
+
+ia1 <- ia1 %>% mutate(phat = ifelse(phat > up, up , ia1$phat))
+ia1 <- ia1 %>% mutate(phat = ifelse(phat < lo, lo, ia1$phat))
 
 summary(ia1$phat)
 
-names(ia1)[40] <- 'id'
-names(ia1)[41] <- 'phat'
 ```
 
+MODELO NO TRUNCADO
 
 ```{r}
 
-ia1['invwt'] = ia1$gi_bb/ia1$phat0 + (1-ia1$gi_bb)/(1-ia1$phat0)
-ia2['invwt'] = ia2$gi_bb/ia2$phat0 + (1-ia2$gi_bb)/(1-ia2$phat0)
-ia3['invwt'] = ia3$gi_bb/ia3$phat0 + (1-ia3$gi_bb)/(1-ia3$phat0)
-ia4['invwt'] = ia4$gi_bb/ia4$phat0 + (1-ia4$gi_bb)/(1-ia4$phat0)
-ia5['invwt'] = ia5$gi_bb/ia5$phat0 + (1-ia5$gi_bb)/(1-ia5$phat0)
-ia6['invwt'] = ia6$gi_bb/ia6$phat0 + (1-ia6$gi_bb)/(1-ia6$phat0)
+ia1['invwt'] = ia1$kind_bb/ia1$phat0 + (1-ia1$kind_bb)/(1-ia1$phat0)
+ia2['invwt'] = ia2$kind_bb/ia2$phat0 + (1-ia2$kind_bb)/(1-ia2$phat0)
+ia3['invwt'] = ia3$kind_bb/ia3$phat0 + (1-ia3$kind_bb)/(1-ia3$phat0)
+ia4['invwt'] = ia4$kind_bb/ia4$phat0 + (1-ia4$kind_bb)/(1-ia4$phat0)
+ia5['invwt'] = ia5$kind_bb/ia5$phat0 + (1-ia5$kind_bb)/(1-ia5$phat0)
+ia6['invwt'] = ia6$kind_bb/ia6$phat0 + (1-ia6$kind_bb)/(1-ia6$phat0)
+
+plot(ia2$invwt, ia5$invwt)
+
+```
+
+MODELO TRUNCADO
+
+```{r}
+
+ia1['invwt'] = ia1$kind_bb/ia1$phat + (1-ia1$kind_bb)/(1-ia1$phat)
+ia2['invwt'] = ia2$kind_bb/ia1$phat + (1-ia2$kind_bb)/(1-ia1$phat)
+ia3['invwt'] = ia3$kind_bb/ia1$phat + (1-ia3$kind_bb)/(1-ia1$phat)
+ia4['invwt'] = ia4$kind_bb/ia1$phat + (1-ia4$kind_bb)/(1-ia1$phat)
+ia5['invwt'] = ia5$kind_bb/ia1$phat + (1-ia5$kind_bb)/(1-ia1$phat)
+ia6['invwt'] = ia6$kind_bb/ia1$phat + (1-ia6$kind_bb)/(1-ia1$phat)
 
 ```
 
 ```{r}
 library(lmtest)
 library(sandwich)
-library(plm)
+library(clipr)
+```
 
-# invr = plm(Gini_net ~ gdp_gro + Secondary_ed + employ_rate + Gov_ex + Trade + gi_bb, weights = ln1$invmt, data = ln1, na.action = na.exclude, model = "within")
+```{r}
+invr1 = lm(Gini_net ~ lag(Gini_netdm,1) + gdp_grodm + Soc_kind+ year, weights = invwt, data = ia1)
+summ(invr1, robust = 'HC3', cluster = '')
+```
 
-invr1 = plm(ia1$Gini_net ~ ia1$gdp_gro + ia1$Secondary_ed + ia1$employ_rate + ia1$Gov_ex + ia1$Trade + ia1$gi_bb , weights = ia1$invwt, data = ia1, na.action = na.exclude, model = "within")
+```{r}
+ia1['pip_a'] = ia1$PIT*ia1$mrp_all
+ia2['pip_a'] = ia2$PIT*ia2$mrp_all
+ia3['pip_a'] = ia3$PIT*ia3$mrp_all
+ia4['pip_a'] = ia4$PIT*ia4$mrp_all
+ia5['pip_a'] = ia5$PIT*ia5$mrp_all
+ia6['pip_a'] = ia6$PIT*ia6$mrp_all
 
-invr2 = plm(ia2$Gini_net ~ ia2$gdp_gro + ia2$Secondary_ed + ia2$employ_rate + ia2$Gov_ex + ia2$Trade + ia2$gi_bb, weights = ia2$invwt, data = ia2, na.action = na.exclude, model = "within")
+```
 
-invr3 = plm(ia3$Gini_net ~ ia3$gdp_gro + ia3$Secondary_ed + ia3$employ_rate + ia3$Gov_ex + ia3$Trade + ia3$gi_bb, weights = ia3$invwt, data = ia3, na.action = na.exclude, model = "within")
 
-invr4 = plm(ia4$Gini_net ~ ia4$gdp_gro + ia4$Secondary_ed + ia4$employ_rate + ia4$Gov_ex + ia4$Trade + ia4$gi_bb, weights = ia4$invwt, data = ia4, na.action = na.exclude, model = "within")
+```{r}
+# invr1 = lm(Gini_net ~ dplyr::lag(Gini_netdm,1)+dplyr::lag(gdp_grodm,1) +Education_exp + employ_rate, weights = invwt, data = ia1) -- EDUCATION
 
-invr5 = plm(ia5$Gini_net ~ ia5$gdp_gro + ia5$Secondary_ed + ia5$employ_rate + ia5$Gov_ex + ia5$Trade + ia5$gi_bb, weights = ia5$invwt, data = ia5, na.action = na.exclude, model = "within")
+# invr1 = lm(Gini_net ~ dplyr::lag(Gini_net,1) + dplyr::lag(Gini_netdm,1) + dplyr::lag(gdp_grodm,1) + (Health_exp) + Secondary_ed + employ_rate , weights = invwt, data = ia1) -- HEALTH
 
-invr6 = plm(ia6$Gini_net ~ ia6$gdp_gro + ia6$Secondary_ed + ia6$employ_rate + ia6$Gov_ex + ia6$Trade + ia6$gi_bb, weights = ia6$invwt, data = ia6, na.action = na.exclude, model = "within")
+# invr1 = lm(Gini_net ~ dplyr::lag(Gini_netdm,1) + dplyr::lag(gdp_grodm,1) + dplyr::lag(gdp_grodm,2)+ dplyr::lag(Soc_payable,1)+dplyr::lag(Gov_ex,1)+Secondary_ed + employ_rate + dplyr::lag(Trade,1), weights = invwt, data = ia1) -- SOC PAYABLE
 
-summary(invr3, cluster=c('iden'))
+# invr1 = opm(Gini_net ~lag(gdp_gro,1) + Property_taxes + Gov_ex + Secondary_ed , data = ia1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+# summary(invr1)
 
-# z2 = list(invr1, invr2)
+# invr1 = opm(Gini_net ~lag(gdp_gro,1) + ind_tx + Gov_ex + Secondary_ed , data = ia1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+# summary(invr1) -- IND TAXES
 
-tmr = coeftest(invr1)
+# invr1 = opm(Gini_net ~lag(gdp_gro,1) + ia1$pip_a + mrp_all + PIT + Gov_ex + Secondary_ed , data = ia1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+# summary(invr1) -- PIT
+
+invr1 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+summary(invr1)
+
+invr2 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia2, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+summary(invr2)
+
+invr3 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia3, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+summary(invr3)
+
+invr4 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia4, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+summary(invr4)
+
+invr5 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia5, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+summary(invr5)
+
+invr6 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia6, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+summary(invr6)
+
+
+caterplot(invr1, 'beta', labels = c('growth','E', 'D','D'))
+
+kind_beta = cbind.data.frame(invr1[["samples"]][["beta"]][,2], invr2[["samples"]][["beta"]][,2],
+                           invr3[["samples"]][["beta"]][,2], invr4[["samples"]][["beta"]][,2],
+                           invr5[["samples"]][["beta"]][,2], invr6[["samples"]][["beta"]][,2])
+
+colnames(kind_beta) <- c("1", "2","3", "4","5", "6" ) 
 
 # PREDICTION
 
 # mu0 = predict(invr, type = 'response')
 mu01 = predict(invr1, type = 'response')
-mu02 = predict(invr2, type = 'response')
-mu03 = predict(invr3, type = 'response')
-mu04 = predict(invr4, type = 'response')
-mu05 = predict(invr5, type = 'response')
-mu06 = predict(invr6, type = 'response')
 
-# ln1['mu'] = mu0*ln1$trend/ln1$trend
-ia1['mu'] = mu01*ia1$trend/ia1$trend
-ia2['mu'] = mu02*ia2$trend/ia2$trend
-ia3['mu'] = mu03*ia3$trend/ia3$trend
-ia4['mu'] = mu04*ia4$trend/ia4$trend
-ia5['mu'] = mu05*ia5$trend/ia5$trend
-ia6['mu'] = mu06*ia6$trend/ia6$trend
+library(dplyr)
+library(ggplot2)
 
+ia1 %>%
+        filter(idem %in% c("Cyprus")) %>%
+        ggplot() +
+        aes(x = year, y = Soc_kind, colour = idem) +
+        geom_line(size = 0.5) +
+        scale_color_hue(direction = 1) +
+        theme_minimal()
 
-# ln1 <- ln1 %>% mutate(mu0 = if_else(ln1$gi_bb == 0, 1, 0))
-# ln1['mu0'] = ln1$mu0*ln1$mu
-# ln1 <- ln1 %>% mutate(mu1 = if_else(ln1$gi_bb == 1, 1, 0))
-# ln1['mu1'] = ln1$mu1*ln1$mu
-
-ia1 <- ia1 %>% mutate(mu0 = if_else(ia1$gi_bb == 0, 1, 0))
-ia1['mu0'] = ia1$mu0*ia1$mu
-ia1 <- ia1 %>% mutate(mu1 = if_else(ia1$gi_bb == 1, 1, 0))
-ia1['mu1'] = ia1$mu1*ia1$mu
-
-ia2 <- ia2 %>% mutate(mu0 = if_else(ia2$gi_bb == 0, 1, 0))
-ia2['mu0'] = ia2$mu0*ia2$mu
-ia2 <- ia2 %>% mutate(mu1 = if_else(ia2$gi_bb == 1, 1, 0))
-ia2['mu1'] = ia2$mu1*ia2$mu
-
-ia3 <- ia3 %>% mutate(mu0 = if_else(ia3$gi_bb == 0, 1, 0))
-ia3['mu0'] = ia3$mu0*ia3$mu
-ia3 <- ia3 %>% mutate(mu1 = if_else(ia3$gi_bb == 1, 1, 0))
-ia3['mu1'] = ia3$mu1*ia3$mu
-
-ia4 <- ia4 %>% mutate(mu0 = if_else(ia4$gi_bb == 0, 1, 0))
-ia4['mu0'] = ia4$mu0*ia4$mu
-ia4 <- ia4 %>% mutate(mu1 = if_else(ia4$gi_bb == 1, 1, 0))
-ia4['mu1'] = ia4$mu1*ia4$mu
-
-ia5 <- ia5 %>% mutate(mu0 = if_else(ia5$gi_bb == 0, 1, 0))
-ia5['mu0'] = ia5$mu0*ia5$mu
-ia5 <- ia5 %>% mutate(mu1 = if_else(ia5$gi_bb == 1, 1, 0))
-ia5['mu1'] = ia5$mu1*ia5$mu
-
-ia6 <- ia6 %>% mutate(mu0 = if_else(ia6$gi_bb == 0, 1, 0))
-ia6['mu0'] = ia6$mu0*ia6$mu
-ia6 <- ia6 %>% mutate(mu1 = if_else(ia6$gi_bb == 1, 1, 0))
-ia6['mu1'] = ia6$mu1*ia6$mu
-
-
-ln1['mdiff1']=(-(ln1$gi_bb -ln1$phat0)*ln1$mu1/ln1$phat0)-((ln1$gi_bb -ln1$phat0)*ln1$mu0/(1-ln1$phat0))
-ln1['iptw'] = (2*ln1$gi_bb-1)*ln1$Gini_net*ln1$invwt
-ln1['dr1']=ln1$iptw + ln1$mdiff1
-
-ia1['mdiff1']=(-(ia1$gi_bb -ia1$phat0)*ia1$mu1/ia1$phat0)-((ia1$gi_bb -ia1$phat0)*ia1$mu0/(1-ia1$phat0))
-ia1['iptw'] = (2*ia1$gi_bb-1)*ia1$Gini_net*ia1$invwt
-ia1['dr1']=ia1$iptw + ia1$mdiff1
-
-ia2['mdiff1']=(-(ia2$gi_bb -ia2$phat0)*ia2$mu1/ia2$phat0)-((ia2$gi_bb -ia2$phat0)*ia2$mu0/(1-ia2$phat0))
-ia2['iptw'] = (2*ia2$gi_bb-1)*ia2$Gini_net*ia2$invwt
-ia2['dr1']=ia2$iptw + ia2$mdiff1
-
-ia3['mdiff1']=(-(ia3$gi_bb -ia3$phat0)*ia3$mu1/ia3$phat0)-((ia3$gi_bb -ia3$phat0)*ia3$mu0/(1-ia3$phat0))
-ia3['iptw'] = (2*ia3$gi_bb-1)*ia3$Gini_net*ia3$invwt
-ia3['dr1']=ia3$iptw + ia3$mdiff1
-
-ia4['mdiff1']=(-(ia4$gi_bb -ia4$phat0)*ia4$mu1/ia4$phat0)-((ia4$gi_bb -ia4$phat0)*ia4$mu0/(1-ia4$phat0))
-ia4['iptw'] = (2*ia4$gi_bb-1)*ia4$Gini_net*ia4$invwt
-ia4['dr1']=ia4$iptw + ia4$mdiff1
-
-ia5['mdiff1']=(-(ia5$gi_bb -ia5$phat0)*ia5$mu1/ia5$phat0)-((ia5$gi_bb -ia5$phat0)*ia5$mu0/(1-ia5$phat0))
-ia5['iptw'] = (2*ia5$gi_bb-1)*ia5$Gini_net*ia5$invwt
-ia5['dr1']=ia5$iptw + ia5$mdiff1
-
-ia6['mdiff1']=(-(ia6$gi_bb -ia6$phat0)*ia6$mu1/ia6$phat0)-((ia6$gi_bb -ia6$phat0)*ia6$mu0/(1-ia6$phat0))
-ia6['iptw'] = (2*ia6$gi_bb-1)*ia6$Gini_net*ia6$invwt
-ia6['dr1']=ia6$iptw + ia6$mdiff1
-
+plot(mu[,3])
 
 ```
+
 
 
 ```{r}
@@ -211,118 +265,22 @@ write.csv(ia3,"ia3.csv",row.names = FALSE)
 write.csv(ia4,"ia4.csv",row.names = FALSE)
 write.csv(ia5,"ia5.csv",row.names = FALSE)
 write.csv(ia6,"ia6.csv",row.names = FALSE)
+
 ```
 
 ```{r}
-ia1['ate'] = 1
-ia2['ate'] = 1
-ia3['ate'] = 1
-ia4['ate'] = 1
-ia5['ate'] = 1
-ia6['ate'] = 1
+write.csv(b1,"b1.csv",row.names = FALSE)
+write.csv(b2,"b2.csv",row.names = FALSE)
+write.csv(b3,"b3.csv",row.names = FALSE)
+write.csv(b4,"b4.csv",row.names = FALSE)
 
-
-ouv1 = plm(ia1$dr1 ~ ate ,  weights = ia1$invwt, data = ia1, na.action = na.exclude, model = "pooling")
-summary(ouv1)
-
-t= lm(ia1$dr1 ~ ate  -1 +id ,  weights = ia1$invwt,data = ia1, na.action = na.exclude)
-summary(t)
-
-
-tc <- data.frame(summary(t)$coefficients)
-tc_1 <- which(!startsWith(row.names(tc), 'id'))
-view(tc[1,])
-tc[1,]
-
-t_cl <- coeftest(t, vcov = vcovCL, cluster = ~ id)
-t_cl[tc_1,]
-
-all(near(m1, t_cl[,2]))
-
-ouv2 = plm(ia2$Gini_net ~ ia2$gdp_gro + ia2$Secondary_ed + ia2$employ_rate + ia2$Gov_ex + ia2$Trade + ia2$gi_bb, weights = ia2$invwt, data = ia2, na.action = na.exclude, model = "within")
-
-ouv3 = plm(ia3$Gini_net ~ ia3$gdp_gro + ia3$Secondary_ed + ia3$employ_rate + ia3$Gov_ex + ia3$Trade + ia3$gi_bb, weights = ia3$invwt, data = ia3, na.action = na.exclude, model = "within")
-
-ouv4 = plm(ia4$Gini_net ~ ia4$gdp_gro + ia4$Secondary_ed + ia4$employ_rate + ia4$Gov_ex + ia4$Trade + ia4$gi_bb, weights = ia4$invwt, data = ia4, na.action = na.exclude, model = "within")
-
-ouv5 = plm(ia5$Gini_net ~ ia5$gdp_gro + ia5$Secondary_ed + ia5$employ_rate + ia5$Gov_ex + ia5$Trade + ia5$gi_bb, weights = ia5$invwt, data = ia5, na.action = na.exclude, model = "within")
-
-ouv6 = plm(ia6$Gini_net ~ ia6$gdp_gro + ia6$Secondary_ed + ia6$employ_rate + ia6$Gov_ex + ia6$Trade + ia6$gi_bb, weights = ia6$invwt, data = ia6, na.action = na.exclude, model = "within")
-
+write.csv(bo1,"bo1.csv",row.names = FALSE)
+write.csv(bo2,"bo2.csv",row.names = FALSE)
+write.csv(bo3,"bo3.csv",row.names = FALSE)
+write.csv(bo4,"bo4.csv",row.names = FALSE)
+write.csv(bo5,"bo5.csv",row.names = FALSE)
+write.csv(bo6,"bo6.csv",row.names = FALSE)
 ```
 
 
 
-
-```{r}
-library(webuse)
-library(dplyr)
-
-nlswork_orig <- webuse('nlswork')
-
-nlswork <- filter(nlswork_orig, idcode <= 100) %>%
-  select(idcode, year, ln_wage, age, tenure, union) %>%
-  filter(complete.cases(.)) %>%
-  mutate(union = as.integer(union),
-         idcode = as.factor(idcode))
-str(nlswork)
-
-ia1$id = as.factor(ia1$id)
-
-```
-
-
-ROBUST CLUSTER STANDARD ERRORS SOLO AL FINAL
-
-```{r}
-X <- model.matrix(t)
-u <- residuals(t)
-n <- nobs(t)
-p <- ncol(X)
-sigma2 <- sum(u^2,na.rm = TRUE) / (n - p)
-# solve (X^T X) A = I, where I is identity matrix -> A is (X^T X)^-1
-crossXinv <- solve(t(X) %*% X, diag(p))
-
-m1se <- sqrt(diag(sigma2 * crossXinv))
-m1se
-
-```
-
-
-```{r}
-omegaj <- lapply(levels(ia1$id), function(idc) {
-  j <- levels(factor(ia1$id)) == idc
-  # drop = FALSE: don't drop dimensions when we have only one obs.
-  X_j <- X[j, , drop = TRUE]
-  # tcrossprod is outer product x * x^T
-  t(X_j) %*% tcrossprod(u[j]) %*% X_j
-})
-
-
-n_cl <- length(levels(ia1$id))
-omega <- (n-1) / (n-p) * (n_cl / (n_cl-1)) * Reduce('+', omegaj)
-m1clse <- sqrt(diag(crossXinv %*% omega %*% crossXinv)) 
-m1clse
-m1se
-
-```
-
-
-```{r}
-library(miceadds)
-library(margins)
-
-m2 <- lm.cluster(dr1 ~ ate -1 + id, cluster = 'id',  data = ia1)
-summary(m2)
-
-mdr1 = mean(ia1$dr1, na.rm = TRUE)
-isq = mean((ia1$dr1 - mdr1)^2, na.rm = TRUE)
-rsd = sqrt(isq/nrow(ia1))
-# añadir rsf al std.error final
-
-```
-
-
-```{r}
-
-```
