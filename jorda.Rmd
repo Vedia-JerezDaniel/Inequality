@@ -16,13 +16,13 @@ library(jtools)
 ```{r}
 library(readr)
 
-ln1 <- read_delim("ln1.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
-ia1 <- read_delim("ia1.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
-ia2 <- read_delim("ia2.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
-ia3 <- read_delim("ia3.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
-ia4 <- read_delim("ia4.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
-ia5 <- read_delim("ia5.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
-ia6 <- read_delim("ia6.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ln1 <- read_delim("ln1.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia1 <- read_delim("ia1.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia2 <- read_delim("ia2.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia3 <- read_delim("ia3.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia4 <- read_delim("ia4.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia5 <- read_delim("ia5.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia6 <- read_delim("ia6.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
 
 attach(ia1)
 ```
@@ -282,5 +282,36 @@ write.csv(bo5,"bo5.csv",row.names = FALSE)
 write.csv(bo6,"bo6.csv",row.names = FALSE)
 ```
 
+tABLE 3 iv BINARY TREATMENT
 
+```{r}
+ia1['pip_a'] = ia1$PIT*ia1$mrp_all
+ia2['pip_a'] = ia2$PIT*ia2$mrp_all
+ia3['pip_a'] = ia3$PIT*ia3$mrp_all
+ia4['pip_a'] = ia4$PIT*ia4$mrp_all
+ia5['pip_a'] = ia5$PIT*ia5$mrp_all
+```
+
+
+```{r}
+library(lfe)
+
+# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed -1 |0 | (Education_exp ~  ed_bb + pop_gro) |Gini_net | idem) 
+
+# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed -1 |0 | (Health_exp ~ he_bb + pop_gro)  | idem) 
+
+# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate -1 |0 | (Soc_payable ~ soc_bb  )   | idem) 
+
+# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + Secondary_ed + employ_rate |0 | (Soc_kind ~ kind_bb + Quantiles )  | idem)
+
+# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed |0 | (Property_taxes ~ prt_bb  + year ) | idem)
+
+form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed| 0 | (pip_a ~ pit_bb + mrp_all) | idem)
+
+my_iv_reg <- felm(form_iv, data = ia5)
+summary(my_iv_reg)
+
+wald_iv <- waldtest(my_iv_reg$stage1, ~ pit_bb, lhs=my_iv_reg$stage1$lhs)
+print(c(wald_iv[5], wald_iv[1]))
+``` 
 
