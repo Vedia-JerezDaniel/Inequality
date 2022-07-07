@@ -1,7 +1,7 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
+*.Rproj.user
+*.Rhistory
+*.RData
+*.Ruserdata
 
 SSRN-id3489976.pdf
 Local Projections OJorda.pdf

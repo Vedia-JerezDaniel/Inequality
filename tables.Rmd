@@ -1,0 +1,67 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Table 7
+
+
+```{r}
+library(mFilter)
+
+hp <- as.data.frame(ia1 %>%
+  arrange(idem, year) %>%  
+  group_by(idem) %>%      
+  mutate_at(vars(GDP),~ ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x)))
+
+temp = as.data.frame(hp %>% select(GDP))
+```
+
+
+```{r}
+test <- temp %>% 
+  mutate(GDP_trend = mFilter::hpfilter(temp$GDP, type = "lambda", freq = 6.25)$trend)
+
+test <- temp %>% 
+  mutate(GDP_cycle = mFilter::hpfilter(GDP, type = "lambda", freq = 6.25)$cycle)
+
+
+test <- test %>% mutate(GDP_bb = case_when((GDP_cycle > 0 ~ 1), (GDP_cycle < 0 ~ 0)))
+
+
+ia1['GDP_tren'] = test$GDP_trend
+ia1['GDP_cycle'] = test$GDP_cycle
+ia1['GDP_bb'] = test$GDP_bb
+
+```
+
+
+```{r}
+library(pROC)
+library(plm)
+library(dplyr)
+library(clipr)
+
+sample <- sample(c(TRUE, FALSE), nrow(ia1), replace=TRUE, prob=c(0.75,0.25))
+train <- ia1[sample, ]
+test <- ia1[!sample, ]
+
+prob <- glm(lead(soc_bb,1) ~ Gov_ex + (gdp_gro) + Gov_ex + Secondary_ed -1 + lag(soc_bb,1), data=train, family=binomial(link="probit"))
+(summary(prob))
+
+prob <- glm(lead(ed_bb,1) ~ lag(gdp_gro,1) + lag(Gov_ex,1)  + lag(Gini_net,1) + lag(Secondary_ed,2) + lag(ed_bb,1)
+            , data=train, family=binomial(link="probit"))
+(summary(prob))
+
+prob <- glm(lead(prt_bb,1) ~ lag(Gov_ex,1) + gdp_gro + lag(Secondary_ed,1)+ lag(prt_bb,3) , data=train, family=binomial(link="probit"))
+(summary(prob))
+
+prob <- glm(lead(pit_bb,1) ~ Gov_ex+ lag(employ_rate,1) + lag(Secondary_ed,1) -1 +lag(pit_bb,2), data=train, family=binomial(link="probit"))
+(summary(prob))
+
+predicted <- predict(prob, test, type="response")
+#calculate AUC
+auc(test$pit_bb, predicted)
+
+```
+
