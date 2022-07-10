@@ -315,3 +315,17 @@ wald_iv <- waldtest(my_iv_reg$stage1, ~ pit_bb, lhs=my_iv_reg$stage1$lhs)
 print(c(wald_iv[5], wald_iv[1]))
 ``` 
 
+Table 6
+
+```{r}
+# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate -1 |0 | (Soc_payable ~ soc_bb  )   | idem) 
+
+form_iv <- formula(Gini_net ~ Gov_ex|0 |(Soc_kind ~ kind_bb + Quantiles) | idem)
+
+my_iv_reg <- felm(form_iv, data = ln1)
+summary(my_iv_reg)
+
+wald_iv <- waldtest(my_iv_reg$stage1, ~ pit_bb, lhs=my_iv_reg$stage1$lhs)
+print(c(wald_iv[5], wald_iv[1]))
+```
+
