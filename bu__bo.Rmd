@@ -84,34 +84,22 @@ kind_beta = cbind.data.frame(invr1[["samples"]][["beta"]][,2], invr2[["samples"]
 
 colnames(kind_beta) <- c("1", "2","3", "4","5", "6" ) 
 ```
-```{r}
-Q1 <- quantile(bo1$Property_taxes, .25, na.rm = TRUE)
-Q3 <- quantile(bo1$Property_taxes, .75, na.rm = TRUE)
-iqr <- IQR(bo1$Property_taxes, na.rm = TRUE)
 
-bo1p <- subset(bo1, bo1$Property_taxes > (Q1 - 1.5*iqr) & bo1$Property_taxes < (Q3 + 1.5*iqr))
-```
 
-```{r}
-Q1 <- quantile(bo1$pip_a, .25, na.rm = TRUE)
-Q3 <- quantile(bo1$pip_a, .75, na.rm = TRUE)
-iqr <- IQR(bo1$pip_a, na.rm = TRUE)
-
-bo1_ip <- subset(bo1, bo1$pip_a > (Q1 - 1.5*iqr) & bo1$pip_a < (Q3 + 1.5*iqr))
-```
 
 ```{r}
 library(lpirfs)
 
-po1 <-  lp_lin_panel(data_set          = bo1,
+po1 <-  lp_lin_panel(data_set          = ia1,
                              # data_sample       = data_sample,
                                cumul_mult        = TRUE,
                                shock             = "Education_exp",
                                endog_data = "gdp_gro",
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
-                               panel_effect      = "individual",
+                               panel_effect      = "twoways",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                               gmm_transformation = "ld",
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex','invwt'),
@@ -129,15 +117,16 @@ lto = rbind(po1[["reg_summaries"]][[1]][1,], po1[["reg_summaries"]][[2]][1,],
 write_clip(lto)
 
 
-po2 <-  lp_lin_panel(data_set          = bo1,
+po2 <-  lp_lin_panel(data_set          = ia1,
                              # data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = TRUE,
+                               cumul_mult        = FALSE,
                                shock             = "Soc_payable",
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                            gmm_transformation = "ld",  
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex', 'invwt'),
@@ -154,15 +143,16 @@ lto2 = rbind(po2[["reg_summaries"]][[1]][1,], po2[["reg_summaries"]][[2]][1,],
 
 write_clip(lto2)
 
-po3 <-  lp_lin_panel(data_set          = bo1,
+po3 <-  lp_lin_panel(data_set          = ia1,
                              # data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = TRUE,
+                               cumul_mult        = FALSE,
                                shock             = "Soc_kind",
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                                gmm_transformation = "ld",
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex', 'invwt'),
@@ -179,15 +169,16 @@ lt3 = rbind(po3[["reg_summaries"]][[1]][1,], po3[["reg_summaries"]][[2]][1,],
 
 write_clip(lt3)
 
-po4 <-  lp_lin_panel(data_set          = bo1p,
+po4 <-  lp_lin_panel(data_set          = ia1,
                              # data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = TRUE,
+                               cumul_mult        = FALSE,
                                shock             = 'Property_taxes',
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                                gmm_transformation = "ld",
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex', 'invwt'),
@@ -204,15 +195,16 @@ lto4 = rbind(po4[["reg_summaries"]][[1]][1,], po4[["reg_summaries"]][[2]][1,],
 
 write_clip(lto4)
 
-po5 <-  lp_lin_panel(data_set          = bo1_ip,
+po5 <-  lp_lin_panel(data_set          = ia1,
                              # data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = TRUE,
+                               cumul_mult        = FALSE,
                                shock             = 'pip_a',
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                                gmm_transformation = "ld",
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex', 'invwt', 'PIT', 'mrp_all'),
@@ -233,15 +225,16 @@ write_clip(lto5)
 ```
 
 ```{r}
-po1b <-  lp_lin_panel(data_set          = bo1,
+po1b <-  lp_lin_panel(data_set          = ia1,
                              data_sample       = data_sample,
                                cumul_mult        = TRUE,
                                shock             = "Education_exp",
                                endog_data = "gdp_gro",
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                               gmm_transformation = "ld",
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex','invwt'),
@@ -259,20 +252,21 @@ ltob = rbind(po1b[["reg_summaries"]][[1]][1,], po1b[["reg_summaries"]][[2]][1,],
 write_clip(ltob)
 
 
-po2b <-  lp_lin_panel(data_set          = bo1,
+po2b <-  lp_lin_panel(data_set          = ia1,
                                data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = TRUE,
+                               cumul_mult        = FALSE,
                                shock             = "Soc_payable",
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                              gmm_transformation = "ld",
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex', 'invwt'),
                                lags_exog_data = 1,
-                               l_exog_data    = c('gdp_gro','Secondary_ed'),
+                               l_exog_data    = c('gdp_gro'),
                                # l_fd_exog_data    = c('employ_rate'),
                                lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
 
@@ -284,15 +278,16 @@ lto2b = rbind(po2b[["reg_summaries"]][[1]][1,], po2b[["reg_summaries"]][[2]][1,]
 
 write_clip(lto2b)
 
-po3b <-  lp_lin_panel(data_set          = bo1,
+po3b <-  lp_lin_panel(data_set          = ia1,
                              data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = TRUE,
+                               cumul_mult        = FALSE,
                                shock             = "Soc_kind",
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                                gmm_transformation = "ld",
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex', 'invwt'),
@@ -309,15 +304,16 @@ lt3b = rbind(po3b[["reg_summaries"]][[1]][1,], po3b[["reg_summaries"]][[2]][1,],
 
 write_clip(lt3b)
 
-po4b <-  lp_lin_panel(data_set          = bo1p,
+po4b <-  lp_lin_panel(data_set          = ia1,
                              data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = TRUE,
+                               cumul_mult        = FALSE,
                                shock             = 'Property_taxes',
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                                gmm_transformation = "ld",
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex', 'invwt'),
@@ -334,15 +330,16 @@ lto4b = rbind(po4b[["reg_summaries"]][[1]][1,], po4b[["reg_summaries"]][[2]][1,]
 
 write_clip(lto4b)
 
-po5b <-  lp_lin_panel(data_set          = bo1_ip,
+po5b <-  lp_lin_panel(data_set          = ia1,
                              data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = TRUE,
+                               cumul_mult        = FALSE,
                                shock             = 'pip_a',
-                               diff_shock        = TRUE,
+                               diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
                                gmm_model = 'twosteps', gmm_effect = 'individual',
+                                gmm_transformation = "ld",
                                # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
                                c_exog_data   = c('Gov_ex', 'invwt', 'PIT', 'mrp_all'),
