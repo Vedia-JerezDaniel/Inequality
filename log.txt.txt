@@ -1,9 +1,0 @@
-TO DO
-======
-
-18/09
-* Graphs (boom & bust) darle una vuelta más! and continue with results draft.
-
-25/09
-* Gox expenditure (boom & bust) theory between lags and current.
-* Income tax (boom & bust) theory between lags and current.
