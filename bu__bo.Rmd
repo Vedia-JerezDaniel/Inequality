@@ -161,7 +161,7 @@ po3 <-  lp_lin_panel(data_set          = ia1,
                                # l_fd_exog_data    = c('employ_rate'),
                                lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
 
-lp3 = data.frame(x =1:5,estm=c(p3[["irf_panel_mean"]]),low=c(p3[["irf_panel_low"]]),up=c(p3[["irf_panel_up"]]))
+lp3 = data.frame(x =1:5,estm=c(po3[["irf_panel_mean"]]),low=c(po3[["irf_panel_low"]]),up=c(po3[["irf_panel_up"]]))
 
 lt3 = rbind(po3[["reg_summaries"]][[1]][1,], po3[["reg_summaries"]][[2]][1,],
            po3[["reg_summaries"]][[3]][1,], po3[["reg_summaries"]][[4]][1,],
@@ -372,15 +372,15 @@ cfi <- function(hori, me, low, up, color, tit) {
 
 ```{r}
 ## "Education_exp"
-y1 = max(lpo1$up) + 0.05
-y2 = min(lpo1$low) - 0.05
+y1 = max(lpo1$up) + 0.005
+y2 = min(lpo1$low) - 0.005
 
 par(mfrow=c(1,2))
 
 cfi(lpo1$x, lpo1$estm,lpo1$low,lpo1$up, 'blue', 'Boom')
 
-y1 = max(lpo1b$up) + 0.05
-y2 = min(lpo1b$low) - 0.05
+y1 = max(lpo1b$up) + 0.005
+y2 = min(lpo1b$low) - 0.005
 
 cfi(lpo1b$x,lpo1b$estm,lpo1b$low,lpo1b$up, 'firebrick', 'Bust')
 ```

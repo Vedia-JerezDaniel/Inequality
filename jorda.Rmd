@@ -28,41 +28,45 @@ attach(ia1)
 ```
 
 ```{r}
-ia6 <- as.data.frame(ia6 %>%
-  arrange(idem, year) %>%  # Sort by firm and tsocn by year
-  group_by(idem) %>%      # Tell dplyr to go within each firm
-  mutate(gdppc_gro = GDP_pc/(lag(GDP_pc)-1),
-         gdp_gro = GDP/(lag(GDP)-1),
-         insde_d = ins_effic/(lag(ins_effic)-1),
-         tot_d = TOT/(lag(TOT)-1),
-         debt_d = Gov_debt/(lag(Gov_debt)-1),
-         redis = Gini_market - Gini_net/Gini_net,
-         pi_m = PIT*mrp_all,
-         pi_a = PIT*arp_mid,
-         rd = sav_gdp*res_1mill,
-         rd1= sav_gdp*RD_gdp,
-         dtrade = Trade-lag(Trade),
-         lgini = lag(Gini_net),
-         lgdpg = lag(gdp_gro),
-         leduc = lag(Education_exp),
-         lkind = lag(Soc_kind), lpay=lag(Soc_payable)))
+# ia6 <- as.data.frame(ia6 %>%
+#   arrange(idem, year) %>%  # Sort by firm and tsocn by year
+#   group_by(idem) %>%      # Tell dplyr to go within each firm
+#   mutate(gdppc_gro = GDP_pc/(lag(GDP_pc)-1),
+#          gdp_gro = GDP/(lag(GDP)-1),
+#          insde_d = ins_effic/(lag(ins_effic)-1),
+#          tot_d = TOT/(lag(TOT)-1),
+#          debt_d = Gov_debt/(lag(Gov_debt)-1),
+#          redis = Gini_market - Gini_net/Gini_net,
+#          pi_m = PIT*mrp_all,
+#          pi_a = PIT*arp_mid,
+#          rd = sav_gdp*res_1mill,
+#          rd1= sav_gdp*RD_gdp,
+#          dtrade = Trade-lag(Trade),
+#          lgini = lag(Gini_net),
+#          lgdpg = lag(gdp_gro),
+#          leduc = lag(Education_exp),
+#          lkind = lag(Soc_kind), lpay=lag(Soc_payable)))
 ```
 
 ```{r}
-library(datawizard)
+#  No CORRER YA DEFINIDO EN VARIABLES
 
-dm = demean(ia6, select = ~ Gini_net+ gdp_gro, group = "idem", suffix_demean = "_within")
-
-dm <- dm %>% select(ends_with('_within'))
-
-colnames(dm)<-gsub("_within","dm",colnames(dm))
-
-ia1 = cbind(ia1, dm)
-ia2 = cbind(ia2, dm)
-ia3 = cbind(ia3, dm)
-ia4 = cbind(ia4, dm)
-ia5 = cbind(ia5, dm)
-ia6 = cbind(ia6, dm)
+# library(datawizard)
+# 
+# dm = demean(ia6, select = ~ Gini_net+ gdp_gro, group = "idem", suffix_demean = "_within")
+# 
+# dm <- dm %>% select(ends_with('_within'))
+# 
+# colnames(dm)<-gsub("_within","dm",colnames(dm))
+# 
+# ia1 = cbind(ia1, dm)
+# ia2 = cbind(ia2, dm)
+# ia3 = cbind(ia3, dm)
+# ia4 = cbind(ia4, dm)
+# ia5 = cbind(ia5, dm)
+# ia6 = cbind(ia6, dm)
+# 
+# ia1 = select(ia1,-123,-124)
 
 ```
 
@@ -76,22 +80,22 @@ ia6 = cbind(ia6, dm)
 # ia2 <- ia2 %>%
 #   mutate(dumm = ifelse( year %in% c(1991, 1992,2000, 2001, 2008, 2009, 2011, 2013), 1, 0))
 
-b1 = ia1 %>% filter(year %in% c(1991, 1992, 1993, 2000, 2001, 2008, 2009, 2011, 2012, 2013))
-b2 = ia2 %>% filter(year %in% c(1991, 1992, 1993, 2000, 2001, 2008, 2009, 2011, 2012, 2013))
-b3 = ia3 %>% filter(year %in% c(1991, 1992, 1993, 2000, 2001, 2008, 2009, 2011, 2012, 2013))
-b4 = ia4 %>% filter(year %in% c(2008, 2009, 2011, 2012, 2013))
+b1 = ia1 %>% select(everything()) %>% filter(year %in% c(1991, 1992, 1993, 2000, 2001, 2008, 2009, 2011, 2012, 2013))
+b2 = ia2 %>% select(everything()) %>%  filter(year %in% c(1991, 1992, 1993, 2000, 2001, 2008, 2009, 2011, 2012, 2013))
+b3 = ia3 %>% select(everything()) %>% filter(year %in% c(1991, 1992, 1993, 2000, 2001, 2008, 2009, 2011, 2012, 2013))
+b4 = ia4 %>% select(everything()) %>% filter(year %in% c(2008, 2009, 2011, 2012, 2013))
 
-bo1 = ia1 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
-bo2 = ia2 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
-bo3 = ia3 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
-bo4 = ia4 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
-bo5 = ia5 %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+bo1 = ia1 %>% select(everything()) %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+bo2 = ia2 %>% select(everything()) %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+bo3 = ia3 %>% select(everything()) %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+bo4 = ia4 %>% select(everything()) %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
+bo5 = ia5 %>% select(everything()) %>% filter (year %in% c(1994,1995,1996,1997,1998,2003,2004,2005,2006,2010,2015,2016,2017,2018))
 
 ```
 
 
 ```{r}
-pror1 = glm(ed_bb ~ lag(Gini_net,1) + Education_exp + employ_rate + Trade, data=b1, family=binomial(link="probit"), na.action = na.exclude)
+pror1 = glm(ed_bb ~ lag(Gini_net,1) + Education_exp + employ_rate + Trade, data=ia5, family=binomial(link="probit"), na.action = na.exclude)
 summ(pror1)
 # # 
 # pror1 = glm(he_bb ~ Gini_net + Health_exp +(gdp_gro)+ employ_rate , data=ia6, family=binomial(link="probit"), na.action = na.exclude)
@@ -113,12 +117,12 @@ summ(pror1)
 # summ(pror1)
 
 # ln1['phat0'] = predict(pror, type = 'response')
-ia1['phat0'] = predict(pror1, type = 'response')
+ia1['phat0'] = predict(pror1,  type = 'response')
 ia2['phat0'] = predict(pror1, type = 'response')
-ia3['phat0'] = predict(pror1, type = 'response')
-ia4['phat0'] = predict(pror1, type = 'response')
-ia5['phat0'] = predict(pror1, type = 'response')
-ia6['phat0'] = predict(pror1, type = 'response')
+ia3['phat0'] = predict(pror1,  type = 'response')
+ia4['phat0'] = predict(pror1,  type = 'response')
+ia5['phat0'] = predict(pror1,  type = 'response')
+ia6['phat0'] = predict(pror1,  type = 'response')
 
 plot(ia2$phat0, ia6$phat0)
 
@@ -146,14 +150,14 @@ MODELO NO TRUNCADO
 
 ```{r}
 
-ia1['invwt'] = ia1$kind_bb/ia1$phat0 + (1-ia1$kind_bb)/(1-ia1$phat0)
-ia2['invwt'] = ia2$kind_bb/ia2$phat0 + (1-ia2$kind_bb)/(1-ia2$phat0)
-ia3['invwt'] = ia3$kind_bb/ia3$phat0 + (1-ia3$kind_bb)/(1-ia3$phat0)
-ia4['invwt'] = ia4$kind_bb/ia4$phat0 + (1-ia4$kind_bb)/(1-ia4$phat0)
-ia5['invwt'] = ia5$kind_bb/ia5$phat0 + (1-ia5$kind_bb)/(1-ia5$phat0)
-ia6['invwt'] = ia6$kind_bb/ia6$phat0 + (1-ia6$kind_bb)/(1-ia6$phat0)
+ia1['invwt'] = ia1$Education_exp/ia1$phat0 + (1-ia1$Education_exp)/(1-ia1$phat0)
+ia2['invwt'] = ia2$Education_exp/ia2$phat0 + (1-ia2$Education_exp)/(1-ia2$phat0)
+ia3['invwt'] = ia3$Education_exp/ia3$phat0 + (1-ia3$Education_exp)/(1-ia3$phat0)
+ia4['invwt'] = ia4$Education_exp/ia4$phat0 + (1-ia4$Education_exp)/(1-ia4$phat0)
+ia5['invwt'] = ia5$Education_exp/ia5$phat0 + (1-ia5$Education_exp)/(1-ia5$phat0)
+ia6['invwt'] = ia6$Education_exp/ia6$phat0 + (1-ia6$Education_exp)/(1-ia6$phat0)
 
-plot(ia2$invwt, ia5$invwt)
+plot(ia5$invwt, ia6$invwt)
 
 ```
 
@@ -161,12 +165,12 @@ MODELO TRUNCADO
 
 ```{r}
 
-ia1['invwt'] = ia1$kind_bb/ia1$phat + (1-ia1$kind_bb)/(1-ia1$phat)
-ia2['invwt'] = ia2$kind_bb/ia1$phat + (1-ia2$kind_bb)/(1-ia1$phat)
-ia3['invwt'] = ia3$kind_bb/ia1$phat + (1-ia3$kind_bb)/(1-ia1$phat)
-ia4['invwt'] = ia4$kind_bb/ia1$phat + (1-ia4$kind_bb)/(1-ia1$phat)
-ia5['invwt'] = ia5$kind_bb/ia1$phat + (1-ia5$kind_bb)/(1-ia1$phat)
-ia6['invwt'] = ia6$kind_bb/ia1$phat + (1-ia6$kind_bb)/(1-ia1$phat)
+ia1['invwt'] = ia1$Education_exp/ia1$phat + (1-ia1$Education_exp)/(1-ia1$phat)
+ia2['invwt'] = ia2$Education_exp/ia1$phat + (1-ia2$Education_exp)/(1-ia1$phat)
+ia3['invwt'] = ia3$Education_exp/ia1$phat + (1-ia3$Education_exp)/(1-ia1$phat)
+ia4['invwt'] = ia4$Education_exp/ia1$phat + (1-ia4$Education_exp)/(1-ia1$phat)
+ia5['invwt'] = ia5$Education_exp/ia1$phat + (1-ia5$Education_exp)/(1-ia1$phat)
+ia6['invwt'] = ia6$Education_exp/ia1$phat + (1-ia6$Education_exp)/(1-ia1$phat)
 
 ```
 
@@ -208,7 +212,7 @@ ia6['pip_a'] = ia6$PIT*ia6$mrp_all
 # invr1 = opm(Gini_net ~lag(gdp_gro,1) + ia1$pip_a + mrp_all + PIT + Gov_ex + Secondary_ed , data = ia1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
 # summary(invr1) -- PIT
 
-invr1 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+invr1 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = b1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
 summary(invr1)
 
 invr2 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia2, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
@@ -251,7 +255,7 @@ ia1 %>%
         scale_color_hue(direction = 1) +
         theme_minimal()
 
-plot(mu[,3])
+plot(mu01[3:10])
 
 ```
 
