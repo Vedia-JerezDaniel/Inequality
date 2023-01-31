@@ -9,8 +9,26 @@ library(jtools)
 library(clipr)
 ```
 
+
 ```{r}
-data_sample <- seq(1990, 2018)[which(!(seq(1990, 2018) %in% c(seq(1991, 1992,1993),seq(2001,2002,2003), seq(2008, 2009), seq(2011, 2012,2013))))]
+library(readr)
+
+ln1 <- read_delim("ln1.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia1 <- read_delim("ia1.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia2 <- read_delim("ia2.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia3 <- read_delim("ia3.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia4 <- read_delim("ia4.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia5 <- read_delim("ia5.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia6 <- read_delim("ia6.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+
+attach(ia1)
+```
+
+```{r}
+# data_sample <- seq(1991, 2013)[which((seq(1991, 2013) %in% c(seq(1991,1992), seq(1993,2001), seq(2002,2003), seq(2008, 2009), seq(2011,2012) ,seq(2013))))]
+
+data_sub = c(1991,1992,1993,2001,2002,2003,2008,2009,2011,2012,2013)
+
 ```
 
 
@@ -88,25 +106,25 @@ colnames(kind_beta) <- c("1", "2","3", "4","5", "6" )
 
 
 ```{r}
-library(lpirfs)
 
 po1 <-  lp_lin_panel(data_set          = ia1,
-                             # data_sample       = data_sample,
+                               # data_sample       = ,
                                cumul_mult        = TRUE,
-                               shock             = "Education_exp",
-                               endog_data = "gdp_gro",
-                               diff_shock        = FALSE,
+                               shock             = "Secondary_ed",
+                               endog_data = "Gini_net",
+                               diff_shock        = TRUE,
                                panel_model       = "within",
-                               panel_effect      = "twoways",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                               gmm_transformation = "ld",
-                               # instrum =   c('invwt'), iv_reg = TRUE,
-                               robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex','invwt'),
-                               lags_exog_data = 1,
-                               l_exog_data    =c('gdp_gro','Secondary_ed'),
+                               panel_effect      = "individual",
+                               instrum =   c('Education_exp', 'invwt', 'gdp_gro'), iv_reg = TRUE,
+                               robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",                                                          c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    =c('Gov_ex'),
+                               c_fd_exog_data = c('GDP_tren', 'Education_exp'),
+                               l_fd_exog_data = c('GDP_tren', 'Education_exp'),
                                # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
+
+plot_lin(po1)
 
 lpo1 = data.frame(x =1:5,estm=c(po1[["irf_panel_mean"]]),low=c(po1[["irf_panel_low"]]),up=c(po1[["irf_panel_up"]]))
 
@@ -120,20 +138,19 @@ write_clip(lto)
 po2 <-  lp_lin_panel(data_set          = ia1,
                              # data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = FALSE,
+                               cumul_mult        = TRUE,
                                shock             = "Soc_payable",
-                               diff_shock        = FALSE,
+                               diff_shock        = TRUE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                            gmm_transformation = "ld",  
-                               # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex', 'invwt'),
-                               lags_exog_data = 1,
-                               l_exog_data    = c('gdp_gro','Secondary_ed'),
+                               c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    = c('Gov_ex'),
+                               c_fd_exog_data = c('GDP_tren', 'Secondary_ed'),
+                               l_fd_exog_data = c('GDP_tren', 'Secondary_ed','employ_rate'),
                                # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
 
 lpo2 = data.frame(x =1:5,estm=c(po2[["irf_panel_mean"]]),low=c(po2[["irf_panel_low"]]),up=c(po2[["irf_panel_up"]]))
 
@@ -146,20 +163,18 @@ write_clip(lto2)
 po3 <-  lp_lin_panel(data_set          = ia1,
                              # data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = FALSE,
+                               cumul_mult        = TRUE,
                                shock             = "Soc_kind",
-                               diff_shock        = FALSE,
+                               diff_shock        = TRUE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                                gmm_transformation = "ld",
-                               # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex', 'invwt'),
-                               lags_exog_data = 1,
-                               l_exog_data    = c('gdp_gro','Secondary_ed'),
-                               # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    = c('Gov_ex'),
+                               c_fd_exog_data = c('Secondary_ed','GDP_tren'),
+                               l_fd_exog_data = c('Secondary_ed','GDP_tren'),
+                              lags_fd_exog_data = 2, confint = 1.67, hor = 5)
 
 lp3 = data.frame(x =1:5,estm=c(po3[["irf_panel_mean"]]),low=c(po3[["irf_panel_low"]]),up=c(po3[["irf_panel_up"]]))
 
@@ -172,20 +187,18 @@ write_clip(lt3)
 po4 <-  lp_lin_panel(data_set          = ia1,
                              # data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = FALSE,
+                               cumul_mult        = TRUE,
                                shock             = 'Property_taxes',
-                               diff_shock        = FALSE,
+                               diff_shock        = TRUE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                                gmm_transformation = "ld",
-                               # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex', 'invwt'),
-                               lags_exog_data = 1,
-                               l_exog_data    = c('gdp_gro','Secondary_ed'),
-                               # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    =c('Gov_ex'),
+                               c_fd_exog_data = c('GDP_tren', 'employ_rate'),
+                               l_fd_exog_data = c('GDP_tren', 'employ_rate'),
+                               lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
 
 lpo4 = data.frame(x =1:5,estm=c(po4[["irf_panel_mean"]]),low=c(po4[["irf_panel_low"]]),up=c(po4[["irf_panel_up"]]))
 
@@ -198,20 +211,17 @@ write_clip(lto4)
 po5 <-  lp_lin_panel(data_set          = ia1,
                              # data_sample       = data_sample,
                                endog_data        = c("Gini_net"),
-                               cumul_mult        = FALSE,
+                               cumul_mult        = TRUE,
                                shock             = 'pip_a',
-                               diff_shock        = FALSE,
+                               diff_shock        = TRUE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                                gmm_transformation = "ld",
-                               # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex', 'invwt', 'PIT', 'mrp_all'),
-                               lags_exog_data = 1,
-                               l_exog_data    = c('gdp_gro','Secondary_ed'),
-                               # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    =c('GDP_tren','employ_rate'),
+                               l_fd_exog_data = c('GDP_tren','employ_rate','mrp_all'),
+                               lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
 
 lpo5 = data.frame(x =1:5,estm=c(po5[["irf_panel_mean"]]),low=c(po5[["irf_panel_low"]]),up=c(po5[["irf_panel_up"]]))
 
@@ -226,22 +236,21 @@ write_clip(lto5)
 
 ```{r}
 po1b <-  lp_lin_panel(data_set          = ia1,
-                             data_sample       = data_sample,
+                               data_sample       = data_sub,
                                cumul_mult        = TRUE,
-                               shock             = "Education_exp",
-                               endog_data = "gdp_gro",
-                               diff_shock        = FALSE,
+                               shock             = "Secondary_ed",
+                               endog_data = "Gini_net",
+                               diff_shock        = TRUE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                               gmm_transformation = "ld",
-                               # instrum =   c('invwt'), iv_reg = TRUE,
-                               robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex','invwt'),
-                               lags_exog_data = 1,
-                               l_exog_data    =c('gdp_gro'),
+                               instrum =   c('Education_exp', 'invwt', 'gdp_gro'), iv_reg = TRUE,
+                               robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",                                                          c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    =c('Gov_ex'),
+                               c_fd_exog_data = c('GDP_tren', 'Education_exp'),
+                               l_fd_exog_data = c('GDP_tren', 'Education_exp'),
                                # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
 
 lpo1b = data.frame(x =1:5,estm=c(po1b[["irf_panel_mean"]]),low=c(po1b[["irf_panel_low"]]),up=c(po1b[["irf_panel_up"]]))
 
@@ -253,22 +262,23 @@ write_clip(ltob)
 
 
 po2b <-  lp_lin_panel(data_set          = ia1,
-                               data_sample       = data_sample,
+                               data_sample       = data_sub,
                                endog_data        = c("Gini_net"),
                                cumul_mult        = FALSE,
                                shock             = "Soc_payable",
                                diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                              gmm_transformation = "ld",
-                               # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex', 'invwt'),
-                               lags_exog_data = 1,
-                               l_exog_data    = c('gdp_gro'),
+                               c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    = c('Gov_ex'),
+                               c_fd_exog_data = c('GDP_tren', 'Secondary_ed'),
+                               l_fd_exog_data = c('GDP_tren', 'Secondary_ed','employ_rate'),
                                # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
+
+
 
 lpo2b = data.frame(x =1:5,estm=c(po2b[["irf_panel_mean"]]),low=c(po2b[["irf_panel_low"]]),up=c(po2b[["irf_panel_up"]]))
 
@@ -279,22 +289,20 @@ lto2b = rbind(po2b[["reg_summaries"]][[1]][1,], po2b[["reg_summaries"]][[2]][1,]
 write_clip(lto2b)
 
 po3b <-  lp_lin_panel(data_set          = ia1,
-                             data_sample       = data_sample,
+                             data_sample       = data_sub,
                                endog_data        = c("Gini_net"),
                                cumul_mult        = FALSE,
                                shock             = "Soc_kind",
                                diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                                gmm_transformation = "ld",
-                               # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex', 'invwt'),
-                               lags_exog_data = 1,
-                               l_exog_data    = c('gdp_gro','Secondary_ed'),
-                               # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    = c('Gov_ex'),
+                               c_fd_exog_data = c('Secondary_ed','GDP_tren'),
+                               l_fd_exog_data = c('Secondary_ed','GDP_tren'),
+                               lags_fd_exog_data = 2, confint = 1.67, hor = 5)
 
 lpo3b = data.frame(x =1:5,estm=c(po3b[["irf_panel_mean"]]),low=c(po3b[["irf_panel_low"]]),up=c(po3b[["irf_panel_up"]]))
 
@@ -305,22 +313,20 @@ lt3b = rbind(po3b[["reg_summaries"]][[1]][1,], po3b[["reg_summaries"]][[2]][1,],
 write_clip(lt3b)
 
 po4b <-  lp_lin_panel(data_set          = ia1,
-                             data_sample       = data_sample,
+                             data_sample       = data_sub,
                                endog_data        = c("Gini_net"),
                                cumul_mult        = FALSE,
                                shock             = 'Property_taxes',
                                diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                                gmm_transformation = "ld",
-                               # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex', 'invwt'),
-                               lags_exog_data = 1,
-                               l_exog_data    = c('gdp_gro','Secondary_ed'),
-                               # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    =c('Gov_ex'),
+                               c_fd_exog_data = c('GDP_tren', 'employ_rate'),
+                               l_fd_exog_data = c('GDP_tren', 'employ_rate'),
+                               lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
 
 lpo4b = data.frame(x =1:5,estm=c(po4b[["irf_panel_mean"]]),low=c(po4b[["irf_panel_low"]]),up=c(po4b[["irf_panel_up"]]))
 
@@ -331,22 +337,19 @@ lto4b = rbind(po4b[["reg_summaries"]][[1]][1,], po4b[["reg_summaries"]][[2]][1,]
 write_clip(lto4b)
 
 po5b <-  lp_lin_panel(data_set          = ia1,
-                             data_sample       = data_sample,
+                             data_sample       = data_sub,
                                endog_data        = c("Gini_net"),
                                cumul_mult        = FALSE,
                                shock             = 'pip_a',
                                diff_shock        = FALSE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               gmm_model = 'twosteps', gmm_effect = 'individual',
-                                gmm_transformation = "ld",
-                               # instrum =   c('invwt'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",
-                               c_exog_data   = c('Gov_ex', 'invwt', 'PIT', 'mrp_all'),
-                               lags_exog_data = 1,
-                               l_exog_data    = c('gdp_gro','Secondary_ed'),
-                               # l_fd_exog_data    = c('employ_rate'),
-                               lags_fd_exog_data = 1,  confint  = 1.96, hor = 5)
+                               c_exog_data   = c('Gov_ex'),
+                               lags_exog_data = 2,
+                               l_exog_data    =c('GDP_tren','employ_rate'),
+                               l_fd_exog_data = c('GDP_tren','employ_rate','mrp_all'),
+                               lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
 
 lpo5b = data.frame(x =1:5,estm=c(po5b[["irf_panel_mean"]]),low=c(po5b[["irf_panel_low"]]),up=c(po5b[["irf_panel_up"]]))
 

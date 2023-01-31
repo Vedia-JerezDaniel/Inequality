@@ -8,7 +8,8 @@ _________________________________________________________
 
 18/09
 
-* Graphs (boom & bust) darle una vuelta más! and continue with results draft.
+* Graphs (boom & bust) dar una vuelta más! and continue with results draft. // done (30/02)
+* Terminar plots revisando ejemplos del paquete
 
 25/09
 * Gox expenditure (boom & bust) theory between lags and current.
