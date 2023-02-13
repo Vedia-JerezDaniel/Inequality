@@ -25,9 +25,10 @@ attach(ia1)
 ```
 
 ```{r}
-# data_sample <- seq(1991, 2013)[which((seq(1991, 2013) %in% c(seq(1991,1992), seq(1993,2001), seq(2002,2003), seq(2008, 2009), seq(2011,2012) ,seq(2013))))]
+# data_sample <- seq(1991, 2018)[which((seq(1991, 2018) %in% c(seq(1991,1992), seq(1993,2001), seq(2002,2003), seq(2008, 2009), seq(2011,2012) ,seq(2013))))]
 
 data_sub = c(1991,1992,1993,2001,2002,2003,2008,2009,2011,2012,2013)
+data_bo = c(1990,1994,1995,1996,1997,1998,1999,2000,2004,2005,2006,2007,2010,2014,2015,2016,2017,2018)
 
 ```
 
@@ -102,25 +103,75 @@ kind_beta = cbind.data.frame(invr1[["samples"]][["beta"]][,2], invr2[["samples"]
 
 colnames(kind_beta) <- c("1", "2","3", "4","5", "6" ) 
 ```
+```{r}
+ia1   <- ia1 %>% group_by(idem) %>% mutate(ins_ed = 0.7*Education_exp + rnorm(length(Education_exp), 0, sd(na.omit(Education_exp))/10)) %>% ungroup()
+```
 
+```{r}
+df_1 <- na.omit(ia1)
+
+#Remove rows with NA's using complete.cases
+df_2 <- ia1[complete.cases(ia1), ] 
+
+#Remove rows with NA's using rowSums()
+df_3 <- ia1[rowSums(is.na(ia1)) == 0, ] 
+```
+
+
+```{r}
+ponl <-  lp_nl_panel(data_set          = df_1,
+                               data_sample       = data_bo,
+                               cumul_mult        = TRUE,
+                               shock             = "Education_exp",
+                               endog_data = "Gini_net",
+                               diff_shock        = TRUE,
+                               panel_model       = "within",
+                               panel_effect      = "individual",
+                               # instrum =   c('ins_ed'), iv_reg = TRUE,
+                               robust_cov   = "vcovSCC", 
+                               # robust_type="HC0", robust_cluster= "vcovHC",   
+                            c_exog_data   = c('Gov_ex'),
+                              switching = 'lgdpg', 
+                               lags_exog_data = 2,
+                                lag_switching     = TRUE,
+                               use_hp            = TRUE,
+                               lambda            = 6.25,
+                               gamma             = 10,
+                               l_exog_data    =c('Gov_ex'),
+                               c_fd_exog_data = c('GDP_tren'),
+                               l_fd_exog_data = c('GDP_tren', 'Secondary_ed'),
+                               # l_fd_exog_data    = c('employ_rate'),
+                               lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
+
+```
+
+```{r}
+nl_plots <- plot_nl(ponl)
+
+ # Compare states
+library(ggpubr)
+library(gridExtra)
+combine_plots <- list(nl_plots$gg_s1[[1]], nl_plots$gg_s2[[1]])
+marrangeGrob(combine_plots, nrow = 1, ncol = 2, top = NULL)
+```
 
 
 ```{r}
 
 po1 <-  lp_lin_panel(data_set          = ia1,
-                               # data_sample       = ,
+                               data_sample       = data_bo,
                                cumul_mult        = TRUE,
-                               shock             = "Secondary_ed",
+                               shock             = "Education_exp",
                                endog_data = "Gini_net",
                                diff_shock        = TRUE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               instrum =   c('Education_exp', 'invwt', 'gdp_gro'), iv_reg = TRUE,
+                               # instrum =   c('ins_ed'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",                                                          c_exog_data   = c('Gov_ex'),
                                lags_exog_data = 2,
                                l_exog_data    =c('Gov_ex'),
-                               c_fd_exog_data = c('GDP_tren', 'Education_exp'),
-                               l_fd_exog_data = c('GDP_tren', 'Education_exp'),
+                               c_fd_exog_data = c('GDP_tren'),
+                               l_fd_exog_data = c('GDP_tren', 'Secondary_ed'),
                                # l_fd_exog_data    = c('employ_rate'),
                                lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
 
@@ -136,7 +187,7 @@ write_clip(lto)
 
 
 po2 <-  lp_lin_panel(data_set          = ia1,
-                             # data_sample       = data_sample,
+                               data_sample       = data_bo,
                                endog_data        = c("Gini_net"),
                                cumul_mult        = TRUE,
                                shock             = "Soc_payable",
@@ -161,7 +212,7 @@ lto2 = rbind(po2[["reg_summaries"]][[1]][1,], po2[["reg_summaries"]][[2]][1,],
 write_clip(lto2)
 
 po3 <-  lp_lin_panel(data_set          = ia1,
-                             # data_sample       = data_sample,
+                               data_sample       = data_bo,
                                endog_data        = c("Gini_net"),
                                cumul_mult        = TRUE,
                                shock             = "Soc_kind",
@@ -176,16 +227,16 @@ po3 <-  lp_lin_panel(data_set          = ia1,
                                l_fd_exog_data = c('Secondary_ed','GDP_tren'),
                               lags_fd_exog_data = 2, confint = 1.67, hor = 5)
 
-lp3 = data.frame(x =1:5,estm=c(po3[["irf_panel_mean"]]),low=c(po3[["irf_panel_low"]]),up=c(po3[["irf_panel_up"]]))
+lpo3 = data.frame(x =1:5,estm=c(po3[["irf_panel_mean"]]),low=c(po3[["irf_panel_low"]]),up=c(po3[["irf_panel_up"]]))
 
-lt3 = rbind(po3[["reg_summaries"]][[1]][1,], po3[["reg_summaries"]][[2]][1,],
+lto3 = rbind(po3[["reg_summaries"]][[1]][1,], po3[["reg_summaries"]][[2]][1,],
            po3[["reg_summaries"]][[3]][1,], po3[["reg_summaries"]][[4]][1,],
            po3[["reg_summaries"]][[5]][1,])
 
-write_clip(lt3)
+write_clip(lto3)
 
 po4 <-  lp_lin_panel(data_set          = ia1,
-                             # data_sample       = data_sample,
+                               data_sample       = data_bo,
                                endog_data        = c("Gini_net"),
                                cumul_mult        = TRUE,
                                shock             = 'Property_taxes',
@@ -209,7 +260,7 @@ lto4 = rbind(po4[["reg_summaries"]][[1]][1,], po4[["reg_summaries"]][[2]][1,],
 write_clip(lto4)
 
 po5 <-  lp_lin_panel(data_set          = ia1,
-                             # data_sample       = data_sample,
+                               data_sample       = data_bo,
                                endog_data        = c("Gini_net"),
                                cumul_mult        = TRUE,
                                shock             = 'pip_a',
@@ -238,17 +289,16 @@ write_clip(lto5)
 po1b <-  lp_lin_panel(data_set          = ia1,
                                data_sample       = data_sub,
                                cumul_mult        = TRUE,
-                               shock             = "Secondary_ed",
+                               shock             = "Education_exp",
                                endog_data = "Gini_net",
                                diff_shock        = TRUE,
                                panel_model       = "within",
                                panel_effect      = "individual",
-                               instrum =   c('Education_exp', 'invwt', 'gdp_gro'), iv_reg = TRUE,
                                robust_cov   = "vcovSCC", robust_type="HC0", robust_cluster= "vcovHC",                                                          c_exog_data   = c('Gov_ex'),
                                lags_exog_data = 2,
                                l_exog_data    =c('Gov_ex'),
-                               c_fd_exog_data = c('GDP_tren', 'Education_exp'),
-                               l_fd_exog_data = c('GDP_tren', 'Education_exp'),
+                               c_fd_exog_data = c('GDP_tren'),
+                               l_fd_exog_data = c('GDP_tren', 'Secondary_ed'),
                                # l_fd_exog_data    = c('employ_rate'),
                                lags_fd_exog_data = 2,  confint  = 1.67, hor = 5)
 
@@ -365,13 +415,16 @@ write_clip(lto5b)
 ```{r}
 cfi <- function(hori, me, low, up, color, tit) {
   plot(hori, me, ylim = c(y2,y1), type = "l", main = tit, xlab = "horizon", ylab= '')
-  polygon(c(hori,rev(hori)),c(low,rev(up)), col = adjustcolor("gray70" ,alpha.f=0.3) , border = NA)
+  polygon(c(hori,rev(hori)),c(low,rev(up)), col = adjustcolor("gray70" ,alpha.f=0.4) , border = NA)
   lines(hori, me, lwd = 2, col = color)
-  lines(hori, up, lty = 'dashed', col="gray")
-  lines(hori, low, lty = 'dashed', col="gray")
+  lines(hori, up, lty = 1, col="gray50")
+  lines(hori, low, lty = 1, col="gray50")
+  abline(h =0, col='black', lty = 2 )
 }
 
 ```
+
+
 
 ```{r}
 ## "Education_exp"
@@ -380,12 +433,12 @@ y2 = min(lpo1$low) - 0.005
 
 par(mfrow=c(1,2))
 
-cfi(lpo1$x, lpo1$estm,lpo1$low,lpo1$up, 'blue', 'Boom')
+cfi(lpo1$x, lpo1$estm,lpo1$low,lpo1$up, 'royalblue1', 'Boom')
 
 y1 = max(lpo1b$up) + 0.005
 y2 = min(lpo1b$low) - 0.005
 
-cfi(lpo1b$x,lpo1b$estm,lpo1b$low,lpo1b$up, 'firebrick', 'Bust')
+cfi(lpo1b$x,lpo1b$estm,lpo1b$low,lpo1b$up, 'sienna2', 'Bust')
 ```
 
 
@@ -402,6 +455,22 @@ y1 = max(lpo2b$up) + 0.05
 y2 = min(lpo2b$low) - 0.05
 
 cfi(lpo2b$x,lpo2b$estm,lpo2b$low,lpo2b$up, 'firebrick', 'Bust')
+```
+
+
+```{r}
+## "Payable Transfers"
+y1 = max(lpo3$up) + 0.05
+y2 = min(lpo3b$low) - 0.05
+
+par(mfrow=c(1,2))
+
+cfi(lpo3$x, lpo3$estm,lpo3$low,lpo3$up, 'blue', 'Boom')
+
+y1 = max(lpo2b$up) + 0.05
+y2 = min(lpo2b$low) - 0.05
+
+cfi(lpo3b$x,lpo3b$estm,lpo3b$low,lpo3b$up, 'firebrick', 'Bust')
 ```
 
 
@@ -451,3 +520,33 @@ write.csv(bo4,"bo4.csv",row.names = FALSE)
 write.csv(bo5,"bo5.csv",row.names = FALSE)
 write.csv(bo6,"bo6.csv",row.names = FALSE)
 ```
+
+```{r}
+GYsc            <- mean(exp(ia1$Gini_net)/exp(ia1$Education_exp), na.rm = TRUE)
+
+multiplier_mean <- po1$irf_panel_mean*GYsc
+multiplier_up   <- po1$irf_panel_up*GYsc
+multiplier_low  <- po1$irf_panel_low*GYsc
+
+results_lin_iv  <- list(irf_lin_mean  = multiplier_mean,
+                        irf_lin_up    = multiplier_up,
+                        irf_lin_low   = multiplier_low,
+                        specs         = po1$specs)
+x =1:5
+# Make new plots 
+plot_lin(results_lin_iv)
+
+y1 = max(results_lin_iv$irf_lin_up) + 0.005
+y2 = min(results_lin_iv$irf_lin_low) - 0.005
+
+par(mfrow=c(1,2))
+
+cfi(x , results_lin_iv$irf_lin_mean,results_lin_iv$irf_lin_low,results_lin_iv$irf_lin_up, 'blue', 'Boom')
+
+
+```
+```{r}
+endog_data <- interest_rules_var_data
+```
+
+
