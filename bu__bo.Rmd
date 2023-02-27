@@ -103,9 +103,38 @@ kind_beta = cbind.data.frame(invr1[["samples"]][["beta"]][,2], invr2[["samples"]
 
 colnames(kind_beta) <- c("1", "2","3", "4","5", "6" ) 
 ```
+
+
 ```{r}
+library(plm)
+library(mFilter)
+
 ia1   <- ia1 %>% group_by(idem) %>% mutate(ins_ed = 0.7*Education_exp + rnorm(length(Education_exp), 0, sd(na.omit(Education_exp))/10)) %>% ungroup()
+
+df1 <- ia1 %>% group_by(idem) %>%  filter(!is.na(Gov_ex)) %>% 
+  pdata.frame(., index = c("idem","year")) %>% 
+  mutate(hp_trend = mFilter::hpfilter(Gov_ex, type = "lambda", freq = 0.75)$trend)
+
+df2 <- merge(ia1,df1, by = colnames(ia1), all.x = T)
+
 ```
+
+```{r}
+ggplot(df2, mapping = aes(x = year, y = Gov_ex)) + geom_line(aes(linetype = as.factor(idem)))
+library(dplyr)
+library(ggplot2)
+
+df2 %>%
+ filter(idem %in% "Portugal") %>%
+ ggplot(aes(x=year)) +
+ geom_line(aes(y = Gov_ex), colour = "darkred") +
+ geom_line(aes(y = hp_trend), colour = "steelblue") +
+ theme_minimal()
+
+df2 %>% filter(idem %in% "Belgium") %>% min(df2$hp_trend)
+
+```
+
 
 ```{r}
 df_1 <- na.omit(ia1)
@@ -519,6 +548,10 @@ write.csv(bo3,"bo3.csv",row.names = FALSE)
 write.csv(bo4,"bo4.csv",row.names = FALSE)
 write.csv(bo5,"bo5.csv",row.names = FALSE)
 write.csv(bo6,"bo6.csv",row.names = FALSE)
+
+write.csv(df2,"df2.csv",row.names = FALSE)
+
+
 ```
 
 ```{r}
