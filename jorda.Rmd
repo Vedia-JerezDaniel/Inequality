@@ -16,8 +16,8 @@ library(jtools)
 ```{r}
 library(readr)
 
-ln1 <- read_delim("ln1.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia1 <- read_delim("ia1.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ln1 <- read_delim("ln1.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia1 <- read_delim("ia1.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
 ia2 <- read_delim("ia2.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
 ia3 <- read_delim("ia3.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
 ia4 <- read_delim("ia4.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
@@ -95,7 +95,7 @@ bo5 = ia5 %>% select(everything()) %>% filter (year %in% c(1994,1995,1996,1997,1
 
 
 ```{r}
-pror1 = glm(ed_bb ~ lag(Gini_net,1) + Education_exp + employ_rate + Trade, data=ia5, family=binomial(link="probit"), na.action = na.exclude)
+pror1 = glm(ed_bb ~ lag(Gini_net,1) + Education_exp + employ_rate + Trade, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
 summ(pror1)
 # # 
 # pror1 = glm(he_bb ~ Gini_net + Health_exp +(gdp_gro)+ employ_rate , data=ia6, family=binomial(link="probit"), na.action = na.exclude)
@@ -124,7 +124,7 @@ ia4['phat0'] = predict(pror1,  type = 'response')
 ia5['phat0'] = predict(pror1,  type = 'response')
 ia6['phat0'] = predict(pror1,  type = 'response')
 
-plot(ia2$phat0, ia6$phat0)
+plot(ia1$phat0, ia6$phat0)
 
 ```
 
@@ -157,7 +157,7 @@ ia4['invwt'] = ia4$Education_exp/ia4$phat0 + (1-ia4$Education_exp)/(1-ia4$phat0)
 ia5['invwt'] = ia5$Education_exp/ia5$phat0 + (1-ia5$Education_exp)/(1-ia5$phat0)
 ia6['invwt'] = ia6$Education_exp/ia6$phat0 + (1-ia6$Education_exp)/(1-ia6$phat0)
 
-plot(ia5$invwt, ia6$invwt)
+plot(ia1$invwt, ia6$invwt)
 
 ```
 
@@ -195,6 +195,7 @@ ia6['pip_a'] = ia6$PIT*ia6$mrp_all
 
 ```
 
+Table 8.
 
 ```{r}
 # invr1 = lm(Gini_net ~ dplyr::lag(Gini_netdm,1)+dplyr::lag(gdp_grodm,1) +Education_exp + employ_rate, weights = invwt, data = ia1) -- EDUCATION
@@ -212,7 +213,7 @@ ia6['pip_a'] = ia6$PIT*ia6$mrp_all
 # invr1 = opm(Gini_net ~lag(gdp_gro,1) + ia1$pip_a + mrp_all + PIT + Gov_ex + Secondary_ed , data = ia1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
 # summary(invr1) -- PIT
 
-invr1 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = b1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
+invr1 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
 summary(invr1)
 
 invr2 = opm(Gini_net ~lag(gdp_gro,1) + Soc_kind + Gov_ex + Secondary_ed , data = ia2, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt)
@@ -329,7 +330,7 @@ form_iv <- formula(Gini_net ~ Gov_ex|0 |(Soc_kind ~ kind_bb + Quantiles) | idem)
 my_iv_reg <- felm(form_iv, data = ln1)
 summary(my_iv_reg)
 
-wald_iv <- waldtest(my_iv_reg$stage1, ~ pit_bb, lhs=my_iv_reg$stage1$lhs)
+wald_iv <- waldtest(my_iv_reg$stage1, ~ kind_bb, lhs=my_iv_reg$stage1$lhs)
 print(c(wald_iv[5], wald_iv[1]))
 ```
 
