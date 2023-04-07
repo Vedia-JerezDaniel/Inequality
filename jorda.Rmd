@@ -18,11 +18,10 @@ library(readr)
 
 ln1 <- read_delim("ln1.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
 ia1 <- read_delim("ia1.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
-ia2 <- read_delim("ia2.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia3 <- read_delim("ia3.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia4 <- read_delim("ia4.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia5 <- read_delim("ia5.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
-ia6 <- read_delim("ia6.csv", delim = ",", escape_double = FALSE, trim_ws = TRUE)
+ia2 <- read_delim("ia2.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia3 <- read_delim("ia3.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia4 <- read_delim("ia4.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
+ia5 <- read_delim("ia5.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
 attach(ia1)
 ```
@@ -69,6 +68,23 @@ attach(ia1)
 # ia1 = select(ia1,-123,-124)
 
 ```
+Demeaned formula
+
+https://ds4ps.org/pe4ps-textbook/docs/p-040-fixed-effects.html
+
+
+
+```{r}
+# ia1  <- ia1 %>%
+#   group_by(idem) %>%
+#   mutate( mean.pit=mean(PIT), pit.demeaned = PIT - mean.pit) %>%
+# ungroup()
+```
+
+
+```{r}
+```
+
 
 ```{r}
 # ln1 <- ln1 %>%
@@ -289,19 +305,11 @@ write.csv(bo6,"bo6.csv",row.names = FALSE)
 
 tABLE 3 iv BINARY TREATMENT
 
-```{r}
-ia1['pip_a'] = ia1$PIT*ia1$mrp_all
-ia2['pip_a'] = ia2$PIT*ia2$mrp_all
-ia3['pip_a'] = ia3$PIT*ia3$mrp_all
-ia4['pip_a'] = ia4$PIT*ia4$mrp_all
-ia5['pip_a'] = ia5$PIT*ia5$mrp_all
-```
-
 
 ```{r}
 library(lfe)
 
-# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed -1 |0 | (Education_exp ~  ed_bb + pop_gro) |Gini_net | idem) 
+form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed -1 | year+idem | (Education_exp ~  ed_bb + pop_gro) |Gini_net | idem)
 
 # form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed -1 |0 | (Health_exp ~ he_bb + pop_gro)  | idem) 
 
@@ -311,14 +319,51 @@ library(lfe)
 
 # form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed |0 | (Property_taxes ~ prt_bb  + year ) | idem)
 
-form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed| 0 | (pip_a ~ pit_bb + mrp_all) | idem)
+form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed | 0 | (pip_a ~ pit_bb + mrp_all) | idem)
 
-my_iv_reg <- felm(form_iv, data = ia5)
+my_iv_reg <- felm(form_iv, data = ia1)
 summary(my_iv_reg)
 
 wald_iv <- waldtest(my_iv_reg$stage1, ~ pit_bb, lhs=my_iv_reg$stage1$lhs)
 print(c(wald_iv[5], wald_iv[1]))
 ``` 
+
+
+```{r}
+
+form_iv <- formula(Gini_netdm ~ lag(gi_bb,2) | idem |(Education_expdm |gdp_grodm ~ Secondary_ed + Gov_ex + employ_rate + pop_gro))
+my_iv_reg <- felm(form_iv, data = ia1)
+summary(my_iv_reg, robust=TRUE)
+
+form_iv <- formula(Gini_netdm ~ lag(gi_bb,1) + Health_expdm -1 | idem | (gdp_grodm ~ Gov_ex + Secondary_ed  + employ_rate))
+my_iv_reg <- felm(form_iv, data = ia1)
+summary(my_iv_reg)
+
+form_iv <- formula(Gini_netdm ~ lag(gi_bb,2) + Soc_payabledm -1 | idem | (gdp_grodm ~ Gov_ex + Secondary_ed + employ_rate + Deficit))
+my_iv_reg <- felm(form_iv, data = ia1)
+summary(my_iv_reg)
+
+form_iv <- formula(Gini_netdm ~ lag(gi_bb) + Soc_kinddm | idem | (gdp_grodm ~ Gov_ex + Secondary_ed  + employ_rate + Deficit)|idem)
+my_iv_reg <- felm(form_iv, data = ia1)
+summary(my_iv_reg)
+
+form_iv <- formula(Gini_netdm ~ lag(gi_bb,1) + Property_taxesdm -1 | idem | (gdp_grodm ~ Gov_ex + Secondary_ed + Deficit))
+my_iv_reg <- felm(form_iv, data = ia1)
+summary(my_iv_reg)
+
+form_iv <- formula(Gini_netdm ~ lag(gi_bb,1) + PITdm*PIT -1 | idem | (gdp_grodm ~ Gov_ex + Secondary_ed  + Deficit))
+my_iv_reg <- felm(form_iv, data = ia1)
+summary(my_iv_reg)
+
+coeftest(my_iv_reg, vcov = vcovHC, type = "HC1")
+```
+```{r}
+dfList <- list(ia1,ia2,ia3,ia4,ia5)
+form_iv <- formula(Gini_netdm ~ lag(gi_bb,2) | idem |(Education_expdm |gdp_grodm ~ Secondary_ed + Gov_ex + employ_rate + pop_gro))
+lapply(dfList, function(x) {summary(felm(form_iv, data = x), robust=TRUE)} )
+```
+
+
 
 Table 6
 
