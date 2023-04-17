@@ -9,11 +9,17 @@ date: '2022-05-07'
 library(tidyverse)
 library(lpirfs)
 library(dplyr)
-library(OrthoPanels)
 library(jtools)
+library(nlme)
+
+library(broom)
+library(scales)
+library(truncnorm)
+library(ipw)
+library(WeightIt)
 ```
 
-```{r}
+```{r load DB, message=FALSE, warning=FALSE}
 library(readr)
 
 ln1 <- read_delim("ln1.csv", delim = ";", escape_double = FALSE, trim_ws = TRUE)
@@ -111,11 +117,11 @@ bo5 = ia5 %>% select(everything()) %>% filter (year %in% c(1994,1995,1996,1997,1
 
 
 ```{r}
-pror1 = glm(ed_bb ~ lag(Gini_net,1) + Education_exp + employ_rate + Trade, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
-summ(pror1)
-# # 
-# pror1 = glm(he_bb ~ Gini_net + Health_exp +(gdp_gro)+ employ_rate , data=ia6, family=binomial(link="probit"), na.action = na.exclude)
+# pror1 = glm(ed_bb ~ dplyr::lag(Gini_net,1)+ dplyr::lag(gdp_gro,1)+ lag(Education_exp,1) + employ_rate  + idem -1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
 # summ(pror1)
+# # 
+pror1 = glm(he_bb ~ lag(Gini_net,1) + lag(Health_exp,1) +lag(gdp_gro,1)+ Gov_ex + idem -1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+summ(pror1)
 
 # pror1 = glm(soc_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) +(Soc_payable) + Gov_ex + Secondary_ed, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
 # summ(pror1)
@@ -138,9 +144,28 @@ ia2['phat0'] = predict(pror1, type = 'response')
 ia3['phat0'] = predict(pror1,  type = 'response')
 ia4['phat0'] = predict(pror1,  type = 'response')
 ia5['phat0'] = predict(pror1,  type = 'response')
-ia6['phat0'] = predict(pror1,  type = 'response')
 
 plot(ia1$phat0, ia6$phat0)
+
+```
+
+```{r}
+
+formula = he_bb ~ lag(Gini_net,1) + lag(Health_exp,1) +lag(gdp_gro,1)+ Gov_ex + idem -1
+
+my_glm_function <- function(data, formula, vari) {
+  model <- glm(formula = formula, data = data, family = binomial(link="probit"), na.action = na.exclude)
+  data$phat <- predict(model, type = 'response')
+  data$invwt <- vari/data$phat + (1-vari)/(1-data$phat)
+  return(data)
+}
+
+
+my_list <- list(ia1, ia2, ia3, ia4, ia5)
+
+# result_list <- lapply(my_list, my_glm_function)
+
+my_glm_function(ia5, formula, ia5$he_bb)
 
 ```
 
@@ -166,14 +191,14 @@ MODELO NO TRUNCADO
 
 ```{r}
 
-ia1['invwt'] = ia1$Education_exp/ia1$phat0 + (1-ia1$Education_exp)/(1-ia1$phat0)
+ia1['invwt'] = ia1$ed_bb/ia1$phat + (1-ia1$ed_bb)/(1-ia1$phat)
 ia2['invwt'] = ia2$Education_exp/ia2$phat0 + (1-ia2$Education_exp)/(1-ia2$phat0)
 ia3['invwt'] = ia3$Education_exp/ia3$phat0 + (1-ia3$Education_exp)/(1-ia3$phat0)
 ia4['invwt'] = ia4$Education_exp/ia4$phat0 + (1-ia4$Education_exp)/(1-ia4$phat0)
 ia5['invwt'] = ia5$Education_exp/ia5$phat0 + (1-ia5$Education_exp)/(1-ia5$phat0)
 ia6['invwt'] = ia6$Education_exp/ia6$phat0 + (1-ia6$Education_exp)/(1-ia6$phat0)
 
-plot(ia1$invwt, ia6$invwt)
+plot(ia1$invwt, phat)
 
 ```
 
@@ -194,12 +219,69 @@ ia6['invwt'] = ia6$Education_exp/ia1$phat + (1-ia6$Education_exp)/(1-ia1$phat)
 library(lmtest)
 library(sandwich)
 library(clipr)
+library(plm)
 ```
 
 ```{r}
-invr1 = lm(Gini_net ~ lag(Gini_netdm,1) + gdp_grodm + Soc_kind+ year, weights = invwt, data = ia1)
-summ(invr1, robust = 'HC3', cluster = '')
+# invr1 = lm(Gini_netdm ~ lag(gi_bb) +ed_bb + lag(Gov_ex) + employ_rate + idem -1, weights = invwt, data = ia1)
+
+invr1 = gls(Gini_netdm ~ he_bb + lag(GDP_cycle) + lag(Gov_ex)+ employ_rate -1 , data=ia1, weights = varIdent(form = ~ invwt), na.action = na.omit, correlation = corAR1(form = ~ 1 | Gini_net))
+
+# Education_expdm |gdp_grodm ~ Secondary_ed + Gov_ex + employ_rate + pop_gro
+coef(summary(invr1))
+summary(invr1)
+intervals(invr1)
+
+coefficients(invr1)[1]
+
+ia1['mu0'] = (if_else(ia1$he_bb == 1, ia1$he_bb - coefficients(invr1)[1], 0))
+ia1['mu1'] = (if_else(ia1$he_bb == 0, ia1$he_bb + coefficients(invr1)[1], 1))
+
+ia1['mdiff'] = (-(ia1$gi_bb-ia1$phat)*ia1$mu1/ia1$phat)-((ia1$gi_bb-ia1$phat)*ia1$mu0/(1-ia1$phat))
+
+plot(ia1$mdiff, Gini_net)
+
+ia1['inv']= ((ia1$gi_bb/ia1$phat) + (1-ia1$gi_bb)/(1-ia1$phat))
+ia1['iptw'] = (2*ia1$gi_bb-1)*(ia1$gi_bb*(ia1$inv))
+plot((ia1$inv),Gini_net)
+
+ia1['dr1'] = ia1$iptw+ia1$mdiff
+
+summary(lm(mdiff ~ 1, data=ia1))
 ```
+
+```{r}
+  invr1 <- gls(Gini_netdm ~ ed_bb +lag(Gini_net)+ lag(GDP_cycle) + lag(Gov_ex) -1 , data=df, weights = varIdent(form = ~  invwt), na.action = na.omit, correlation = corAR1(form = ~ 1 | Gini_net))
+```
+
+
+```{r}
+
+last_rf <- function(df, vari) {
+  invr1 <- gls(Gini_netdm ~ he_bb +lag(Gini_net)+ lag(GDP_cycle) + lag(Gov_ex) +employ_rate -1 , data=df, weights = varIdent(form = ~  invwt), na.action = na.omit, correlation = corAR1(form = ~ 1 | Gini_net))
+  # invr1 = lm(Gini_netdm ~ ed_bb +lag(GDP_cycle) + lag(Gov_ex) + employ_rate + idem -1, weights = invwt, data = ia1)
+  
+  df['mu0'] = (if_else(vari == 1, vari - coefficients(invr1)[1], 0))
+  df['mu1'] = (if_else(vari == 0, vari + coefficients(invr1)[1], 1))
+
+  df['mdiff'] = (-(df$he_bb-df$phat)*df$mu1/df$phat)-((df$he_bb-df$phat)*df$mu0/(1-df$phat))
+
+  df['inv']= ((df$he_bb/df$phat) + (1-df$he_bb)/(1-df$phat))
+  df['iptw'] = (2*df$he_bb-1)*(df$he_bb*df$inv)
+    
+  df['dr1'] = df$iptw+df$mdiff
+
+   summary(lm(mdiff ~ 1, data=df))
+}
+
+my_list <- list(ia1, ia2, ia3, ia4, ia5)
+
+lapply(my_list, function(x) last_rf(x,x$he_bb)) 
+
+
+
+```
+
 
 ```{r}
 ia1['pip_a'] = ia1$PIT*ia1$mrp_all
@@ -214,8 +296,9 @@ ia6['pip_a'] = ia6$PIT*ia6$mrp_all
 Table 8.
 
 ```{r}
-# invr1 = lm(Gini_net ~ dplyr::lag(Gini_netdm,1)+dplyr::lag(gdp_grodm,1) +Education_exp + employ_rate, weights = invwt, data = ia1) -- EDUCATION
-
+invr1 = opm(Gini_netdm ~ lag(gi_bb) +lag(gdp_grodm,1) + Education_expdm + lag(Gov_ex) + ed_bb, data = ia1, index = c('idem','year'), n.samp = 10000, add.time.indicators = FALSE, weights=invwt) 
+# -- EDUCATION
+summary(invr1)
 # invr1 = lm(Gini_net ~ dplyr::lag(Gini_net,1) + dplyr::lag(Gini_netdm,1) + dplyr::lag(gdp_grodm,1) + (Health_exp) + Secondary_ed + employ_rate , weights = invwt, data = ia1) -- HEALTH
 
 # invr1 = lm(Gini_net ~ dplyr::lag(Gini_netdm,1) + dplyr::lag(gdp_grodm,1) + dplyr::lag(gdp_grodm,2)+ dplyr::lag(Soc_payable,1)+dplyr::lag(Gov_ex,1)+Secondary_ed + employ_rate + dplyr::lag(Trade,1), weights = invwt, data = ia1) -- SOC PAYABLE
