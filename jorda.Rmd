@@ -115,12 +115,59 @@ bo5 = ia5 %>% select(everything()) %>% filter (year %in% c(1994,1995,1996,1997,1
 
 ```
 
+```{r}
+pror1 = glm(ed_bb ~ lag(Gini_netdm,1) + lag(Education_expdm,1)+ Gov_ex + Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+summ(pror1)
+```
+
+```{r}
+pror1 = glm(he_bb ~ lag(Gini_netdm,1) + Gov_ex+ lag(Health_expdm,1) + Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+summ(pror1)
+```
+
+```{r}
+pror1 = glm(soc_bb ~ lag(Gini_net,1) +lag(Soc_payabledm,1)+ gdp_gro+Gov_ex +Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+summ(pror1)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+
+
+
+```{r}
+
+select_col <- function(pror1, ia1, cols) {
+  esample <- rownames(as.matrix(pror1$fitted.values))
+
+  ia1_e <- ia1[esample,]
+  df_ee <- ia1_e %>% select(cols)
+  return(df_ee)
+}
+
+```
+
+```{r}
+df_ee1 = select_col(pror1, ia1, c("ed_bb","Gini_netdm","Gov_ex","Education_expdm","Trade","Deficit"))
+
+df_ee1 = select_col(pror1, ia1, c("he_bb","Gini_netdm","Gov_ex","Health_expdm","Trade","Deficit"))
+
+df_ee1 = select_col(pror1, ia1, c("soc_bb","Gini_netdm","Gov_ex","Soc_payabledm",'gdp_gro',"Trade","Deficit"))
+```
+
 
 ```{r}
 # pror1 = glm(ed_bb ~ dplyr::lag(Gini_net,1)+ dplyr::lag(gdp_gro,1)+ lag(Education_exp,1) + employ_rate  + idem -1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
 # summ(pror1)
 # # 
-pror1 = glm(he_bb ~ lag(Gini_net,1) + lag(Health_exp,1) +lag(gdp_gro,1)+ Gov_ex + idem -1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+pror1 = glm(he_bb ~ Gini_netdm +gdp_grodm + Gov_ex+Education_expdm + Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
 summ(pror1)
 
 # pror1 = glm(soc_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) +(Soc_payable) + Gov_ex + Secondary_ed, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
@@ -226,6 +273,7 @@ library(plm)
 # invr1 = lm(Gini_netdm ~ lag(gi_bb) +ed_bb + lag(Gov_ex) + employ_rate + idem -1, weights = invwt, data = ia1)
 
 invr1 = gls(Gini_netdm ~ he_bb + lag(GDP_cycle) + lag(Gov_ex)+ employ_rate -1 , data=ia1, weights = varIdent(form = ~ invwt), na.action = na.omit, correlation = corAR1(form = ~ 1 | Gini_net))
+
 
 # Education_expdm |gdp_grodm ~ Secondary_ed + Gov_ex + employ_rate + pop_gro
 coef(summary(invr1))
@@ -461,4 +509,148 @@ summary(my_iv_reg)
 wald_iv <- waldtest(my_iv_reg$stage1, ~ kind_bb, lhs=my_iv_reg$stage1$lhs)
 print(c(wald_iv[5], wald_iv[1]))
 ```
+
+```{r}
+attach(ia1)
+```
+
+```{r}
+model_net_naive <- lm(Gini_net ~ Education_exp, data = ia1)
+tidy(model_net_naive)
+```
+
+Crear una formula para cada modelo y DB, para un solo DF (no ocupe espacio)
+
+```{r}
+model_predict_net <- glm(he_bb ~ lag(Gini_net,1) + lag(Health_exp,1) +lag(gdp_gro,1)+ Gov_ex + idem -1, data=ia1,
+                         family = binomial(link = "logit"),
+                         ,na.action = na.exclude)
+
+# Generate propensity scores and IPWs
+net_data_ipw <- augment_columns(model_predict_net, ia1,
+            type.predict = "response") %>%  rename(propensity = .fitted) %>% 
+             mutate(ipw = (ed_bb/propensity) + ((1-ed_bb)/(1-propensity)))
+
+net_data_ipw %>% 
+  select(idem, year, Gini_net, gi_bb, GDP_bb, gdppc_gro, Education_exp, ed_bb, Gov_ex, propensity, ipw) %>% 
+  head()
+```
+
+
+```{r}
+model_net_ipw <- lm(Gini_net ~ Education_exp, data = net_data_ipw, weights = ipw)
+tidy(model_net_ipw)
+
+```
+```{r}
+# ipwpoint() can't handle tibbles! Force net_data to be a data.frame
+weights_ipwpoint <- ipwpoint(exposure = ed_bb,
+  family = "binomial",  # The treatment is binary
+  link = "logit",
+  denominator = ~ gdppc_gro + Education_exp + Gov_ex,
+  data = as.data.frame(na.omit(ia1)))
+
+# They're the same!
+head(weights_ipwpoint$ipw.weights)
+## [1] 1.61 1.59 2.93 1.36 1.68 1.85
+head(net_data_ipw$ipw)
+## [1] 1.61 1.59 2.93 1.36 1.68 1.85
+```
+
+
+```{r}
+ia1c = na.omit(ia1)
+
+net_data_ipwpoint <- ia1c %>% 
+  mutate(ipw = weights_ipwpoint$ipw.weights)
+
+model_net_ipwpoint <- lm(Gini_net ~ Education_exp, 
+                         data = net_data_ipwpoint, weights = ipw)
+tidy(model_net_ipwpoint)
+
+```
+
+
+```{r}
+weights_weightit <- weightit(ed_bb ~ gdppc_gro + Gov_ex,  # Model net use with confounders
+                             data = ia1c, 
+                             estimand = "ATE",  # Find the ATE
+                             method = "ps", include.obj = TRUE)  # Build weights with propensity scores
+weights_weightit$weights
+```
+
+
+```{r}
+net_data_weightit <- ia1c %>% 
+  mutate(ipw = weights_weightit$weights)
+
+model_net_weightit <- lm(Gini_net ~ ed_bb, 
+                         data = net_data_weightit, weights = ipw)
+
+tidy(model_net_weightit)
+```
+
+
+```{r}
+fit <- lm(speed ~ dist, data= cars)
+
+esample.n <- nobs(fit)
+```
+
+
+```{r}
+esample<-rownames(as.matrix(resid(fit)))
+
+cars[esample,]
+```
+
+```{r}
+pror1 = glm(he_bb ~ lag(Gini_net,1) + lag(Health_exp,1) +lag(gdp_gro,1)+ Gov_ex + idem -1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+summ(pror1)
+```
+
+
+```{r}
+ia1['phat0'] = predict(pror1,  type = 'response')
+```
+
+
+```{r}
+esample.n <- nobs(pror1)
+```
+
+
+```{r}
+esample<-rownames(as.matrix(resid(pror1)))
+esample.n <- nobs(fit)
+```
+
+
+```{r}
+esample<-rownames(as.matrix(pror1$fitted.values))
+esample.n <- nobs(pr)
+
+ia1_e = ia1[esample,]
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
 
