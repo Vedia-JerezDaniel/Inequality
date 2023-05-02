@@ -26,6 +26,7 @@ https://www.math.umd.edu/~slud/s818M-MissingData/PropensityScoreWeightingR.pdf
 
 https://cran.r-project.org/web/packages/ipw/ipw.pdf
 
+<<<<<<< HEAD
 
 
 ### May
@@ -34,3 +35,5 @@ https://cran.r-project.org/web/packages/ipw/ipw.pdf
 
 
 
+=======
+>>>>>>> 89e029a71628609f00615dc5e326a8b7ce9753c5
