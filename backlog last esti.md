@@ -33,7 +33,7 @@ https://cran.r-project.org/web/packages/ipw/ipw.pdf
 
 02/05 --> DB is updated with PIT
 
+09/05 --> End global est with ia1, then continue to the rest.
 
+15/05 --> First function for steps (1 to 3), next step 4 & 5 on multiple DF.
 
-=======
->>>>>>> 89e029a71628609f00615dc5e326a8b7ce9753c5

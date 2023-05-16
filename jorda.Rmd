@@ -116,34 +116,109 @@ bo5 = ia5 %>% select(everything()) %>% filter (year %in% c(1994,1995,1996,1997,1
 ```
 
 ```{r}
+get_phat <- function(equation, db) {
+    pror1 = glm(equation, data=db, family=binomial(link="probit"), na.action = na.exclude)
+
+    db['phat0'] = predict(pror1,  type = 'response')
+    db['invwt'] = db$ed_bb/db$phat0 + (1-db$ed_bb)/(1-db$phat0)
+    
+    return(db)
+}
+```
+
+
+```{r}
+eq_ed <- as.formula(paste("ed_bb ~ lag(Gini_netdm,1) + lag(Education_expdm,1)+ Gov_ex + Trade+Deficit+idem-1", collapse = " + "))
+
+eq_he <- as.formula(paste("he_bb ~ lag(Gini_netdm,1) + Gov_ex+ lag(Health_expdm,1) + Trade+Deficit+idem-1", collapse = " + "))
+
+eq_soc <- as.formula(paste("soc_bb ~ lag(Gini_netdm,1) +lag(Soc_payabledm,1)+ gdp_gro+Gov_ex +Trade+Deficit+idem-1", collapse = " + "))
+
+eq_kind <- as.formula(paste("kind_bb ~ lag(Gini_netdm,1) +lag(Soc_kinddm,1)+Gov_ex +Trade+Deficit+idem-1", collapse = " + "))
+
+eq_prt <- as.formula(paste("prt_bb ~ Gini_netdm +Property_taxesdm +Gov_ex+Trade+Deficit+idem", collapse = " + "))
+
+eq_indtx <- as.formula(paste("indt_bb ~ lag(Gini_netdm,1) + lag(ind_txdm,1) + Gov_ex +Deficit+idem", collapse = " + "))
+
+eq_pit <- as.formula(paste("pit_bb ~ lag(Gini_netdm,3)+lag(PITdm,4)+lag(gdp_grodm,3) + Gov_ex+ Deficit+idem-1", collapse = " + "))
+
+```
+
+
+```{r}
+get_phat(eq_ed, ia3)
+
+# data_frames <- list(ia1, ia2, ia3, ia4, ia5)
+
+# results <- lapply(data_frames, function(df) get_phat(eq_ed, df))
+
+```
+
+
+
+
+```{r}
 pror1 = glm(ed_bb ~ lag(Gini_netdm,1) + lag(Education_expdm,1)+ Gov_ex + Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
 summ(pror1)
+
+ia1['phat0'] = predict(pror1,  type = 'response')
+
+ia1['invwt'] = ia1$ed_bb/ia1$phat0 + (1-ia1$ed_bb)/(1-ia1$phat0)
 ```
+
+```{r}
+# Load the package
+boxplot(ia1$invwt, plot=TRUE)$out
+
+outliers <- boxplot(ia1$invwt, plot=FALSE)$out
+
+boxplot(outliers, plot=TRUE)$out
+
+x<-ia1$invwt
+
+ia1$invwt_2 <- ia1$invwt[-which(x %in% outliers),]
+
+# Create a new column excluding outliers
+ia1$invwt_2 <- ifelse(ia1$invwt %in% outliers, NA, ia1$invwt)
+
+```
+
 
 ```{r}
 pror1 = glm(he_bb ~ lag(Gini_netdm,1) + Gov_ex+ lag(Health_expdm,1) + Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
 summ(pror1)
+
 ```
 
 ```{r}
-pror1 = glm(soc_bb ~ lag(Gini_net,1) +lag(Soc_payabledm,1)+ gdp_gro+Gov_ex +Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+pror1 = glm(soc_bb ~ lag(Gini_netdm,1) +lag(Soc_payabledm,1)+ gdp_gro+Gov_ex +Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
 summ(pror1)
 ```
 
 ```{r}
+pror1 = glm(kind_bb ~ lag(Gini_netdm,1) +lag(Soc_kinddm,1)+Gov_ex +Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+summ(pror1)
+```
+
+```{r}
+pror1 = glm(prt_bb ~ Gini_netdm +Property_taxesdm +Gov_ex+Trade+Deficit+idem, data=ia1 , family=binomial(link="probit"), na.action = na.exclude)
+
+summ(pror1)
+```
+
+```{r}
+pror1 = glm(indt_bb ~ lag(Gini_netdm,1) +  lag(ind_txdm,1) + Gov_ex +Deficit+idem, data=ia1 , family=binomial(link="probit"), na.action = na.exclude)
+summ(pror1)
 
 ```
 
 ```{r}
-
+pror1 = glm(pit_bb ~ lag(Gini_netdm,3)+lag(PITdm,4) +lag(gdp_grodm,3) + Gov_ex+ Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+summ(pror1)
 ```
 
 
-
-
-
 ```{r}
-
 select_col <- function(pror1, ia1, cols) {
   esample <- rownames(as.matrix(pror1$fitted.values))
 
@@ -155,36 +230,25 @@ select_col <- function(pror1, ia1, cols) {
 ```
 
 ```{r}
-df_ee1 = select_col(pror1, ia1, c("ed_bb","Gini_netdm","Gov_ex","Education_expdm","Trade","Deficit"))
+df_ee1 = select_col(pror1, ia1, c('idem','year',"ed_bb","Gini_netdm","Gov_ex","Education_expdm","Trade","Deficit"))
 
-df_ee1 = select_col(pror1, ia1, c("he_bb","Gini_netdm","Gov_ex","Health_expdm","Trade","Deficit"))
+df_ee1 = select_col(pror1, ia1, c('idem','year',"he_bb","Gini_netdm","Gov_ex","Health_expdm","Trade","Deficit"))
 
-df_ee1 = select_col(pror1, ia1, c("soc_bb","Gini_netdm","Gov_ex","Soc_payabledm",'gdp_gro',"Trade","Deficit"))
+df_ee1 = select_col(pror1, ia1, c('idem','year',"soc_bb","Gini_netdm","Gov_ex","Soc_payabledm",'gdp_gro',"Trade","Deficit"))
+
+df_ee1 = select_col(pror1, ia1, c('idem','year',"kind_bb","Gini_netdm","Gov_ex","Soc_kinddm","Trade","Deficit"))
+
+df_ee1 = select_col(pror1, ia1, c('idem','year',"prt_bb","Gini_netdm","Gov_ex","Property_taxesdm","Trade","Deficit"))
+
+df_ee1 = select_col(pror1, ia1, c('idem','year',"indt_bb","Gini_netdm","Gov_ex","ind_txdm","Deficit"))
+
+df_ee1 = select_col(pror1, ia1, c('idem','year',"pit_bb","Gini_netdm","gdp_grodm","PITdm","Gov_ex","Deficit"))
+
 ```
 
+---- Learn predict & continue: Try one function of (1,2,3)
 
 ```{r}
-# pror1 = glm(ed_bb ~ dplyr::lag(Gini_net,1)+ dplyr::lag(gdp_gro,1)+ lag(Education_exp,1) + employ_rate  + idem -1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
-# summ(pror1)
-# # 
-pror1 = glm(he_bb ~ Gini_netdm +gdp_grodm + Gov_ex+Education_expdm + Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
-summ(pror1)
-
-# pror1 = glm(soc_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) +(Soc_payable) + Gov_ex + Secondary_ed, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
-# summ(pror1)
-# 
-# pror1 = glm(kind_bb ~ lag(Gini_net,1) + gdp_gro + Soc_kind +Secondary_ed + Gov_ex , data=gr5 , family=binomial(link="probit"), na.action = na.exclude)
-# summ(pror1)
-
-# pror1 = glm(prt_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) + Property_taxes + Secondary_ed + Gov_ex , data=ia6 , family=binomial(link="probit"), na.action = na.exclude)
-# summ(pror1)
-
-# pror1 = glm(indt_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) + ind_tx + Secondary_ed + Gov_ex , data=ia1 , family=binomial(link="probit"), na.action = na.exclude)
-# summ(pror1)
-
-# pror1 = glm(pit_bb ~ lag(Gini_net,1) + lag(gdp_gro,1) + PIT+mrp_all + Secondary_ed + Gov_ex , data=ia6 , family=binomial(link="probit"), na.action = na.exclude)
-# summ(pror1)
-
 # ln1['phat0'] = predict(pror, type = 'response')
 ia1['phat0'] = predict(pror1,  type = 'response')
 ia2['phat0'] = predict(pror1, type = 'response')
@@ -196,25 +260,7 @@ plot(ia1$phat0, ia6$phat0)
 
 ```
 
-```{r}
 
-formula = he_bb ~ lag(Gini_net,1) + lag(Health_exp,1) +lag(gdp_gro,1)+ Gov_ex + idem -1
-
-my_glm_function <- function(data, formula, vari) {
-  model <- glm(formula = formula, data = data, family = binomial(link="probit"), na.action = na.exclude)
-  data$phat <- predict(model, type = 'response')
-  data$invwt <- vari/data$phat + (1-vari)/(1-data$phat)
-  return(data)
-}
-
-
-my_list <- list(ia1, ia2, ia3, ia4, ia5)
-
-# result_list <- lapply(my_list, my_glm_function)
-
-my_glm_function(ia5, formula, ia5$he_bb)
-
-```
 
 
 ```{r}
