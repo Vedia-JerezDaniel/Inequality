@@ -118,6 +118,14 @@ get_phat <- function(equation, db) {
     db['phat0'] = predict(pror1,  type = 'response')
     db['invwt'] = db$ed_bb/db$phat0 + (1-db$ed_bb)/(1-db$phat0)
     
+    db['phat'] = db$phat0
+    
+    lo = summary(db$phat0)[1]*1.1
+    up = .9*summary(db$phat0)[6]
+    
+    db <- db %>% mutate(phat = ifelse(phat > up, up , db$phat))
+    db <- db %>% mutate(phat = ifelse(phat < lo, lo, db$phat))
+    
     return(db)
 }
 
@@ -231,6 +239,14 @@ summ(pror1)
 ## Parte 4
 
 ```{r}
+fix <- plm(Gini_netdm ~ ed_bb + lag(gdp_gro) + lag(Gov_ex) +  Education_expdm + gdp_grodm , data=ia1, index=c("idem", "year"), model="within",weights = ia1$invwt)
+
+
+summary(fix)
+
+```
+
+```{r}
 select_col <- function(pror1, ia1, cols) {
   esample <- rownames(as.matrix(pror1$fitted.values))
 
@@ -239,30 +255,57 @@ select_col <- function(pror1, ia1, cols) {
   return(df_ee)
 }
 
-ia1['phat0'] = predict(pror1, type='response')
+
+# ia1['phat0'] = predict(pror1, type='response')
 
 esample.n <- nobs(fix)
-esample <- rownames(as.matrix(resid(fix)))
-
-esample.n <- nobs(fit)
-
 esample<-rownames(as.matrix(fix$model))
-esample.n <- nobs(pr)
-
 ia1_e = ia1[esample,]
 
-predict(fix, ia1_p, type='response', na.fill=TRUE)
+# predict(fix, ia1_p, type='response', na.fill=TRUE)
 
-ia1_p <- pdata.frame(ia1_e, index = c("idem", "year"))
+ia1_e <- pdata.frame(ia1_e, index = c("idem", "year"))
 
-ia1_p['ed_bb_t'] = ifelse(ia1_p$ed_bb == 0, 1, 0)
+# ia1_p['ed_bb_t'] = ifelse(ia1_p$ed_bb == 0, 1, 0)
 
-ia1_p['mu0'] <- predict(fix, newdata=ia1_p, type="response")
+ia1_e['mu0'] <- predict(fix, newdata=ia1_e, type="response")
 
-ia1_p['mu0'] = ifelse(ia1_p$ed_bb==0 & !is.na(ia1_p$mu0),1,0)
+ia1_e['mu0'] = ifelse(ia1_e$ed_bb==0 & !is.na(ia1_e$mu0),1,0)
 
 ```
 
+```{r}
+apply_prediction <- function(fix, db) {
+
+  esample.n <- nobs(fix)
+  esample <- rownames(as.matrix(fix$model))
+
+  db_e <- db[esample, ]
+  ia1_e <- pdata.frame(ia1_e, index = c("idem", "year"))
+  db_e$mu0 <- predict(fix, newdata = db_e, type = "response")
+  db_e$mu0 <- ifelse(db_e$ed_bb == 0 & !is.na(db_e$mu0), 1, 0)
+  
+  return(db_e)
+}
+
+# Usage example
+ia1_e <- apply_prediction(fix, ia1)
+
+```
+```{r}
+
+ia1_e$mdiff = (-(ia1_e$gi_bb-ia1_e$phat)*ia1_e$mu1/ia1_e$phat)-((ia1_e$gi_bb-ia1_e$phat)*ia1_e$mu0/(1-ia1_e$phat))
+
+plot(ia1_e$mdiff, ia1_e$Gini_net)
+
+ia1_e$inv= ((ia1_e$gi_bb/ia1_e$phat) + (1-ia1_e$gi_bb)/(1-ia1_e$phat))
+ia1_e$iptw = (2*ia1_e$gi_bb-1)*(ia1_e$gi_bb*(ia1_e$inv))
+plot((ia1_e$inv),ia1_e$Gini_net)
+
+ia1_e$dr1 = ia1_e$iptw+ia1_e$mdiff
+
+summary(lm(mdiff ~ 1, data=ia1_e))
+```
 
 
 ```{r}
