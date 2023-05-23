@@ -89,10 +89,6 @@ https://ds4ps.org/pe4ps-textbook/docs/p-040-fixed-effects.html
 
 
 ```{r}
-```
-
-
-```{r}
 # ln1 <- ln1 %>%
 #   mutate(dumm = ifelse( year %in% c(1991, 1992, 2000, 2001, 2008, 2009, 2011, 2013), 1, NA))
 # 
@@ -124,6 +120,17 @@ get_phat <- function(equation, db) {
     
     return(db)
 }
+
+db_trunc <- function(db) {
+    db['phat'] = db$phat0
+    
+    lo = summary(db$phat0)[1]*1.1
+    up = .9*summary(db$phat0)[6]
+    
+    db <- db %>% mutate(phat = ifelse(phat > up, up , db$phat))
+    db <- db %>% mutate(phat = ifelse(phat < lo, lo, db$phat))
+    return(db)
+    }
 ```
 
 
@@ -146,7 +153,7 @@ eq_pit <- as.formula(paste("pit_bb ~ lag(Gini_netdm,3)+lag(PITdm,4)+lag(gdp_grod
 
 
 ```{r}
-get_phat(eq_ed, ia3)
+get_phat(eq_ed, ia1)
 
 # data_frames <- list(ia1, ia2, ia3, ia4, ia5)
 
@@ -154,6 +161,10 @@ get_phat(eq_ed, ia3)
 
 ```
 
+
+```{r}
+
+```
 
 
 
@@ -217,6 +228,7 @@ pror1 = glm(pit_bb ~ lag(Gini_netdm,3)+lag(PITdm,4) +lag(gdp_grodm,3) + Gov_ex+ 
 summ(pror1)
 ```
 
+## Parte 4
 
 ```{r}
 select_col <- function(pror1, ia1, cols) {
@@ -227,7 +239,31 @@ select_col <- function(pror1, ia1, cols) {
   return(df_ee)
 }
 
+ia1['phat0'] = predict(pror1, type='response')
+
+esample.n <- nobs(fix)
+esample <- rownames(as.matrix(resid(fix)))
+
+esample.n <- nobs(fit)
+
+esample<-rownames(as.matrix(fix$model))
+esample.n <- nobs(pr)
+
+ia1_e = ia1[esample,]
+
+predict(fix, ia1_p, type='response', na.fill=TRUE)
+
+ia1_p <- pdata.frame(ia1_e, index = c("idem", "year"))
+
+ia1_p['ed_bb_t'] = ifelse(ia1_p$ed_bb == 0, 1, 0)
+
+ia1_p['mu0'] <- predict(fix, newdata=ia1_p, type="response")
+
+ia1_p['mu0'] = ifelse(ia1_p$ed_bb==0 & !is.na(ia1_p$mu0),1,0)
+
 ```
+
+
 
 ```{r}
 df_ee1 = select_col(pror1, ia1, c('idem','year',"ed_bb","Gini_netdm","Gov_ex","Education_expdm","Trade","Deficit"))
@@ -316,10 +352,18 @@ library(plm)
 ```
 
 ```{r}
+fix <- plm(Gini_netdm ~ ed_bb + lag(gdp_gro) + lag(Gov_ex) +  Education_expdm + gdp_grodm , data=ia1, index=c("idem", "year"), model="within",weights = ia1$invwt)
+
+
+summary(fix)
+
+```
+
+
+```{r}
 # invr1 = lm(Gini_netdm ~ lag(gi_bb) +ed_bb + lag(Gov_ex) + employ_rate + idem -1, weights = invwt, data = ia1)
 
-invr1 = gls(Gini_netdm ~ he_bb + lag(GDP_cycle) + lag(Gov_ex)+ employ_rate -1 , data=ia1, weights = varIdent(form = ~ invwt), na.action = na.omit, correlation = corAR1(form = ~ 1 | Gini_net))
-
+invr1 = gls(Gini_netdm ~ he_bb + lag(GDP_cycle) + lag(Gov_ex) + employ_rate -1 +idem, data=ia1, weights=varIdent(form = ~ invwt), na.action = na.omit, correlation = corAR1(form = ~ 1 | Gini_net))
 
 # Education_expdm |gdp_grodm ~ Secondary_ed + Gov_ex + employ_rate + pop_gro
 coef(summary(invr1))
@@ -345,7 +389,7 @@ summary(lm(mdiff ~ 1, data=ia1))
 ```
 
 ```{r}
-  invr1 <- gls(Gini_netdm ~ ed_bb +lag(Gini_net)+ lag(GDP_cycle) + lag(Gov_ex) -1 , data=df, weights = varIdent(form = ~  invwt), na.action = na.omit, correlation = corAR1(form = ~ 1 | Gini_net))
+invr1 <- gls(Gini_netdm ~ ed_bb +lag(Gini_net)+ lag(GDP_cycle) + lag(Gov_ex) -1,data=df, weights = varIdent(form = ~  invwt), na.action = na.omit, correlation = corAR1(form = ~ 1 | Gini_net))
 ```
 
 
