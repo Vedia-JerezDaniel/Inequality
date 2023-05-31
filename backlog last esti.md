@@ -37,3 +37,4 @@ https://cran.r-project.org/web/packages/ipw/ipw.pdf
 
 15/05 --> First function for steps (1 to 3), next step 4 & 5 on multiple DF.
 
+29/05 --> Tested in 3 equations, falta definir una o 2 funciones y como automatizar para todas las DB y sus resultados (extraer)

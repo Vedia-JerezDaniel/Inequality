@@ -161,7 +161,7 @@ eq_pit <- as.formula(paste("pit_bb ~ lag(Gini_netdm,3)+lag(PITdm,4)+lag(gdp_grod
 
 
 ```{r}
-get_phat(eq_ed, ia1)
+get_phat(eq_kind, ia1)
 
 # data_frames <- list(ia1, ia2, ia3, ia4, ia5)
 
@@ -171,7 +171,7 @@ get_phat(eq_ed, ia1)
 
 
 ```{r}
-
+plot(ia1$invwt, ia1$Gini_net)
 ```
 
 
@@ -237,9 +237,14 @@ summ(pror1)
 ```
 
 ## Parte 4
+```{r}
+library(plm)
+```
+
 
 ```{r}
-fix <- plm(Gini_netdm ~ ed_bb + lag(gdp_gro) + lag(Gov_ex) +  Education_expdm + gdp_grodm , data=ia1, index=c("idem", "year"), model="within",weights = ia1$invwt)
+
+fix <- plm(Gini_netdm ~ kind_bb + lag(gdp_grodm) + lag(Gov_ex) + Soc_kinddm , data=ia1, index=c("idem", "year"), model="within",weights = ia1$invwt)
 
 
 summary(fix)
@@ -281,7 +286,7 @@ apply_prediction <- function(fix, db) {
   esample <- rownames(as.matrix(fix$model))
 
   db_e <- db[esample, ]
-  ia1_e <- pdata.frame(ia1_e, index = c("idem", "year"))
+  db_e <- (db_e)
   db_e$mu0 <- predict(fix, newdata = db_e, type = "response")
   db_e$mu0 <- ifelse(db_e$ed_bb == 0 & !is.na(db_e$mu0), 1, 0)
   
@@ -289,22 +294,53 @@ apply_prediction <- function(fix, db) {
 }
 
 # Usage example
-ia1_e <- apply_prediction(fix, ia1)
+ia1_k <- apply_prediction(fix, ia1)
 
 ```
+
+Note. Aqui deberias seleccionar columnas del modelo
+
 ```{r}
 
-ia1_e$mdiff = (-(ia1_e$gi_bb-ia1_e$phat)*ia1_e$mu1/ia1_e$phat)-((ia1_e$gi_bb-ia1_e$phat)*ia1_e$mu0/(1-ia1_e$phat))
+last_m <- function(n_db){
+    
+    n_db$mdiff = (-(n_db$gi_bb-n_db$phat)*n_db$mu1/n_db$phat)-((n_db$gi_bb-n_db$phat)*n_db$mu0/(1-n_db$phat))
+# 
+#     plot(n_db$mdiff, n_db$Gini_net)
+    
+    n_db$inv= ((n_db$gi_bb/n_db$phat) + (1-n_db$gi_bb)/(1-n_db$phat))
+    n_db$iptw = (2*n_db$gi_bb-1)*(n_db$gi_bb*(n_db$inv))
+    
+    plot((n_db$inv),n_db$Gini_netdm)
+    abline(lm(n_db$Gini_netdm ~ n_db$inv))
+    
+    n_db$dr1 = n_db$iptw+n_db$mdiff    
+    
+    # return(n_db)
+    print(summary(lm(mdiff ~ 1, data=n_db)))
+    
+    
+}
 
-plot(ia1_e$mdiff, ia1_e$Gini_net)
+last_m(ia1_k)
 
-ia1_e$inv= ((ia1_e$gi_bb/ia1_e$phat) + (1-ia1_e$gi_bb)/(1-ia1_e$phat))
-ia1_e$iptw = (2*ia1_e$gi_bb-1)*(ia1_e$gi_bb*(ia1_e$inv))
-plot((ia1_e$inv),ia1_e$Gini_net)
+```
 
-ia1_e$dr1 = ia1_e$iptw+ia1_e$mdiff
 
-summary(lm(mdiff ~ 1, data=ia1_e))
+
+```{r}
+
+ia1_h$mdiff = (-(ia1_h$gi_bb-ia1_h$phat)*ia1_h$mu1/ia1_h$phat)-((ia1_h$gi_bb-ia1_h$phat)*ia1_h$mu0/(1-ia1_h$phat))
+
+plot(ia1_h$mdiff, ia1_h$Gini_net)
+
+ia1_h$inv= ((ia1_h$gi_bb/ia1_h$phat) + (1-ia1_h$gi_bb)/(1-ia1_h$phat))
+ia1_h$iptw = (2*ia1_h$gi_bb-1)*(ia1_h$gi_bb*(ia1_h$inv))
+plot(ia1_h$inv,ia1_h$Gini_net)
+
+ia1_h$dr1 = ia1_h$iptw+ia1_h$mdiff
+
+summary(lm(mdiff ~ 1, data=ia1_h))
 ```
 
 
