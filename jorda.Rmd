@@ -17,6 +17,7 @@ library(scales)
 library(truncnorm)
 library(ipw)
 library(WeightIt)
+
 ```
 
 ```{r load DB, message=FALSE, warning=FALSE}
@@ -605,221 +606,115 @@ write.csv(bo6,"bo6.csv",row.names = FALSE)
 
 tABLE 3 iv BINARY TREATMENT
 
-
-```{r}
-library(lfe)
-
-form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed -1 | year+idem | (Education_exp ~  ed_bb + pop_gro) |Gini_net | idem)
-
-# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed -1 |0 | (Health_exp ~ he_bb + pop_gro)  | idem) 
-
-# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate -1 |0 | (Soc_payable ~ soc_bb  )   | idem) 
-
-# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + Secondary_ed + employ_rate |0 | (Soc_kind ~ kind_bb + Quantiles )  | idem)
-
-# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed |0 | (Property_taxes ~ prt_bb  + year ) | idem)
-
-form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate + Secondary_ed | 0 | (pip_a ~ pit_bb + mrp_all) | idem)
-
-my_iv_reg <- felm(form_iv, data = ia1)
-summary(my_iv_reg)
-
-wald_iv <- waldtest(my_iv_reg$stage1, ~ pit_bb, lhs=my_iv_reg$stage1$lhs)
-print(c(wald_iv[5], wald_iv[1]))
-``` 
-
-
 ```{r}
 
-form_iv <- formula(Gini_netdm ~ lag(gi_bb,2) | idem |(Education_expdm |gdp_grodm ~ Secondary_ed + Gov_ex + employ_rate + pop_gro))
-my_iv_reg <- felm(form_iv, data = ia1)
-summary(my_iv_reg, robust=TRUE)
-
-form_iv <- formula(Gini_netdm ~ lag(gi_bb,1) + Health_expdm -1 | idem | (gdp_grodm ~ Gov_ex + Secondary_ed  + employ_rate))
-my_iv_reg <- felm(form_iv, data = ia1)
-summary(my_iv_reg)
-
-form_iv <- formula(Gini_netdm ~ lag(gi_bb,2) + Soc_payabledm -1 | idem | (gdp_grodm ~ Gov_ex + Secondary_ed + employ_rate + Deficit))
-my_iv_reg <- felm(form_iv, data = ia1)
-summary(my_iv_reg)
-
-form_iv <- formula(Gini_netdm ~ lag(gi_bb) + Soc_kinddm | idem | (gdp_grodm ~ Gov_ex + Secondary_ed  + employ_rate + Deficit)|idem)
-my_iv_reg <- felm(form_iv, data = ia1)
-summary(my_iv_reg)
-
-form_iv <- formula(Gini_netdm ~ lag(gi_bb,1) + Property_taxesdm -1 | idem | (gdp_grodm ~ Gov_ex + Secondary_ed + Deficit))
-my_iv_reg <- felm(form_iv, data = ia1)
-summary(my_iv_reg)
-
-form_iv <- formula(Gini_netdm ~ lag(gi_bb,1) + PITdm*PIT -1 | idem | (gdp_grodm ~ Gov_ex + Secondary_ed  + Deficit))
-my_iv_reg <- felm(form_iv, data = ia1)
-summary(my_iv_reg)
-
-coeftest(my_iv_reg, vcov = vcovHC, type = "HC1")
-```
-```{r}
-dfList <- list(ia1,ia2,ia3,ia4,ia5)
-form_iv <- formula(Gini_netdm ~ lag(gi_bb,2) | idem |(Education_expdm |gdp_grodm ~ Secondary_ed + Gov_ex + employ_rate + pop_gro))
-lapply(dfList, function(x) {summary(felm(form_iv, data = x), robust=TRUE)} )
-```
+fix <- plm(Gini_netdm ~ kind_bb + lag(gdp_grodm) + lag(Gov_ex) + Soc_kinddm , data=ia1, index=c("idem", "year"), model="within",weights = ia1$invwt)
 
 
 
-Table 6
+model_wrong <- plm(Gini_net ~ kind_bb | lag(Soc_kind) + Gov_ex , data = ia1, na.action=na.exclude,index=c("idem", "year"), model="within")
 
-```{r}
-# form_iv <- formula(Gini_net ~ gdp_gro + Gov_ex + employ_rate -1 |0 | (Soc_payable ~ soc_bb  )   | idem) 
-
-form_iv <- formula(Gini_net ~ Gov_ex|0 |(Soc_kind ~ kind_bb + Quantiles) | idem)
-
-my_iv_reg <- felm(form_iv, data = ln1)
-summary(my_iv_reg)
-
-wald_iv <- waldtest(my_iv_reg$stage1, ~ kind_bb, lhs=my_iv_reg$stage1$lhs)
-print(c(wald_iv[5], wald_iv[1]))
+summary(model_wrong)
 ```
 
 ```{r}
-attach(ia1)
+library(MatchIt)
+library(ivreg)
+
+matched_data <- matchit(kind_bb ~ Gini_netdm + Soc_kinddm + Gov_ex + Trade + Deficit+idem,
+                        data = ia1_k,
+                        method = "nearest",
+                        distance = "mahalanobis",
+                        replace = TRUE)
+summary(matched_data)
 ```
 
 ```{r}
-model_net_naive <- lm(Gini_net ~ Education_exp, data = ia1)
-tidy(model_net_naive)
+# Fit the model
+model_wrong <- plm(Gini_net ~ kind_bb | lag(Soc_kind) + Gov_ex, data = ia1, index = c("idem", "year"), model = "within")
+
+# Create an empty data frame to store the fitted values
+fitted_df <- data.frame(fitted = plm:::fitted_exp.plm(model_wrong))
+
+# Assign row names to the fitted data frame to match the original data
+rownames(fitted_df) <- row.names(model_wrong$model)
+
+# Merge the fitted values with the original data using row names as the common identifier
+ia1 <- merge(ia1, fitted_df, by = 0, all.x = TRUE)
+
+# Remove the redundant row name column
+ia1 <- subset(ia1, select = -c("Row.names", "Row.names.x"))
+
+# Rename the Row.names.y column to Row.names
+colnames(ia1)[colnames(ia1) == "Row.names.y"] <- "Row.names"
+
+ia1 <- ia1[ -c(1) ]
 ```
 
-Crear una formula para cada modelo y DB, para un solo DF (no ocupe espacio)
 
 ```{r}
-model_predict_net <- glm(he_bb ~ lag(Gini_net,1) + lag(Health_exp,1) +lag(gdp_gro,1)+ Gov_ex + idem -1, data=ia1,
-                         family = binomial(link = "logit"),
-                         ,na.action = na.exclude)
+matched_data_for_real <- match.data(matched_data)
+```
 
-# Generate propensity scores and IPWs
-net_data_ipw <- augment_columns(model_predict_net, ia1,
-            type.predict = "response") %>%  rename(propensity = .fitted) %>% 
-             mutate(ipw = (ed_bb/propensity) + ((1-ed_bb)/(1-propensity)))
+```{r}
+model_matched <- lm(Gini_net ~ fitted  , 
+                    data = matched_data_for_real,
+                    weights = weights)
+summary(model_matched)
+```
+Generate propensity scores
 
-net_data_ipw %>% 
-  select(idem, year, Gini_net, gi_bb, GDP_bb, gdppc_gro, Education_exp, ed_bb, Gov_ex, propensity, ipw) %>% 
+```{r}
+model_net <- glm(kind_bb ~ Gini_netdm + Soc_kinddm + Gov_ex + Trade + Deficit+idem-1,
+                 data = ia1,
+                 family = binomial(link = "logit"))
+
+summary(model_net, exponentiate = TRUE)
+```
+
+```{r}
+net_probabilities <- augment_columns(model_net,
+                                     ia1,type.predict = "response") %>% 
+  # The predictions are in a column named ".fitted", so we rename it here
+  rename(propensity = .fitted)
+
+# Look at the first few rows of a few columns
+net_probabilities %>% 
+  select(kind_bb, Gini_netdm, Soc_kinddm, Gov_ex, Trade, Deficit, idem) %>% 
+  head()
+```
+```{r}
+net_ipw <- net_probabilities %>% mutate(ipw = (kind_bb / propensity) + ((1 - kind_bb) / (1 - propensity)))
+
+# Look at the first few rows of a few columns
+net_ipw %>% 
+  select(kind_bb, Gini_netdm, Gini_net, gdppc_gro, Soc_kinddm, Gov_ex, Trade, Deficit, idem, propensity, ipw) %>% 
   head()
 ```
 
 
 ```{r}
-model_net_ipw <- lm(Gini_net ~ Education_exp, data = net_data_ipw, weights = ipw)
-tidy(model_net_ipw)
+model_ipw <- lm(Gini_net ~ kind_bb, 
+                data = net_ipw,
+                weights = ipw)
 
-```
-```{r}
-# ipwpoint() can't handle tibbles! Force net_data to be a data.frame
-weights_ipwpoint <- ipwpoint(exposure = ed_bb,
-  family = "binomial",  # The treatment is binary
-  link = "logit",
-  denominator = ~ gdppc_gro + Education_exp + Gov_ex,
-  data = as.data.frame(na.omit(ia1)))
-
-# They're the same!
-head(weights_ipwpoint$ipw.weights)
-## [1] 1.61 1.59 2.93 1.36 1.68 1.85
-head(net_data_ipw$ipw)
-## [1] 1.61 1.59 2.93 1.36 1.68 1.85
-```
-
-
-```{r}
-ia1c = na.omit(ia1)
-
-net_data_ipwpoint <- ia1c %>% 
-  mutate(ipw = weights_ipwpoint$ipw.weights)
-
-model_net_ipwpoint <- lm(Gini_net ~ Education_exp, 
-                         data = net_data_ipwpoint, weights = ipw)
-tidy(model_net_ipwpoint)
-
-```
-
-
-```{r}
-weights_weightit <- weightit(ed_bb ~ gdppc_gro + Gov_ex,  # Model net use with confounders
-                             data = ia1c, 
-                             estimand = "ATE",  # Find the ATE
-                             method = "ps", include.obj = TRUE)  # Build weights with propensity scores
-weights_weightit$weights
-```
-
-
-```{r}
-net_data_weightit <- ia1c %>% 
-  mutate(ipw = weights_weightit$weights)
-
-model_net_weightit <- lm(Gini_net ~ ed_bb, 
-                         data = net_data_weightit, weights = ipw)
-
-tidy(model_net_weightit)
-```
-
-
-```{r}
-fit <- lm(speed ~ dist, data= cars)
-
-esample.n <- nobs(fit)
-```
-
-
-```{r}
-esample<-rownames(as.matrix(resid(fit)))
-
-cars[esample,]
+summary(model_ipw)
 ```
 
 ```{r}
-pror1 = glm(he_bb ~ lag(Gini_net,1) + lag(Health_exp,1) +lag(gdp_gro,1)+ Gov_ex + idem -1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
-summ(pror1)
-```
+net_ipw <- net_ipw %>% 
+  # If the IPW is larger than 8, make it 8, otherwise use the current IPW
+  mutate(ipw_truncated = ifelse(ipw > 5, 5, ipw))
 
+model_ipw_truncated <- lm(Gini_net ~ kind_bb, 
+                        data = net_ipw,
+                          weights = ipw_truncated)
+
+summary(model_ipw_truncated)
+```
 
 ```{r}
-ia1['phat0'] = predict(pror1,  type = 'response')
+plot(net_ipw$propensity, net_ipw$Soc_kind)
+abline(lm(Soc_kind~propensity,data=net_ipw),col='red')
 ```
-
-
-```{r}
-esample.n <- nobs(pror1)
-```
-
-
-```{r}
-esample<-rownames(as.matrix(resid(pror1)))
-esample.n <- nobs(fit)
-```
-
-
-```{r}
-esample<-rownames(as.matrix(pror1$fitted.values))
-esample.n <- nobs(pr)
-
-ia1_e = ia1[esample,]
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
 
