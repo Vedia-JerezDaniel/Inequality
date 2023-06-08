@@ -205,7 +205,8 @@ ia1$invwt_2 <- ifelse(ia1$invwt %in% outliers, NA, ia1$invwt)
 
 
 ```{r}
-pror1 = glm(he_bb ~ lag(Gini_netdm,1) + Gov_ex+ lag(Health_expdm,1) + Trade+Deficit+idem-1, data=ia1, family=binomial(link="probit"), na.action = na.exclude)
+pror1 = glm(he_bb ~ lag(Gini_netdm,1) + Gov_ex + lag(Health_expdm,1) + Trade + Deficit + idem - 1, data = ia1, family = binomial(link="probit"), na.action = na.exclude)
+
 summ(pror1)
 
 ```
@@ -251,6 +252,8 @@ fix <- plm(Gini_netdm ~ kind_bb + lag(gdp_grodm) + lag(Gov_ex) + Soc_kinddm , da
 summary(fix)
 
 ```
+
+Probar select_col para IVREG
 
 ```{r}
 select_col <- function(pror1, ia1, cols) {
