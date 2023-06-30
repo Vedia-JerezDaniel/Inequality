@@ -365,7 +365,7 @@ df_ee1 = select_col(pror1, ia1, c('idem','year',"pit_bb","Gini_netdm","gdp_grodm
 
 ```
 
----- Learn predict & continue: Try one function of (1,2,3)
+
 
 ```{r}
 # ln1['phat0'] = predict(pror, type = 'response')
@@ -435,11 +435,10 @@ library(plm)
 ```
 
 ```{r}
-fix <- plm(Gini_netdm ~ ed_bb + lag(gdp_gro) + lag(Gov_ex) +  Education_expdm + gdp_grodm , data=ia1, index=c("idem", "year"), model="within",weights = ia1$invwt)
 
+fix <- plm(Gini_netdm ~ ed_bb + lag(gdp_gro) + lag(Gov_ex) + Education_expdm + gdp_grodm,data=ia1, index=c("idem", "year"), model="within", weights = ia1$invwt)
 
 summary(fix)
-
 ```
 
 
@@ -615,20 +614,97 @@ fix <- plm(Gini_netdm ~ kind_bb + lag(gdp_grodm) + lag(Gov_ex) + Soc_kinddm , da
 
 
 
-model_wrong <- plm(Gini_net ~ kind_bb | lag(Soc_kind) + Gov_ex , data = ia1, na.action=na.exclude,index=c("idem", "year"), model="within")
+m_i <- plm(Gini_net ~ kind_bb , data = ia1, model="within", index=c("idem", "year"))
 
-summary(model_wrong)
+summary(m_i)
+
+
+fit_df <- data.frame(fitted = plm:::fitted_exp.plm(m_i))
+
+# Assign row names to the fitted data frame to match the original data
+rownames(fit_df) <- row.names(m_i$model)
+
+# Merge the fitted values with the original data using row names as the common identifier
+ia1_i <- merge(ia1, fit_df, by = 0, all.x = TRUE)
+
+esample.n <- nobs(m_i)
+esample <- rownames(as.matrix(m_i$model))
+
+db_e <- ia1_i[esample, ]
+db_e <- data.frame(db_e, index=c("idem", "year"))
+# Remove the redundant row name column
+# ia1 <- subset(ia1, select = -c("Row.names", "Row.names.x"))
+
+# Rename the Row.names.y column to Row.names
+# colnames(ia1)[colnames(ia1) == "Row.names.y"] <- "Row.names"
+
+ia1_i <- ia1_i[ -c(1,124) ]
+ia_id = data.frame(ia1,)
+
+db_e$mu0 <- predict(m_i, newdata = db_e, type = "response")
+  db_e$mu0 <- ifelse(db_e$ed_bb == 0 & !is.na(db_e$mu0), 1, 0)
+
+  
+fit_df <- data.frame(predict(m_i, newdata = db_e, type = "response"))
+
+# Assign row names to the fitted data frame to match the original data
+
+apply_prediction <- function(fix, db) {
+
+  esample.n <- nobs(fix)
+  esample <- rownames(as.matrix(fix$model))
+
+  db_e <- db[esample, ]
+  db_e <- (db_e)
+  db_e$mu0 <- predict(fix, newdata = db_e, type = "response")
+  db_e$mu0 <- ifelse(db_e$ed_bb == 0 & !is.na(db_e$mu0), 1, 0)
+  
+  return(db_e)
+}
+
+# Usage example
+ia1_k <- apply_prediction(fix, ia1)
+
+
+
+ia1_i[rowSums(is.na(ia1_i)) == 0, ]
+ia1_k %>% drop_na()
+na.omit(ia1_i)
 ```
 
 ```{r}
-library(MatchIt)
-library(ivreg)
+# Obtain the predicted values
+predicted_values <- predict(m_i, newdata = db_e, type = "response")
 
-matched_data <- matchit(kind_bb ~ Gini_netdm + Soc_kinddm + Gov_ex + Trade + Deficit+idem,
-                        data = ia1_k,
+# Subset the original data frame to match the length of predicted values
+db_e_subset <- db_e[1:length(predicted_values), ]
+
+# Add the predicted values to the subset of the original data frame
+db_e_subset$mu0 <- predicted_values
+
+# Use the subsetted data frame with predicted values
+db_e <- db_e_subset
+
+
+
+```
+
+
+```{r}
+esample.n <- nobs(m_i)
+esample <- rownames(as.matrix(m_i$model))
+
+db_e <- ia1[esample, ]
+db_e <- (db_e)
+
+library(MatchIt)
+
+matched_data <- matchit(kind_bb ~ Gini_netdm + gdp_grodm + Soc_kinddm + Gov_ex + Trade + Deficit+idem,
+                        data = db_e,
                         method = "nearest",
                         distance = "mahalanobis",
                         replace = TRUE)
+
 summary(matched_data)
 ```
 
@@ -646,12 +722,13 @@ rownames(fitted_df) <- row.names(model_wrong$model)
 ia1 <- merge(ia1, fitted_df, by = 0, all.x = TRUE)
 
 # Remove the redundant row name column
-ia1 <- subset(ia1, select = -c("Row.names", "Row.names.x"))
+# ia1 <- subset(ia1, select = -c("Row.names", "Row.names.x"))
 
 # Rename the Row.names.y column to Row.names
-colnames(ia1)[colnames(ia1) == "Row.names.y"] <- "Row.names"
+# colnames(ia1)[colnames(ia1) == "Row.names.y"] <- "Row.names"
 
 ia1 <- ia1[ -c(1) ]
+ia1 <- ia1[ -c(124) ]
 ```
 
 
@@ -660,7 +737,7 @@ matched_data_for_real <- match.data(matched_data)
 ```
 
 ```{r}
-model_matched <- lm(Gini_net ~ fitted  , 
+model_matched <- lm(Gini_net ~ fitted.x  , 
                     data = matched_data_for_real,
                     weights = weights)
 summary(model_matched)
@@ -669,7 +746,7 @@ Generate propensity scores
 
 ```{r}
 model_net <- glm(kind_bb ~ Gini_netdm + Soc_kinddm + Gov_ex + Trade + Deficit+idem-1,
-                 data = ia1,
+                 data = ia1_k,
                  family = binomial(link = "logit"))
 
 summary(model_net, exponentiate = TRUE)
@@ -677,27 +754,26 @@ summary(model_net, exponentiate = TRUE)
 
 ```{r}
 net_probabilities <- augment_columns(model_net,
-                                     ia1,type.predict = "response") %>% 
-  # The predictions are in a column named ".fitted", so we rename it here
-  rename(propensity = .fitted)
+                                     ia1_k,type.predict = "response") %>% rename(propensity = .fitted)
 
 # Look at the first few rows of a few columns
-net_probabilities %>% 
-  select(kind_bb, Gini_netdm, Soc_kinddm, Gov_ex, Trade, Deficit, idem) %>% 
+net_probabilities %>%  select(kind_bb, Gini_netdm, Soc_kinddm, Gov_ex, Trade, Deficit, idem) %>% 
   head()
 ```
+
+
 ```{r}
 net_ipw <- net_probabilities %>% mutate(ipw = (kind_bb / propensity) + ((1 - kind_bb) / (1 - propensity)))
 
 # Look at the first few rows of a few columns
 net_ipw %>% 
-  select(kind_bb, Gini_netdm, Gini_net, gdppc_gro, Soc_kinddm, Gov_ex, Trade, Deficit, idem, propensity, ipw) %>% 
+  select(kind_bb, Gini_netdm, Gini_net, gdppc_gro, Soc_kinddm, Gov_ex, Trade, Deficit, idem, propensity, ipw, fitted.x) %>% 
   head()
 ```
 
 
 ```{r}
-model_ipw <- lm(Gini_net ~ kind_bb, 
+model_ipw <- lm(Gini_net ~ fitted.x, 
                 data = net_ipw,
                 weights = ipw)
 
@@ -709,7 +785,7 @@ net_ipw <- net_ipw %>%
   # If the IPW is larger than 8, make it 8, otherwise use the current IPW
   mutate(ipw_truncated = ifelse(ipw > 5, 5, ipw))
 
-model_ipw_truncated <- lm(Gini_net ~ kind_bb, 
+model_ipw_truncated <- lm(Gini_net ~ fitted.x, 
                         data = net_ipw,
                           weights = ipw_truncated)
 
