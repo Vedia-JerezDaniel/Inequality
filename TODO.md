@@ -4,7 +4,8 @@ _________________________________________________________
 
 ### After the conclusion of each point, mark as “done...”
 
-
+10/09
+* Complete the DB for test_1 excel file
 
 18/09
 
@@ -33,4 +34,6 @@ _________________________________________________________
   12. Write Conclusions 
 
 
-
+21/10
+ 
+* Test the model in Stata, we have a clean DF.
