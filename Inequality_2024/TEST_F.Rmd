@@ -1,0 +1,376 @@
+```{r,message=FALSE}
+library(tidyverse)
+library(lpirfs)
+library(dplyr)
+library(jtools)
+library(nlme)
+
+library(broom)
+library(scales)
+library(truncnorm)
+library(ipw)
+library(WeightIt)
+```
+
+```{r}
+library(readxl)
+test_1 <- read_excel("E:/GitRepo/Inequality/test_1.xlsx", sheet = "clean")
+
+View(test_1)
+```
+
+### Filter and BB var definition
+
+```{r}
+library(mFilter)
+
+hp <- as.data.frame(test_1 %>%
+  arrange(idem, year) %>%  
+  group_by(idem) %>%      
+  mutate_at(vars(Gini_net, Education_exp, Health_exp, Soc_payable),~ ifelse(is.na(.x), mean(.x, na.rm = TRUE), .x)))
+
+temp = as.data.frame(hp %>% select(year, idem, Gini_net, Education_exp, Health_exp, Soc_payable))
+
+```
+
+```{r}
+fh <- temp %>% arrange(idem, year) %>% group_by(idem) %>% 
+  filter(!is.na(Gini_net)) %>% 
+  mutate(gi_trend = mFilter::hpfilter(Gini_net, type = "lambda", freq = 6.25)$trend,
+         ed_trend = mFilter::hpfilter(Education_exp, type = "lambda", freq = 6.25)$trend,
+         he_trend = mFilter::hpfilter(Health_exp, type = "lambda", freq = 6.25)$trend,
+         soc_trend = mFilter::hpfilter(Soc_payable, type = "lambda", freq = 6.25)$trend,
+         # kind_trend = mFilter::hpfilter(Soc_kind, type = "lambda", freq = 6.25)$trend,
+         # prt_trend = mFilter::hpfilter(Property_taxes, type = "lambda", freq = 6.25)$trend,
+         # indt_trend = mFilter::hpfilter(ind_tx, type = "lambda", freq = 6.25)$trend,
+         # pit_trend = mFilter::hpfilter(PIT, type = "lambda", freq = 6.25)$trend
+         )
+
+fh <- fh %>% arrange(idem, year) %>% group_by(idem) %>% 
+  filter(!is.na(Gini_net)) %>% 
+  mutate(gi_cycle = mFilter::hpfilter(Gini_net, type = "lambda", freq = 6.25)$cycle,
+         ed_cycle = mFilter::hpfilter(Education_exp, type = "lambda", freq = 6.25)$cycle,
+         he_cycle = mFilter::hpfilter(Health_exp, type = "lambda", freq = 6.25)$cycle,
+         soc_cycle = mFilter::hpfilter(Soc_payable, type = "lambda", freq = 6.25)$cycle,
+         # kind_cycle = mFilter::hpfilter(Soc_kind, type = "lambda", freq = 6.25)$cycle,
+         # prt_cycle = mFilter::hpfilter(Property_taxes, type = "lambda", freq = 6.25)$cycle,
+         # indt_cycle = mFilter::hpfilter(ind_tx, type = "lambda", freq = 6.25)$cycle,
+         # pit_cycle = mFilter::hpfilter(PIT, type = "lambda", freq = 6.25)$cycle
+         )
+
+
+fh <- fh %>% mutate(gi_bb = case_when((gi_cycle > 0 ~ 1), (gi_cycle < 0 ~ 0)),
+                    ed_bb = case_when((ed_cycle > 0 ~ 1), (ed_cycle < 0 ~ 0)),
+                    he_bb = case_when((he_cycle > 0 ~ 1), (he_cycle < 0 ~ 0)),
+                    soc_bb = case_when((soc_cycle > 0 ~ 1), (soc_cycle < 0 ~ 0)),
+                    # kind_bb = case_when((kind_cycle > 0 ~ 1), (kind_cycle < 0 ~ 0)),
+                    # prt_bb = case_when((prt_cycle > 0 ~ 1), (prt_cycle < 0 ~ 0)),
+                    # indt_bb = case_when((indt_cycle > 0 ~ 1), (indt_cycle < 0 ~ 0)),
+                    # pit_bb = case_when((pit_cycle > 0 ~ 1), (pit_cycle < 0 ~ 0))
+                    )
+
+rm(temp)
+```
+
+```{r}
+
+temp <- fh %>% arrange(idem, year) %>% group_by(idem) %>% select(c(1,2,15:18))
+
+ln1 = merge.data.frame(test_1, temp, by=c("idem","year"))
+
+ln1['id'] = as.numeric(as.factor(ln1$idem))
+
+# ln1 <- ln1 %>% select(idem,id, year, c(3:83) )
+
+rm(hp, fh)
+
+detach("package:mFilter", unload = TRUE)
+```
+
+### Demeaned variables
+
+
+```{r}
+library(datawizard)
+
+dm = demean(test_1, select =~ Gini_net+gdp_gro+Gov_ex+Education_exp+Health_exp+Soc_payable, group = "idem", suffix_demean = "_within")
+
+dm <- dm %>% select(ends_with('_within'))
+
+colnames(dm) <- gsub("_within","dm",colnames(dm))
+
+dm['idem'] = test_1$idem
+dm['year'] = test_1$year
+
+ln1 = merge.data.frame(test_1, dm, by=c("idem","year"))
+# dm <- dm %>% relocate(idem) 
+# dm <- dm %>% relocate(year, .after = idem) 
+
+# attach(dm)
+
+rm(dm, temp)
+
+detach("package:datawizard", unload = TRUE)
+
+attach(ln1)
+```
+
+
+```{r}
+eq_ed <- as.formula(paste("ed_bb ~ lag(Gini_netdm,1) + lag(Education_expdm,1)+ Gov_ex + Trade+Deficit+idem-1", collapse = " + "))
+
+eq_he <- as.formula(paste("he_bb ~ lag(Gini_netdm,1) + Gov_ex+ lag(Health_expdm,1) + Trade+Deficit+idem-1", collapse = " + "))
+
+eq_soc <- as.formula(paste("soc_bb ~ lag(Gini_netdm,1) +lag(Soc_payabledm,1)+ gdp_gro+Gov_ex +Trade+Deficit+idem-1", collapse = " + "))
+
+eq_kind <- as.formula(paste("kind_bb ~ lag(Gini_netdm,1) +lag(Soc_kinddm,1)+Gov_ex +Trade+Deficit+idem-1", collapse = " + "))
+
+eq_prt <- as.formula(paste("prt_bb ~ Gini_netdm +Property_taxesdm +Gov_ex+Trade+Deficit+idem", collapse = " + "))
+
+eq_indtx <- as.formula(paste("indt_bb ~ lag(Gini_netdm,1) + lag(ind_txdm,1) + Gov_ex +Deficit+idem", collapse = " + "))
+
+eq_pit <- as.formula(paste("pit_bb ~ lag(Gini_netdm,3)+lag(PITdm,4)+lag(gdp_grodm,3) + Gov_ex+ Deficit+idem-1", collapse = " + "))
+
+```
+
+```{r}
+eq_ed <- as.formula(paste("ed_bb ~ lag(Gini_net,1) + lag(Education_exp,1)+ Gov_ex +idem-1", collapse = " + "))
+```
+
+
+```{r}
+ln1 = merge.data.frame(ln1, temp, by=c("idem","year"))
+
+ln1['id'] = as.numeric(as.factor(ln1$idem))
+
+rm(fh, hp, temp)
+```
+
+```{r}
+pror1 = glm(eq_ed, data=ln1, family=binomial(link="probit"), na.action=na.exclude)
+
+summary(pror1)
+
+ln1['phat0'] = predict(pror1,  type = 'response')
+ln1['invwt'] = ln1$ed_bb/ln1$phat0 + (1-ln1$ed_bb)/(1-ln1$phat0)
+
+ln1['phat'] = ln1$phat0
+
+summary(ln1$phat0)
+
+lo = summary(ln1$phat0)[1]*1.1
+up = .9*summary(ln1$phat0)[6]
+
+ln1 <- ln1 %>% mutate(phat = ifelse(phat > up, up , ln1$phat))
+ln1 <- ln1 %>% mutate(phat = ifelse(phat < lo, lo, ln1$phat))
+    
+```
+
+Añadir argument de Y en la función
+
+```{r}
+
+get_phat <- function(equation, db) {
+    pror1 = glm(equation, data=db, family=binomial(link="probit"), na.action = na.exclude)
+
+    db['phat0'] = predict(pror1,  type = 'response')
+    db['invwt'] = db$ed_bb/db$phat0 + (1-db$ed_bb)/(1-db$phat0)
+    
+    db['phat'] = db$phat0
+    
+    lo = summary(db$phat0)[1]*1.1
+    up = .9*summary(db$phat0)[6]
+    
+    db <- db %>% mutate(phat = ifelse(phat > up, up , db$phat))
+    db <- db %>% mutate(phat = ifelse(phat < lo, lo, db$phat))
+    
+    return(db)
+}
+```
+
+
+```{r}
+ln1['invwt'] = ln1$Education_exp/ln1$phat + (1-ln1$Education_exp)/(1-ln1$phat)
+```
+
+```{r}
+get_phat(eq_ed, test_1)
+```
+
+```{r}
+library(plm)
+```
+
+```{r}
+# Fit the model
+model_wrong <- plm(Gini_netdm ~ lag(ed_bb,1) + lag(Gov_exdm,1) + lag(gdp_grodm,1), data = ln1, weights = invwt,index = c("idem", "year"), model = "within", effect = 'twoways'  )
+
+summary(model_wrong)
+
+ln1['mu0'] = (if_else(ln1$ed_bb == 1, ln1$ed_bb - coefficients(model_wrong)[1], 0))
+ln1['mu1'] = (if_else(ln1$ed_bb == 0, ln1$ed_bb + coefficients(model_wrong)[1], 1))
+
+
+ln1['mdiff'] = (-(ln1$ed_bb-ln1$phat)*ln1$mu1/ln1$phat)-((ln1$ed_bb-ln1$phat)*ln1$mu0/(1-ln1$phat))
+
+ln1['inv']= ((ln1$ed_bb/ln1$phat) + (1-ln1$ed_bb)/(1-ln1$phat))
+ln1['iptw'] = (2*ln1$ed_bb-1)*(ln1$ed_bb*ln1$inv)
+  
+ln1['dr1'] = ln1$iptw + ln1$mdiff
+
+summary(lm.cluster(data=ln1, ln1$dr1 ~ 1, cluster = ln1$idem))
+
+coef(lm.cluster(data=ln1, ln1$dr1 ~ 1 , cluster = ln1$idem))
+vcov(lm.cluster(data=ln1, ln1$dr1 ~ 1, cluster = ln1$idem))
+# # Create an empty data frame to store the fitted values
+# fitted_df <- data.frame(fitted = plm:::fitted_exp.plm(model_wrong))
+# 
+# # Assign row names to the fitted data frame to match the original data
+# rownames(fitted_df) <- row.names(model_wrong$model)
+# 
+# # Merge the fitted values with the original data using row names as the common identifier
+# ia1_m <- merge(test_1, fitted_df, by = 0, all.x = TRUE)
+# ia1_m$Row.names <- as.numeric(ia1_m$Row.names)
+# 
+# rownames(ia1_m) <- ln1
+# # Remove the redundant row name column
+# # ia1 <- subset(ia1, select = -c("Row.names", "Row.names.x"))
+# 
+# # Rename the Row.names.y column to Row.names
+# # colnames(ia1)[colnames(ia1) == "Row.names.y"] <- "Row.names"
+# ia1_m <- ia1_m %>% arrange(idem, year)
+# 
+# ia1_m <- ia1_m[ -c(1) ]
+
+
+```
+
+
+
+```{r}
+ia1_m %>% drop_na() -> ia_t
+
+library(MatchIt)
+
+matched_data <- matchit(ed_bb ~ Gini_net + gdp_gro + Education_exp + Gov_ex + Trade + Deficit +goveff,
+                        data = ia_t, method = "nearest",distance = "mahalanobis", replace = TRUE)
+
+summary(matched_data)
+```
+
+```{r}
+ia1_i[rowSums(is.na(ia1_i)) == 0, ]
+ia1_m %>% drop_na() -> ia_t
+na.omit(ia1_i)
+```
+
+```{r}
+matched_data_for_real <- match.data(matched_data)
+
+```
+
+```{r}
+model_matched <- lm(Gini_net ~ fitted +idem, data = matched_data_for_real, weights = weights)
+summary(model_matched)
+```
+
+Generate propensity scores
+
+```{r}
+model_net <- glm(ed_bb ~ Gini_net + gdp_gro + Education_exp + Gov_ex + Trade + Deficit +goveff,
+                 data = ia1_m,
+                 family = binomial(link = "logit"))
+
+summary(model_net, exponentiate = TRUE)
+```
+
+```{r}
+net_probabilities <- augment_columns(model_net,
+                    ia1_m,type.predict = "response") %>% rename(propensity = .fitted)
+
+# Look at the first few rows of a few columns
+net_probabilities %>%  select(ed_bb, Gini_netdm, Education_expdm, Gov_ex, Trade, Deficit, idem) %>% 
+  head()
+
+net_probabilities <- net_probabilities[ -c(33:38) ]
+```
+
+```{r}
+net_ipw <- net_probabilities %>% mutate(ipw = (ed_bb / propensity) + ((1 - ed_bb) / (1 - propensity)))
+
+# Look at the first few rows of a few columns
+net_ipw %>% 
+  select(ed_bb, Gini_netdm, Gini_net, gdppc_gro, Education_expdm, Gov_ex, Trade, Deficit, idem, propensity, ipw, fitted) %>% head()
+
+
+orde_df = as.matrix.data.frame(net_ipw)
+
+net_ipw <- as.data.frame(orde_df[order(orde_df[,2],orde_df[,3],decreasing=FALSE),])
+
+net_ipw$ipw <- as.numeric(net_ipw$ipw)
+
+```
+
+```{r}
+model_ipw <- lm(Gini_net ~ fitted +idem, data = net_ipw, weights = ipw)
+
+summary(model_ipw)
+
+plot(net_ipw$propensity, net_ipw$Education_expdm)
+abline(lm(Education_expdm~propensity,data=net_ipw),col='red')
+```
+
+```{r}
+summary(net_ipw$ipw)
+
+net_ipw <- net_ipw %>% 
+  # If the IPW is larger than 8, make it 8, otherwise use the current IPW
+  mutate(ipw_truncated = ifelse(ipw > 5, 5, ipw))
+
+model_ipw_truncated <- lm(Gini_net ~ fitted, data = net_ipw, weights = ipw_truncated)
+
+summary(model_ipw_truncated)
+```
+
+```{r}
+library(plm)
+data("Gasoline", package = "plm")
+form <- lgaspcar ~ lincomep + lrpmg + lcarpcap
+
+gasw <-  plm(form, data = Gasoline, model = "within")
+gasp <-  plm(form, data = Gasoline, model = "pooling")
+gasnp <-  pvcm(form, data = Gasoline, model = "within")
+
+pooltest(gasw, gasnp)
+pooltest(gasp, gasnp)
+
+pooltest(form, data = Gasoline, effect = "individual", model = "within")
+pooltest(form, data = Gasoline, effect = "individual", model = "pooling")
+
+```
+
+```{r}
+varia <- c('Gini_net', 'Gov_debt')
+peri <- c(0, 1, 2, 3, 4)
+
+
+for (x in varia) {
+  for (h in peri) {
+    test_1[paste0(x, "_", h)] <- lead(test_1[[x]], h) - lag(test_1[[x]], h)
+  }
+}
+
+
+
+
+```
+
+```{r}
+library(lpirfs)
+
+```
+
+```{r}
+
+
+```

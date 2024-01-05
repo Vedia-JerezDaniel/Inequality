@@ -1,0 +1,1312 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>OECD.Stat</Author>
+  <LastAuthor>dani</LastAuthor>
+  <Created>2023-03-28T19:07:57Z</Created>
+  <LastSaved>2023-03-28T17:24:47Z</LastSaved>
+  <Company>OECD</Company>
+  <Version>16.00</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <AllowPNG/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>12045</WindowHeight>
+  <WindowWidth>28800</WindowWidth>
+  <WindowTopX>32767</WindowTopX>
+  <WindowTopY>32767</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Arial"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="m2683305660944">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Center" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Color="#FFFFFF"
+    ss:Bold="1"/>
+   <Interior ss:Color="#00A1E3" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="m2683305660964">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Underline="Single"/>
+   <Interior ss:Color="#C4D8ED" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="m2683305660984">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Underline="Single"/>
+   <Interior ss:Color="#C4D8ED" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="m2683305655744">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Color="#FFFFFF"
+    ss:Bold="1"/>
+   <Interior ss:Color="#2973BD" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="m2683305655764">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#2973BD" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="m2683305655784">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Center" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Color="#FFFFFF"
+    ss:Bold="1"/>
+   <Interior ss:Color="#00A1E3" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="m2683305655804">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#00A1E3" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="m2683305655824">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#00A1E3" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="m2683305655844">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#00A1E3" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s62">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="8"/>
+  </Style>
+  <Style ss:ID="s63">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="9" ss:Color="#000080"
+    ss:Bold="1" ss:Underline="Single"/>
+  </Style>
+  <Style ss:ID="s86">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Color="#FFFFFF"/>
+   <Interior ss:Color="#00A1E3" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s92">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Color="#FFFFFF"
+    ss:Underline="Single"/>
+   <Interior ss:Color="#00A1E3" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s93">
+   <Alignment ss:Vertical="Bottom" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Bold="1"/>
+   <Interior ss:Color="#C4D8ED" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s94">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Courier New" x:Family="Modern" ss:Size="9" ss:Color="#FF0000"
+    ss:Bold="1"/>
+   <Interior ss:Color="#FFFFFF" ss:Pattern="Gray50" ss:PatternColor="#C0C0C0"/>
+  </Style>
+  <Style ss:ID="s102">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8"/>
+   <Interior ss:Color="#C4D8ED" ss:Pattern="Solid"/>
+  </Style>
+  <Style ss:ID="s103">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="8"/>
+   <NumberFormat ss:Format="#,##0.0_ ;\-#,##0.0\ "/>
+  </Style>
+  <Style ss:ID="s104">
+   <Alignment ss:Horizontal="Right" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"
+     ss:Color="#C0C0C0"/>
+   </Borders>
+   <Font ss:FontName="Arial" x:Family="Swiss" ss:Size="8"/>
+   <Interior ss:Color="#F0F8FF" ss:Pattern="Solid"/>
+   <NumberFormat ss:Format="#,##0.0_ ;\-#,##0.0\ "/>
+  </Style>
+  <Style ss:ID="s105">
+   <Alignment ss:Horizontal="Left" ss:Vertical="Bottom"/>
+   <Font ss:FontName="Verdana" x:Family="Swiss" ss:Size="8" ss:Underline="Single"/>
+  </Style>
+  <Style ss:ID="s106">
+   <NumberFormat ss:Format="#,##0.0_ ;\-#,##0.0\ "/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="OECD.Stat export">
+  <Table ss:ExpandedColumnCount="17" ss:ExpandedRowCount="69" x:FullColumns="1"
+   x:FullRows="1">
+   <Column ss:AutoFitWidth="0" ss:Width="144" ss:Span="1"/>
+   <Column ss:Index="3" ss:AutoFitWidth="0" ss:Width="12.75"/>
+   <Row ss:Hidden="1">
+    <Cell ss:StyleID="s62" ss:Formula="=DotStatQuery(RC[1])"><Data ss:Type="Error">#NAME?</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;&lt;WebTableParameter xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns=&quot;http://stats.oecd.org/OECDStatWS/2004/03/01/&quot;&gt;&lt;DataTable Code=&quot;RS_GBL&quot; HasMetadata=&quot;true&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Global Revenue Statistics Database&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Base de données mondiale des statistiques des recettes publiques&lt;/Name&gt;&lt;Dimension Code=&quot;COU&quot; HasMetadata=&quot;false&quot; CommonCode=&quot;LOCATION&quot; Display=&quot;labels&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Country&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Pays&lt;/Name&gt;&lt;Member Code=&quot;AUT&quot; HasMetadata=&quot;true&quot; HasOnlyUnitMetadata=&quot;false&quot; HasChild=&quot;0&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Austria&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Autriche&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;BEL&quot; HasMetadata=&quot;true&quot; HasOnlyUnitMetadata=&quot;false&quot; HasChild=&quot;0&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Belgium&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Belgique&lt;/Name&gt;&lt;/Member&gt;&lt;/Dimension&gt;&lt;Dimension Code=&quot;GOV&quot; HasMetadata=&quot;false&quot; Display=&quot;labels&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Level of government&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Niveau d'administration&lt;/Name&gt;&lt;Member Code=&quot;NES&quot; HasMetadata=&quot;false&quot; HasOnlyUnitMetadata=&quot;false&quot; HasChild=&quot;0&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Total&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Total&lt;/Name&gt;&lt;/Member&gt;&lt;/Dimension&gt;&lt;Dimension Code=&quot;TAX&quot; HasMetadata=&quot;false&quot; Display=&quot;labels&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Tax revenue&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Recettes fiscales&lt;/Name&gt;&lt;Member Code=&quot;1100&quot; HasMetadata=&quot;false&quot; HasOnlyUnitMetadata=&quot;false&quot; HasChild=&quot;0&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1100 Taxes on income, profits and capital gains of individuals&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1100 Impôts sur le revenu, les bénéfices et les gains en capital des personnes physiques&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2000&quot; HasMetadata=&quot;false&quot; HasOnlyUnitMetadata=&quot;false&quot; HasChild=&quot;0&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2000 Social security contributions (SSC)&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2000 Cotisations de sécurité sociale (CSS)&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;3000&quot; HasMetadata=&quot;false&quot; HasOnlyUnitMetadata=&quot;false&quot; HasChild=&quot;0&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;3000 Taxes on payroll and workforce&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;3000 Impôts sur les salaires et la main-d’oeuvre&lt;/Name&gt;&lt;/Member&gt;&lt;/Dimension&gt;&lt;Dimension Code=&quot;VAR&quot; HasMetadata=&quot;false&quot; Display=&quot;labels&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Indicator&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Indicateur&lt;/Name&gt;&lt;Member Code=&quot;TAXGDP&quot; HasMetadata=&quot;true&quot; HasOnlyUnitMetadata=&quot;false&quot; HasChild=&quot;0&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Tax revenue as % of GDP&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Recettes fiscales en % du PIB&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;TAXPER&quot; HasMetadata=&quot;false&quot; HasOnlyUnitMetadata=&quot;false&quot; HasChild=&quot;0&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Tax revenue as % of total taxation&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Recettes fiscales en % du total des recettes&lt;/Name&gt;&lt;/Member&gt;&lt;/Dimension&gt;&lt;Dimension Code=&quot;YEA&quot; HasMetadata=&quot;false&quot; CommonCode=&quot;TIME&quot; Display=&quot;labels&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;Year&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;Année&lt;/Name&gt;&lt;Member Code=&quot;1990&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1990&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1990&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;1991&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1991&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1991&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;1992&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1992&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1992&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;1993&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1993&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1993&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;1994&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1994&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1994&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;1995&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1995&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1995&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;1996&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1996&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1996&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;1997&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1997&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1997&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;1998&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1998&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1998&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;1999&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;1999&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;1999&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2000&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2000&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2000&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2001&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2001&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2001&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2002&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2002&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2002&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2003&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2003&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2003&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2004&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2004&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2004&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2005&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2005&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2005&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2006&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2006&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2006&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2007&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2007&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2007&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2008&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2008&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2008&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2009&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2009&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2009&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2010&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2010&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2010&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2011&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2011&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2011&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2012&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2012&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2012&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2013&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2013&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2013&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2014&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2014&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2014&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2015&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2015&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2015&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2016&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2016&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2016&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2017&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2017&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2017&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2018&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2018&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2018&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2019&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2019&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2019&lt;/Name&gt;&lt;/Member&gt;&lt;Member Code=&quot;2020&quot; HasMetadata=&quot;false&quot;&gt;&lt;Name LocaleIsoCode=&quot;en&quot;&gt;2020&lt;/Name&gt;&lt;Name LocaleIsoCode=&quot;fr&quot;&gt;2020&lt;/Name&gt;&lt;/Member&gt;&lt;/Dimension&gt;&lt;WBOSInformations&gt;&lt;TimeDimension WebTreeWasUsed=&quot;false&quot;&gt;&lt;StartCodes Annual=&quot;1990&quot; /&gt;&lt;/TimeDimension&gt;&lt;/WBOSInformations&gt;&lt;Tabulation Axis=&quot;horizontal&quot;&gt;&lt;Dimension Code=&quot;TAX&quot; /&gt;&lt;Dimension Code=&quot;VAR&quot; /&gt;&lt;/Tabulation&gt;&lt;Tabulation Axis=&quot;vertical&quot;&gt;&lt;Dimension Code=&quot;COU&quot; /&gt;&lt;Dimension Code=&quot;YEA&quot; /&gt;&lt;/Tabulation&gt;&lt;Tabulation Axis=&quot;page&quot;&gt;&lt;Dimension Code=&quot;GOV&quot; /&gt;&lt;/Tabulation&gt;&lt;Formatting&gt;&lt;Labels LocaleIsoCode=&quot;en&quot; /&gt;&lt;Power&gt;0&lt;/Power&gt;&lt;Decimals&gt;1&lt;/Decimals&gt;&lt;SkipEmptyLines&gt;true&lt;/SkipEmptyLines&gt;&lt;SkipEmptyCols&gt;false&lt;/SkipEmptyCols&gt;&lt;SkipLineHierarchy&gt;false&lt;/SkipLineHierarchy&gt;&lt;SkipColHierarchy&gt;false&lt;/SkipColHierarchy&gt;&lt;Page&gt;1&lt;/Page&gt;&lt;/Formatting&gt;&lt;/DataTable&gt;&lt;Format&gt;&lt;ShowEmptyAxes&gt;true&lt;/ShowEmptyAxes&gt;&lt;Page&gt;1&lt;/Page&gt;&lt;EnableSort&gt;true&lt;/EnableSort&gt;&lt;IncludeFlagColumn&gt;false&lt;/IncludeFlagColumn&gt;&lt;IncludeTimeSeriesId&gt;false&lt;/IncludeTimeSeriesId&gt;&lt;DoBarChart&gt;false&lt;/DoBarChart&gt;&lt;FreezePanes&gt;true&lt;/FreezePanes&gt;&lt;MaxBarChartLen&gt;65&lt;/MaxBarChartLen&gt;&lt;/Format&gt;&lt;Query&gt;&lt;AbsoluteUri&gt;http://stats.oecd.org//View.aspx?QueryId=&amp;amp;QueryType=Public&amp;amp;Lang=en&lt;/AbsoluteUri&gt;&lt;/Query&gt;&lt;/WebTableParameter&gt;</Data></Cell>
+   </Row>
+   <Row ss:Height="23.25">
+    <Cell ss:StyleID="s63" ss:HRef="http://localhost/OECDStat_Metadata/ShowMetadata.ashx?Dataset=RS_GBL&amp;ShowOnWeb=true&amp;Lang=en"><Data
+      ss:Type="String">Dataset: Global Revenue Statistics Database</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:MergeAcross="2" ss:StyleID="m2683305655744"><Data ss:Type="String">Level of government</Data></Cell>
+    <Cell ss:MergeAcross="5" ss:StyleID="m2683305655764"><Data ss:Type="String">Total</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:MergeAcross="2" ss:StyleID="m2683305655784"><Data ss:Type="String">Tax revenue</Data></Cell>
+    <Cell ss:MergeAcross="1" ss:StyleID="m2683305655804"><Data ss:Type="String">1100 Taxes on income, profits and capital gains of individuals</Data></Cell>
+    <Cell ss:MergeAcross="1" ss:StyleID="m2683305655824"><Data ss:Type="String">2000 Social security contributions (SSC)</Data></Cell>
+    <Cell ss:MergeAcross="1" ss:StyleID="m2683305655844"><Data ss:Type="String">3000 Taxes on payroll and workforce</Data></Cell>
+   </Row>
+   <Row ss:Height="52.5">
+    <Cell ss:MergeAcross="2" ss:StyleID="m2683305660944"><Data ss:Type="String">Indicator</Data></Cell>
+    <Cell ss:StyleID="s92" ss:HRef="http://localhost/OECDStat_Metadata/ShowMetadata.ashx?Dataset=RS_GBL&amp;Coords=[VAR].[TAXGDP]&amp;ShowOnWeb=true&amp;Lang=en"><Data
+      ss:Type="String">Tax revenue as % of GDP</Data></Cell>
+    <Cell ss:StyleID="s86"><Data ss:Type="String">Tax revenue as % of total taxation</Data></Cell>
+    <Cell ss:StyleID="s92" ss:HRef="http://localhost/OECDStat_Metadata/ShowMetadata.ashx?Dataset=RS_GBL&amp;Coords=[VAR].[TAXGDP]&amp;ShowOnWeb=true&amp;Lang=en"><Data
+      ss:Type="String">Tax revenue as % of GDP</Data></Cell>
+    <Cell ss:StyleID="s86"><Data ss:Type="String">Tax revenue as % of total taxation</Data></Cell>
+    <Cell ss:StyleID="s92" ss:HRef="http://localhost/OECDStat_Metadata/ShowMetadata.ashx?Dataset=RS_GBL&amp;Coords=[VAR].[TAXGDP]&amp;ShowOnWeb=true&amp;Lang=en"><Data
+      ss:Type="String">Tax revenue as % of GDP</Data></Cell>
+    <Cell ss:StyleID="s86"><Data ss:Type="String">Tax revenue as % of total taxation</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:StyleID="s93"><Data ss:Type="String">Country</Data></Cell>
+    <Cell ss:StyleID="s93"><Data ss:Type="String">Year</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:MergeDown="30" ss:StyleID="m2683305660964" ss:HRef="http://localhost/OECDStat_Metadata/ShowMetadata.ashx?Dataset=RS_GBL&amp;Coords=[COU].[AUT]&amp;ShowOnWeb=true&amp;Lang=en"><Data
+      ss:Type="String">Austria</Data></Cell>
+    <Cell ss:StyleID="s102"><Data ss:Type="String">1990</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">8.2342721000000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">20.9589833</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">12.913696699999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">32.869687999999996</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.3695637000000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.0313340999999996</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1991</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">8.6348801000000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">21.723982700000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.001035</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">32.708533000000003</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.3976989</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.0322285999999998</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1992</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">8.8756926000000007</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">21.500147999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.618687599999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">32.989403000000003</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.4237901000000002</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">5.8712989999999996</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1993</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.0109034000000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">21.6151309</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.1648101</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.978194100000003</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.437481</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">5.8469688</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1994</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">8.1889448999999992</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">19.637416099999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.617702400000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">35.0538326</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.7258344999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.5366596000000001</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1995</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">8.5655362999999998</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">20.754119800000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.7128023</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">35.648820200000003</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.8409319000000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.8835202000000004</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1996</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.0234161999999998</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">21.161452100000002</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.739020399999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">34.565520100000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.8034688999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.5746133000000002</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1997</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.5304398999999993</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">21.9392423</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.693116</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.823814400000003</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.7885637000000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.4193233000000003</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1998</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.6326850000000004</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">22.171315</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.608231399999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">33.623408099999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.7664469</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.3674628999999996</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1999</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.7232231000000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">22.564685600000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.563420600000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.797332699999998</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.7576075000000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.3995803000000002</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2000</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.3114624999999993</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">22.020580599999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.283326300000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">33.778489399999998</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.7095395</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.4077618000000003</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">40.186251200000001</Data></Cell>
+    <Cell><Data ss:Type="Number">43.244363999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">47.312047999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">54.589621000000001</Data></Cell>
+    <Cell><Data ss:Type="Number">55.073383</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.3860339687277152</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.0931256</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.739579784363858</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2001</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.9155639999999998</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">22.593959600000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.243507599999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">32.455767000000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.7199325000000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.1977357</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">38.653502700000004</Data></Cell>
+    <Cell><Data ss:Type="Number">42.919429000000001</Data></Cell>
+    <Cell><Data ss:Type="Number">46.910884000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">54.006633000000001</Data></Cell>
+    <Cell><Data ss:Type="Number">54.498928999999997</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.2039854542543669</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">19.326751350000002</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.265368402127184</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2002</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.6456000999999993</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">22.590665999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.0582639</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">32.925431199999998</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.7067478</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.3393915999999999</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">39.264822799999997</Data></Cell>
+    <Cell><Data ss:Type="Number">43.155498000000001</Data></Cell>
+    <Cell><Data ss:Type="Number">47.073607000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">54.001700999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">54.495404000000001</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.3158829479209553</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">19.632411399999999</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.474147173960477</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2003</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.6441469000000009</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">22.740859799999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.089801400000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.223695399999997</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.6991920999999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.3646840999999998</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">39.588379499999995</Data></Cell>
+    <Cell><Data ss:Type="Number">43.600465999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">47.377707999999998</Data></Cell>
+    <Cell><Data ss:Type="Number">55.597749999999998</Data></Cell>
+    <Cell><Data ss:Type="Number">61.122477000000003</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.3414241382530738</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">19.794189749999997</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.567806944126536</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2004</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.4000000999999997</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">22.4034902</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.015207699999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">33.403145299999998</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.6321444999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.2733217000000003</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">39.676467000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">44.016463999999999</Data></Cell>
+    <Cell><Data ss:Type="Number">48.266145000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">56.051796000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">61.759003999999997</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.2814348681484917</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">19.838233500000001</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.559834184074246</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2005</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">8.9593136999999992</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">21.845679700000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.896841</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.8849546</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.5875151999999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.3091917000000004</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">40.1941463</Data></Cell>
+    <Cell><Data ss:Type="Number">43.335026999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">48.14329</Data></Cell>
+    <Cell><Data ss:Type="Number">57.905521</Data></Cell>
+    <Cell><Data ss:Type="Number">57.905521</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.3188509769940513</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.09707315</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.707962063497025</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2006</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">8.9633462000000002</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">22.182027600000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.750375999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">34.028722700000003</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.5635173999999998</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.3440608999999997</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">40.372783600000005</Data></Cell>
+    <Cell><Data ss:Type="Number">43.798555999999998</Data></Cell>
+    <Cell><Data ss:Type="Number">48.453854</Data></Cell>
+    <Cell><Data ss:Type="Number">57.905521</Data></Cell>
+    <Cell><Data ss:Type="Number">57.905521</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.3471737618312849</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.186391800000003</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.766782780915644</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2007</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.0642735000000005</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">22.354630100000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.5408252</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.3948593</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.5586023</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.3101149999999997</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">39.704974300000003</Data></Cell>
+    <Cell><Data ss:Type="Number">44.221049000000001</Data></Cell>
+    <Cell><Data ss:Type="Number">48.760437000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">57.905521</Data></Cell>
+    <Cell><Data ss:Type="Number">60.763128999999999</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.3072796622316281</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">19.852487150000002</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.579883406115815</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2008</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.5342503000000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">23.034535999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.673014</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">33.033696800000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.6967601000000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.5153122999999997</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">39.549009099999999</Data></Cell>
+    <Cell><Data ss:Type="Number">44.534927000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">49.033048000000001</Data></Cell>
+    <Cell><Data ss:Type="Number">57.856565000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">60.717497000000002</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.4419783446738901</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">19.77450455</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.608241447336944</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2009</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.0790588999999997</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">22.154695700000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.106313699999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">34.422189799999998</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.8270857999999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.8986472000000001</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">41.320836999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">43.261415</Data></Cell>
+    <Cell><Data ss:Type="Number">47.948742000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">56.910055999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">60.555782000000001</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.7468957679061194</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.660418499999999</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.203657133953058</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2010</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.1579072999999998</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">22.359456099999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.999060999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">34.179357899999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.8248905999999998</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.8971016000000001</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">41.076459499999999</Data></Cell>
+    <Cell><Data ss:Type="Number">43.499623</Data></Cell>
+    <Cell><Data ss:Type="Number">48.168771</Data></Cell>
+    <Cell><Data ss:Type="Number">56.910055999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">60.555782000000001</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.7390171141469155</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.538229749999999</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.138623432073457</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2011</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.2045708000000008</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">22.385388200000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.9776676</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.993493000000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.8232463000000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.8660958000000001</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">40.859588799999997</Data></Cell>
+    <Cell><Data ss:Type="Number">43.901277</Data></Cell>
+    <Cell><Data ss:Type="Number">48.539772999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">56.910055999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">60.555782000000001</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.7123085760136041</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.429794399999999</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.071051488006802</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2012</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.5053351999999993</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">22.758174199999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.0960293</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">33.7494558</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.8734926999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.8798677000000001</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">40.629323499999998</Data></Cell>
+    <Cell><Data ss:Type="Number">44.225889000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">48.839612000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">56.910055999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">60.555782000000001</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.7148820322100047</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.314661749999999</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.014771891105003</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2013</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.7169974000000003</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">22.791160399999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.462474200000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.9216482</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.9295871999999998</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.8713294999999999</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">40.792977700000002</Data></Cell>
+    <Cell><Data ss:Type="Number">44.598469000000001</Data></Cell>
+    <Cell><Data ss:Type="Number">49.183759000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">56.910055999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">60.555782000000001</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.7138957513582511</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.396488850000001</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.055192300679126</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2014</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">10.0341384</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">23.499599100000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.500655099999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">33.960023999999997</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.9354472999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.8747144000000002</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">40.834738399999999</Data></Cell>
+    <Cell><Data ss:Type="Number">44.849600000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">49.415725000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">56.910055999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">60.555782000000001</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.7173248847639391</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.4173692</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.06734704238197</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2015</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">10.4108898</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">24.140663</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.484755699999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.587100700000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.9164555000000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.7626467999999997</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">40.349747499999999</Data></Cell>
+    <Cell><Data ss:Type="Number">45.065845000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">49.616021000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">56.843212999999999</Data></Cell>
+    <Cell><Data ss:Type="Number">60.494593999999999</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.6292223159545856</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.17487375</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">12.902048032977293</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2016</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.0183511000000003</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">21.599414899999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.4927782</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">34.710949499999998</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.9083877999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.9657384999999996</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">41.676687999999999</Data></Cell>
+    <Cell><Data ss:Type="Number">42.993997</Data></Cell>
+    <Cell><Data ss:Type="Number">47.331795999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">55.977747000000001</Data></Cell>
+    <Cell><Data ss:Type="Number">59.788820000000001</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.8015022043907551</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.838343999999999</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.319923102195377</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2017</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.0758971000000006</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">21.6758308</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.5975815</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">34.863188200000003</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.7736383999999998</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.6242397000000004</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">41.4874279</Data></Cell>
+    <Cell><Data ss:Type="Number">43.079611999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">47.420240999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">55.840722</Data></Cell>
+    <Cell><Data ss:Type="Number">59.663657999999998</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.5665565939558181</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.74371395</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.155135271977908</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2018</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.3905717000000006</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">22.229304800000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.7036167</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">34.806312800000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.7024645999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.3972578999999996</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">41.2035707</Data></Cell>
+    <Cell><Data ss:Type="Number">43.283026999999997</Data></Cell>
+    <Cell><Data ss:Type="Number">47.618571000000003</Data></Cell>
+    <Cell><Data ss:Type="Number">55.771889000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">59.600783999999997</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.4040209561175505</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.60178535</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.002903153058774</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2019</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">9.6251847000000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">22.606696500000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.8628768</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">34.9084778</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.7106807000000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">6.3665830000000003</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">41.275060799999999</Data></Cell>
+    <Cell><Data ss:Type="Number">43.579655000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">47.904752000000002</Data></Cell>
+    <Cell><Data ss:Type="Number">55.737392</Data></Cell>
+    <Cell><Data ss:Type="Number">59.569273000000003</Data></Cell>
+    <Cell ss:Formula="=SUMPRODUCT(RC[-8],RC[-6])/RC[-5]"><Data ss:Type="Number">5.3845522455864545</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-9],RC[-7])"><Data
+      ss:Type="Number">20.637530399999999</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Number">13.011041322793227</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2020</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">9.3587174999999991</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">22.160334299999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">15.533160000000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">36.780682599999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.7542574000000002</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">6.5217552000000003</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">43.3024378</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:MergeDown="30" ss:StyleID="m2683305660984" ss:HRef="http://localhost/OECDStat_Metadata/ShowMetadata.ashx?Dataset=RS_GBL&amp;Coords=[COU].[BEL]&amp;ShowOnWeb=true&amp;Lang=en"><Data
+      ss:Type="String">Belgium</Data></Cell>
+    <Cell ss:StyleID="s102"><Data ss:Type="String">1990</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.249924399999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">32.0102318</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.7486991</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.215212000000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">33.215212000000001</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1991</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.0312109</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.3189362</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.272249199999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">34.301621400000002</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">34.301621400000002</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1992</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">12.937833299999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.417685200000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.4645461</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">35.125089899999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">35.125089899999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1993</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.524340499999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.7236771</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.6791681</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">34.432524700000002</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">34.432524700000002</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1994</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.592448299999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.6745622</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.3585966</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">33.4599221</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">33.4599221</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1995</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.9967343</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">32.674626699999997</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.0383516</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">32.771780200000002</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">32.771780200000002</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1996</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.694011400000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.5884486</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.1057954</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">32.538325</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">32.538325</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1997</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.927037500000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.788325700000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.9272606</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.788834900000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.788834900000001</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1998</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.9453057</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.3822969</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.979137100000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.458430700000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.458430700000001</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">1999</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.585087700000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">30.708155999999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.919332300000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.463692900000002</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.463692900000002</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2000</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.7602759</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.380821600000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.508263599999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">30.806098200000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">30.806098200000001</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2001</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.009690000000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">32.064963800000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.6862367</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.324653399999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.324653399999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2002</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.9970628</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.8747604</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.907915600000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.671750299999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.671750299999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2003</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.652657400000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.498512099999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.803759700000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.847125399999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.847125399999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2004</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.461067399999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">30.965456400000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.5032479</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.0624872</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">0</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.0624872</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2005</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">12.588763399999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">29.035027400000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.3007738</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">30.6772253</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">1.5158999999999999E-3</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">3.4964000000000002E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">30.680721699999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2006</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">12.094085400000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">27.983903099999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.263109699999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">30.688850299999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">1.9067999999999999E-3</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">4.4121000000000004E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">30.693262399999998</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2007</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">11.922190499999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">27.777879500000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.3511282</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.107205499999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">1.6006E-3</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">3.7293000000000001E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.110934799999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2008</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">12.390634</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">28.423127900000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.788671300000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.630114299999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">1.6489E-3</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">3.7824999999999998E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.633896799999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2009</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">12.1212401</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">28.387839899999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.278985199999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">33.441260399999997</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">1.7029E-3</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">3.9880999999999996E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">33.445248499999998</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2010</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">12.1044467</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">28.2276341</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.9105816</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">32.439550199999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">1.9276E-3</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">4.4952000000000004E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">32.4440454</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2011</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">12.254161099999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">28.165455399999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.0814719</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">32.365419699999997</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.2607999999999999E-3</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">5.1964000000000003E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">32.370616099999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2012</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">12.339285800000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">27.8346041</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.261343399999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">32.170326000000003</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.0198E-3</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">4.5561999999999998E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">32.174882200000006</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2013</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">12.846339800000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">28.526268699999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.338322099999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.839328200000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">2.0108000000000001E-3</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">4.4650999999999996E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.843793300000002</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2014</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">12.884410600000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">28.791911500000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">14.164127199999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.651606600000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">1.9602999999999999E-3</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">4.3804999999999998E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.655987100000001</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2015</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">12.437803199999999</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">28.194125700000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">14.0799863</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.916641299999998</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">1.9918000000000002E-3</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">4.5151000000000002E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.921156399999997</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2016</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">11.963138499999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">27.636143100000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.4810699</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.1427288</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">1.9298E-3</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">4.4581999999999998E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.147186999999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2017</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">11.914411400000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">27.203966000000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.410557600000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">30.6200902</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">1.7975999999999999E-3</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">4.1043E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">30.624194500000002</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2018</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">11.817991900000001</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">26.9692659</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.264768699999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">30.270885</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">1.5648999999999999E-3</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">3.5712000000000001E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">30.274456199999999</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2019</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">11.2874967</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">26.615428900000001</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">13.1933015</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">31.1092342</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">1.8818999999999999E-3</Data></Cell>
+    <Cell ss:StyleID="s103"><Data ss:Type="Number">4.4374000000000002E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.1136716</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row ss:Height="13.5">
+    <Cell ss:Index="2" ss:StyleID="s102"><Data ss:Type="String">2020</Data></Cell>
+    <Cell ss:StyleID="s94"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">11.830627</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">27.841027400000002</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">13.591333199999999</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">31.9844993</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">1.0509E-3</Data></Cell>
+    <Cell ss:StyleID="s104"><Data ss:Type="Number">2.4732000000000001E-3</Data></Cell>
+    <Cell ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data ss:Type="Number">31.9869725</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s105" ss:HRef="https://stats-3.oecd.org/index.aspx?DatasetCode=RS_GBL"><Data
+      ss:Type="String">Data extracted on 28 Mar 2023 17:07 UTC (GMT) from OECD.Stat</Data></Cell>
+    <Cell ss:Index="10" ss:StyleID="s106" ss:Formula="=RC[-3]+RC[-1]"><Data
+      ss:Type="Number">0</Data></Cell>
+    <Cell ss:Index="17" ss:StyleID="s106" ss:Formula="=AVERAGE(RC[-2],RC[-1])"><Data
+      ss:Type="Error">#DIV/0!</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <Print>
+    <ValidPrinterInfo/>
+    <VerticalResolution>0</VerticalResolution>
+   </Print>
+   <Selected/>
+   <DoNotDisplayGridlines/>
+   <TopRowVisible>1</TopRowVisible>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>22</ActiveRow>
+     <ActiveCol>19</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>
