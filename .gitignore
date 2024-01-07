@@ -13,4 +13,7 @@ w19414.pdf
 *.bak
 *.csv
 *.xlsx
-.Rproj.user
+*.Rproj.user
+*.Rproj
+/*.Rproj
+/Inequality_2024/*Rproj*

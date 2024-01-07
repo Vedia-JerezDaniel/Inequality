@@ -24,5 +24,8 @@ forvalues i=1/4 {
 	eststo m`i'
 }
 
+biprobit (f.soc_bb gdp_gro soc_payable soc_bb  ) (gi_bb gdp_cycle gdp_gro soc_payable gov_ex ), cluster(idem) const(3) nolog robust
 
-probit gi_bb
+constraint 1 gdp_gro
+constraint 3 high_debt=0
+biprobit (soc_bb gdp_gro high_debt gov_ex gini_net ) (gi_bb gdp_cycle gdp_gro  soc_payable gov_ex ), cluster(idem) const(3) nolog
