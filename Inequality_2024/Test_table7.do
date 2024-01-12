@@ -1,16 +1,15 @@
 
-local m1 "gov_debt"
-local m2 gov_debt gdp_gro gdp_cycle
-local m3 gov_debt gdp_cycle ed_bb
-local m4 gov_debt gdp_gro ed_bb
+local m1 gdp_gro
+local m2 gdp_gro gov_debt
+local m3 gdp_gro gov_debt ind_tx
 
 
-forvalues i=1/4 {
+forvalues i=1/3 {
 
-	probit gi_bb `m`i'' 
+	xtprobit indt_bb `m`i'' , nolog corr( ar 1) pa iter(100)
 
 	predict phatm`i'
-	roctab ftreatment phatm`i'
+	roctab indt_bb phatm`i'
 	
 	*** AUC info -- see Figure 1
 	local auc`i' = r(area)
@@ -24,8 +23,10 @@ forvalues i=1/4 {
 	eststo m`i'
 }
 
-biprobit (f.soc_bb gdp_gro soc_payable soc_bb  ) (gi_bb gdp_cycle gdp_gro soc_payable gov_ex ), cluster(idem) const(3) nolog robust
+esttab m1 m2 m3 using results/Table_7/Table7i.rtf, replace title("Table 7. Fiscal treatment regression, pooled probit estimators, marginal effects") b(3) se(3) sfmt(2) obslast se label star(* 0.10 ** 0.05 *** 0.01)
+	
+*** add AUCs
+esttab auc1 auc2 auc3 using results/Table_7/Table7i.rtf, a drop(gdp_gro gov_debt ind_tx _cons) scalars("Model_AUC Model AUC" "se s.e.") noobs nomtitles nonum label
+	
 
-constraint 1 gdp_gro
-constraint 3 high_debt=0
-biprobit (soc_bb gdp_gro high_debt gov_ex gini_net ) (gi_bb gdp_cycle gdp_gro  soc_payable gov_ex ), cluster(idem) const(3) nolog
+	
