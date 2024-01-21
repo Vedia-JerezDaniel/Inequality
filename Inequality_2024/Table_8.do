@@ -14,7 +14,8 @@ xi: probit ftreatment debtgdp hply dly ldly treatment ///
 	drprv dlcpi dlriy stir ltrate cay dmdumiso1-dmdumiso16 if year>=1980 & year<=2007 
 
 
-xi: probit f.gi_bb gi_bb gdp_gro gov_ex ed_bb gov_debt dumiso1-dumiso16
+xtprobit gi_bb l(1/2).gdp_gro l(0/1).education_exp rule_law l(0/1).deficit if year < 2019, nolog corr(ar 1) pa iter(500) vce(robust) nocons
+
 
 * raw prscore, not truncated (pihat0)
 predict pihat0

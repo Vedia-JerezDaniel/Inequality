@@ -1,5 +1,3 @@
-
-
 *
 * Tables 8 and 9. DR ATE of fiscal consolidation on real GDP, inverse propensity score weights.
 * Log real GDP (relative to Year 0, x 100)
@@ -71,7 +69,6 @@ forvalues i=1/6 {
 	}
 
 
-
 * DR - IPWRA - ATE weighted by IPWT (Davidian/Lunt) WITH COMMON SLOPE/CFEs (beta1=beta0)
 * truncations (use phat)
 capture drop a invwt
@@ -102,7 +99,6 @@ gen invwt=a/pihat + (1-a)/(1-pihat) if pihat~=. // invwt from Lunt et al.
 	capture drop iptw Isq mdiff1 dr1 mu1 mu0 samp ATE_IPWRA*
 	capture scalar drop dr1m
 	}
-
 
 
 * DR - IPWRA - ATE weighted by IPWT (Davidian/Lunt) WITH COMMON SLOPE/CFEs (beta1=beta0)
@@ -153,10 +149,6 @@ gen invwt=a/pihat0 + (1-a)/(1-pihat0) if pihat~=. // invwt from Lunt et al.
 	}
 
 
-
-
-
-
 * DR - IPWRA - ATE weighted by IPWT (Davidian/Lunt) WITH DIFFERENT SLOPE/CFEs (beta1.NEQ.beta0)
 * ATE split by bin
 * no truncations (use phat0)
@@ -173,7 +165,7 @@ gen invwt=a/pihat0 + (1-a)/(1-pihat0) if pihat~=. // invwt from Lunt et al.
 		capture drop temp
 		predict temp
 		replace mu0 = temp if year>=1980 & year<=2007   
-		
+	
 		
 		/*qui*/ reg ly`i'  hply dml0dly  dml1dly dmdumiso1-dmdumiso16 [pweight=invwt] ///
 			if year>=1980 & year<=2007 & ftreatment==1,  cluster(iso)
@@ -200,11 +192,6 @@ gen invwt=a/pihat0 + (1-a)/(1-pihat0) if pihat~=. // invwt from Lunt et al.
 
 	}
 
-
-
-
-
-
 * DR - IPWRA - ATE weighted by IPWT (Davidian/Lunt) WITH DIFFERENT SLOPE/CFEs (beta1.NEQ.beta0)
 * ATE split by bin
 * no truncations (use phat0)
@@ -223,14 +210,11 @@ gen invwt=a/pihat0 + (1-a)/(1-pihat0) if pihat~=. // invwt from Lunt et al.
 		capture drop temp
 		predict temp
 		replace mu0 = temp if year>=1980 & year<=2007 & `bin'==1  
-
-		
 		/*qui*/ reg ly`i'  hply dml0dly  dml1dly dmdumiso1-dmdumiso16 [pweight=invwt] ///
 			if year>=1980 & year<=2007 & `bin'==1 & ftreatment==1,  cluster(iso)
 		capture drop temp
 		predict temp
 		replace mu1 = temp if year>=1980 & year<=2007 & `bin'==1  
-
 		}
 	*from Lunt et al
 	generate mdiff1=(-(a-pihat0)*mu1/pihat0)-((a-pihat0)*mu0/(1-pihat0))
@@ -267,11 +251,7 @@ gen invwt=a/pihat0 + (1-a)/(1-pihat0) if pihat~=. // invwt from Lunt et al.
 
 
 
-
-
-
 * Table 8: same slope vs. different slopes
-
 * fix labels
 	qui gen ATE_IPWRA=1 // constant for convenience in next reg to get mean
 	qui gen ATE_IPWRA_boom  = boom  // constant for convenience in next reg to get mean
