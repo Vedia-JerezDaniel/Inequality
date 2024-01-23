@@ -3,7 +3,6 @@
 * Log real GDP (relative to Year 0, x 100)
 *
 
-
 pause on 
 capture drop pihat pihat0
 
