@@ -3,33 +3,25 @@ encode idem, generate(country)
 xtset  country year, yearly
 
 
-foreach x in gov_debt health_exp education_exp gov_ex {
-forv h = 0/4 {
-gen `x'`h' = f`h'.`x' - l.f`h'.`x'		
+local var gini_net gdp_gro education_exp health_exp soc_payable soc_kind ind_tx property_taxes pit
 
-}
-}
 
-foreach x in soc_payable soc_kind gini_net gdp_gro {
-forv h = 0/4 {
-gen `x'`h' = f`h'.`x' - l.f`h'.`x'		
-
-}
-}
-
-foreach x in deficit sav_gdp ind_tx	 property_taxes {
-forv h = 0/4 {
-gen `x'`h' = f`h'.`x' - l.f`h'.`x'		
-
-}
+foreach v of local var {
+	forvalues i=0/4 {
+		if "`v'"=="gini_net" {
+		gen `v'`i' = f`i'.`v' - `v'
+		}
+		if "`v'"!="gini_net" {
+		gen `v'`i' = f`i'.`v'
+		}
+		label var `v'`i' "Year `i'"
+	}
 }
 
-foreach x in pit gov_eff rule_law reg_qual {
-forv h = 0/4 {
-gen `x'`h' = f`h'.`x' - l.f`h'.`x'		
-
-}
-}
+forvalues i=1/5 {
+	    gen gini_net`i' = f`i'.gini_net -gini_net
+	}
+	
 
 // To construct Dummy variables for countries.
 tabulate idem, gen(dumiso)
