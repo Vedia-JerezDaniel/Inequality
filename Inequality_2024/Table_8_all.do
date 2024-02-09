@@ -55,9 +55,29 @@ forvalues i=0/4 {
 esttab DR10 DR11 DR12 DR13 DR14 using results/Table_8/Table8.rtf, scalars(RobustSE pvalue) title("Table 8. ATE-IP (DR) i.p. weights, Unrestricted, b0=b1") b(4) se(4) sfmt(5) obslast label star(* 0.10 ** 0.05 *** 0.01)
 
 forvalues i=0/4 {
-	eteffects (gini_net`i' gdp_gro gov_debt education_exp reg_qual ) (ed_bb gdp_gro) if year < 2019, aeq vce(cluster idem)
+	eteffects (gini_net`i' gdp_gro gov_ex  education_exp gov_eff ) (ed_bb gdp_cycle less_15 gov_ex ) if year < 2019, aeq vce(cluster idem)
 	eststo DR1`i'
 }
+
+//mas asociado con el efecto de paises ricos
+forvalues i=0/4 {
+	eteffects (gini_net`i' gdp_gro gov_ex health_exp gov_eff ) (he_bb gdp_cycle _high gov_ex ) if year < 2019, aeq vce(cluster idem)
+	eststo DR1`i'
+}
+
+
+forvalues i=0/4 {
+	eteffects (gini_net`i' gdp_gro gov_ex soc_payable gov_eff) (soc_bb gdp_cycle gov_eff _high  ) if year < 2019, aeq vce(cluster idem)
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	eteffects (gini_net gdp_cycle  gov_ex soc_payable  gov_eff) (soc_bb gdp_gro  gov_eff less_15 ) if year < 2019, aeq vce(cluster idem)
+	eststo DR1`i'
+}
+
+
+
 // ------------------------------
 eteffects (gini_net gdp_gro gdp_cycle gov_debt) (ed_bb education_exp gov_ex),  aeq vce(cluster idem)
 
