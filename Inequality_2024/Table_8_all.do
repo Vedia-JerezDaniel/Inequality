@@ -1,10 +1,8 @@
 * Tables 8 and 9. DR ATE of fiscal consolidation on real GDP, inverse propensity score weights.
 * Log real GDP (relative to Year 0, x 100)
 
-
 /* health_exp  soc_kind ind_tx */
 /* he_bb kind_bb indt_bb */
-
 
 pause on 
 drop a 
@@ -54,12 +52,25 @@ forvalues i=0/4 {
 	}
 
 
+esttab DR10 DR11 DR12 DR13 DR14 using results/Table_8/Table8.rtf, scalars(RobustSE pvalue) title("Table 8. ATE-IP (DR) i.p. weights, Unrestricted, b0=b1") b(4) se(4) sfmt(5) obslast label star(* 0.10 ** 0.05 *** 0.01)
 
+forvalues i=0/4 {
+	eteffects (gini_net`i' gdp_gro gov_debt education_exp reg_qual ) (ed_bb gdp_gro) if year < 2019, aeq vce(cluster idem)
+	eststo DR1`i'
+}
+// ------------------------------
+eteffects (gini_net gdp_gro gdp_cycle gov_debt) (ed_bb education_exp gov_ex),  aeq vce(cluster idem)
 
-esttab DR10 DR11 DR12 DR13 DR14, scalars(RobustSE pvalue) title("Table 8. ATE-IP (DR) i.p. weights, Unrestricted, b0=b1") b(4) se(4) sfmt(5) obslast label star(* 0.10 ** 0.05 *** 0.01)
+teffects ipw (gini_net) (ed_bb  gdp_gro  gov_eff  education_exp , probit  ), aeq
+teffects ipw (gini_net) (ed_bb  gdp_gro  gov_eff  education_exp , probit  ) if year < 2019, aeq ate vce(robust) coefl
+nlcom _b[ATE:r1vs0.ed_bb] / _b[POmean:0.ed_bb]
 
+teffects ipwra (gini_net gdp_gro gov_debt gov_eff  ) (ed_bb gdp_gro gdp_cycle gov_debt gov_eff education_exp , probit) if year < 2019,  aeq
 
-eteffects (gini_net gdp_gro gdp_cycle gov_debt ) (ed_bb education_exp gov_ex ),  aeq vce(cluster idem)
+// ------------------------------
+
+teffects ipwra (gini_net gdp_gro gov_debt gov_eff  ) (ed_bb gdp_gro gdp_cycle gov_debt gov_eff education_exp , probit) if year < 2019,  aeq
+eteffects (gini_net gdp_gro gdp_cycle gov_debt) (ed_bb education_exp gov_ex),  aeq vce(cluster idem)
 // El coff de ATE es muy elevado cerca del -0.23
 
 etregress gini_net gdp_gro gdp_cycle ed_bb#c.education_exp gov_debt , treat(ed_bb = gdp_gro gov_ex) vce(robust)
@@ -81,9 +92,7 @@ teffects aipw (gini_net gdp_gro gov_debt gov_eff  ) (ed_bb gdp_gro gdp_cycle gov
 teffects ipwra (gini_net gdp_gro gov_debt gov_eff  ) (ed_bb gdp_gro gdp_cycle gov_debt gov_eff education_exp , probit) if year < 2019,  aeq
 
 
-telasso (gini_net gdp_gro gdp_cycle ) (ed_bb  gdp_gro  gov_eff  education_exp dumiso1-dumiso22 , probit  )
-
-
+telasso (gini_net gdp_gro gdp_cycle gov_debt gov_ex) (ed_bb gov_debt gov_ex gdp_gro  gov_eff  education_exp dumiso1-dumiso22 , probit  )
 bfit logit ed_bb  gdp_gro  gov_eff  education_exp
 display r(bvlist)
 
