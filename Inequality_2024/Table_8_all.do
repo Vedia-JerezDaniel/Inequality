@@ -52,8 +52,9 @@ forvalues i=0/4 {
 	}
 
 
-esttab DR10 DR11 DR12 DR13 DR14 using results/Table_8/Table8.rtf, scalars(RobustSE pvalue) title("Table 8. ATE-IP (DR) i.p. weights, Unrestricted, b0=b1") b(4) se(4) sfmt(5) obslast label star(* 0.10 ** 0.05 *** 0.01)
+esttab DR10 DR11 DR12 DR13 DR14 using results/Table_8/Table8.rtf, replace scalars(RobustSE pvalue) title("Table 8. IPW") b(4) se(4) sfmt(5) obslast label star(* 0.10 ** 0.05 *** 0.01)
 
+// ETEFFECTES 
 forvalues i=0/4 {
 	eteffects (gini_net`i' gdp_gro gov_ex  education_exp gov_eff ) (ed_bb gdp_cycle less_15 gov_ex ) if year < 2019, aeq vce(cluster idem)
 	eststo DR1`i'
@@ -67,21 +68,121 @@ forvalues i=0/4 {
 
 
 forvalues i=0/4 {
-	eteffects (gini_net`i' gdp_gro gov_ex soc_payable gov_eff) (soc_bb gdp_cycle gov_eff _high  ) if year < 2019, aeq vce(cluster idem)
+	eteffects (gini_net`i' gdp_gro gov_ex soc_payable gov_eff) (soc_bb gdp_cycle gov_eff _high  ) if year < 2019, aeq vce(cluster idem) coeflegend
 	eststo DR1`i'
 }
 
 forvalues i=0/4 {
-	eteffects (gini_net gdp_cycle  gov_ex soc_payable  gov_eff) (soc_bb gdp_gro  gov_eff less_15 ) if year < 2019, aeq vce(cluster idem)
+	eteffects (gini_net`i' gdp_cycle  gov_ex soc_kind gov_eff) (kind_bb gdp_gro  gov_eff less_15 ) if year < 2019, aeq vce(cluster idem) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	eteffects (gini_net`i' gdp_cycle gov_ex property_taxes gov_eff) (prt_bb gdp_gro gov_eff ) if year < 2019, aeq vce(cluster idem) coeflegend
 	eststo DR1`i'
 }
 
 
+forvalues i=0/4 {
+	eteffects (gini_net`i' gdp_cycle gov_ex ind_tx gov_eff sav_gdp ) (indt_bb gdp_gro gov_eff) if year < 2019, aeq vce(cluster idem) coeflegend
+	eststo DR1`i'
+}
 
-// ------------------------------
+forvalues i=0/4 {
+	eteffects (gini_net`i' gdp_cycle gov_ex pit gov_eff sav_gdp ) (pit_bb gdp_gro gov_eff ) if year < 2019, aeq vce(cluster idem) coeflegend
+	eststo DR1`i'
+}
+
+//----------
+// TEFFECTES IPW
+
+forvalues i=0/4 {
+	teffects ipw (gini_net`i') (ed_bb gdp_gro`i' gdp_cycle less_15 gov_eff education_exp`i' , probit) if year < 2019, aeq ate vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipw (gini_net`i') (he_bb  gdp_cycle gov_eff health_exp`i' , probit) if year < 2019, aeq ate vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipw (gini_net`i') (soc_bb gdp_cycle gov_eff less_15 gov_debt soc_payable`i', probit) if year < 2019, aeq ate vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipw (gini_net`i') (kind_bb gdp_cycle gov_eff gov_debt _high , probit) if year < 2019, aeq ate vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipw (gini_net`i') (prt_bb gdp_gro gdp_cycle`i' gov_debt gov_ex, probit) if year < 2019, aeq ate vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipw (gini_net`i') (indt_bb gdp_gro`i' gov_debt gov_eff gov_ex , probit) if year < 2019, aeq ate vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipw (gini_net`i') (pit_bb gdp_gro gdp_cycle gov_eff gov_ex  sav_gdp, probit) if year < 2019, aeq ate vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+//----------
+// TEFFECTES IPWRA
+
+forvalues i=0/4 {
+teffects aipw (gini_net`i' gdp_gro`i' gdp_cycle gov_debt gov_eff) (ed_bb gdp_gro`i' gdp_cycle gov_eff education_exp`i' , probit) if year < 2019,  aeq vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+
+forvalues i=0/4 {
+	teffects ipwra (gini_net`i' gdp_gro`i' gdp_cycle  gov_eff  gov_debt) (ed_bb gdp_gro`i' gdp_cycle less_15 gov_eff education_exp`i', probit) if year < 2019, aeq vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipwra (gini_net`i' gdp_gro`i' gdp_cycle  gov_eff  gov_debt) (he_bb  gdp_cycle gov_eff health_exp`i', probit) if year < 2019, aeq vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipwra (gini_net`i' gdp_gro`i' gdp_cycle gov_eff ) (soc_bb gdp_cycle gov_eff gov_debt,probit) if year < 2019, aeq vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipwra (gini_net`i' gdp_gro`i' gdp_cycle gov_eff ) (kind_bb gdp_cycle gov_eff gov_debt,probit) if year < 2019, aeq vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipwra (gini_net`i' gdp_gro`i' gdp_cycle gov_eff ) (prt_bb gdp_gro`i' gov_eff gov_debt,probit) if year < 2019, aeq vce(robust)
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipwra (gini_net`i' gdp_gro`i' gdp_cycle gov_eff ) (prt_bb gdp_gro`i' gov_eff gov_debt,probit) if year < 2019, aeq vce(robust)
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipwra (gini_net`i' gdp_gro`i' gdp_cycle gov_eff gov_ex ) (indt_bb gdp_gro`i' gov_eff sav_gdp  ,probit) if year < 2019, aeq vce(robust) coeflegend
+	eststo DR1`i'
+}
+
+forvalues i=0/4 {
+	teffects ipwra (gini_net`i' gdp_gro`i' gdp_cycle gov_eff ) (pit_bb gdp_gro gov_eff gov_debt pit`i' ,probit) if year < 2019, aeq vce(robust)
+	eststo DR1`i'
+}
+
+// ------------------------------ SELECTED MODELS
 eteffects (gini_net gdp_gro gdp_cycle gov_debt) (ed_bb education_exp gov_ex),  aeq vce(cluster idem)
 
-teffects ipw (gini_net) (ed_bb  gdp_gro  gov_eff  education_exp , probit  ), aeq
 teffects ipw (gini_net) (ed_bb  gdp_gro  gov_eff  education_exp , probit  ) if year < 2019, aeq ate vce(robust) coefl
 nlcom _b[ATE:r1vs0.ed_bb] / _b[POmean:0.ed_bb]
 
