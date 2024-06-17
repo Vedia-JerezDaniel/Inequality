@@ -35,5 +35,10 @@ _________________________________________________________
 
 
 21/10
- 
+
 * Test the model in Stata, we have a clean DF.
+
+11/05/24 
+
+* D:\GitRepo\Inequality\Inequality_2024\results\Table_1 Table_1.docx 
+* revisar tablas y texto para luego pegar al paper.
