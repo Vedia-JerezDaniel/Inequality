@@ -42,3 +42,7 @@ _________________________________________________________
 
 * D:\GitRepo\Inequality\Inequality_2024\results\Table_1 Table_1.docx 
 * revisar tablas y texto para luego pegar al paper.
+
+18/06
+* add table title
+* check and rewrite tables 8 & 9
