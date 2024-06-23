@@ -1,4 +1,4 @@
-# TODO
+ # TODO
 
 _________________________________________________________
 
@@ -46,3 +46,5 @@ _________________________________________________________
 18/06
 * add table title
 * check and rewrite tables 8 & 9
+* Results for T 8&9 describe more the results
+* Make graph for Figure 3 and similars
