@@ -177,9 +177,7 @@ fe_1 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed +
   Soc_payable,  data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("individual"))
 
 fe_2 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate + Trade + Gov_ex + Secondary_ed +
-                Soc_kind,
-                        data = panel.plm.df, 
-                        index=c("idem", "year"), model="within", effect = c("individual"))
+      Soc_kind, data = panel.plm.df, index=c("idem", "year"), model="within", effect = c("individual"))
 
 fe_3 <- plm(Gini_net ~ (gdp_gro) + Unempl_rate +Trade +  Gov_ex + Education_exp,  data = panel.plm.df,  index=c("idem", "year"), model="within", effect = c("individual"))
 
