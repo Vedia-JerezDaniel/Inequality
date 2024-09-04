@@ -2,6 +2,7 @@
 *.Rhistory
 *.RData
 *.Ruserdata
+**/*.pdf
 
 SSRN-id3489976.pdf
 Local Projections OJorda.pdf

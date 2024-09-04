@@ -9,8 +9,9 @@ locproj gini_net s(l.soc_payable gdp_gro) (l.gov_ex trade), h(5) tr(diff) noisil
 locproj gini_net s(l.soc_payable gdp_gro) (l.gov_ex trade), h(5) tr(diff) noisily yl(1) sl(1) z met(xtivreg) inst(soc_payable_dm) fe vce(robust)
 
 XTIVREG
-xtreg gdp_gro l.gdp_gro l.sav_gdp gov_debt trade , fe robust
+xtreg gdp_gro l(1/2).gdp_gro l(2).sav_gdp l(1/2).gov_ex trade l.rule_law _high,fe robust
 predict resid, xb
+
 locproj gini_net s(soc_payable resid) (l.gov_ex trade), h(4) tr(cmlt) noisily yl(1) sl(1) z  fe vce(robust)
 
 how to graph gdp_gro as an instrument?
