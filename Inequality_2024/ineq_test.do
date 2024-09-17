@@ -5,6 +5,8 @@ xtset  country year, yearly
 
 local var gini_net gdp_gro education_exp health_exp soc_payable soc_kind ind_tx property_taxes pit
 
+local var ed_bb he_bb soc_bb kind_bb indt_bb prt_bb pit_bb
+
 
 foreach v of local var {
 	forvalues i=0/4 {
