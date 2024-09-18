@@ -83,11 +83,9 @@ esttab ptols0 ptols1 ptols2 ptols3 ptols4 using results/Table_1/property_taxes.r
 
 // PIT
 forvalues i=0/4 {
-
-	xtreg gini_net`i' dl.gini_net l(0/1).gdp_gro l(1).gov_ex l(0/1).pit gdp_cycle, fe vce(robust)
-	
+	xtreg gini_net`i' dl.gini_net l(0/1).gdp_gro l(1).gov_ex l(0/1).pit`i' gdp_cycle, fe vce(robust)
 	eststo pitols`i'	
 }
 
-esttab pitols0 pitols1 pitols2 pitols3 pitols4 using results/Table_1/pit.rtf, ar2
+esttab pitols0 pitols1 pitols2 pitols3 pitols4 using results/Table_1/pit.rtf, ar2 re
 
