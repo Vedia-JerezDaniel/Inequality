@@ -55,7 +55,7 @@ forvalues i=0/4 {
 	eststo ols`i'	
 }
 
-esttab ols0 ols1 ols2 ols3 ols4 using results/Table_1/soc.rtf, ar2
+esttab ols0 ols1 ols2 ols3 ols4 using results/Table_1/soc.rtf, ar2 replace
 
 // TRANSFERS IN KIND
 forvalues i=0/4 {

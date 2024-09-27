@@ -4,40 +4,29 @@ gen boom = cond(gdp_bb>+0,1,0)
 gen slump = 1 - boom
 
 
-forvalues j=1/2 {
-	forvalues i=0/4 {
-		foreach c in boom slump {
-		
-	xtreg gini_net`i' dl.gini_net l(0/1).gdp_gro l(0/1).gov_ex l(0/1).education_exp`i' gdp_cycle if year < 2020 and `c'==1, fe vce(robust)
+
+forvalues i=0/4 {
+foreach c in boom slump {
+	xtreg gini_net`i' dl.gini_net l(0/1).gdp_gro l(0/1).gov_ex l(0/1).education_exp`i' gdp_cycle if year < 2020 &  `c'==1, fe vce(robust) 
+	
+eststo edu`c'`i'
 		}
 	}
-eststo edu_p`c'`i'`j'
-}
 
 
-
-forvalues j=1/2 {
-	forvalues i=0/4 {
-		foreach c in boom slump {
-		
-	reg gini_net`i' dl.gini_net l(0/1).gdp_gro l(0/1).gov_ex l(0/1).education_exp`i' gdp_cycle dumiso1-dumiso22 ${fe`j'} if `c'==1, cluster(idem)
-		}
-	}
-eststo edu`c'`i'`j'
-}
+esttab eduboom0 eduboom1 eduboom2 eduboom3 eduboom4 using results/Table_2/edu_boom.rtf, ar2
+esttab eduslump0 eduslump1 eduslump2 eduslump3 eduslump4 using results/Table_2/edu_slump.rtf, ar2
 
 // Payable Transfers
 forvalues i=0/4 {
 foreach c in boom slump {
-
-xtreg gini_net`i' dl.gini_net l(0/1).gdp_gro l(0/1).gov_ex l(0/1).soc_payable`i' gdp_cycle ${fe`j'} if `c'==1, fe vce(robust)
-	
-eststo pay`c'`i'
+	xtreg gini_net`i' dl.gini_net l(0/1).gdp_gro l(0/1).gov_ex l(0/1).soc_payable`i' gdp_cycle ${fe`j'} if `c'==1, fe vce(robust)
+	eststo pay`c'`i'
 }
 }
 
 esttab payboom0 payboom1 payboom2 payboom3 payboom4 using results/Table_1/pay_boom.rtf, ar2
-esttab paybust0 paybust1 paybust2 paybust3 paybust4 using results/Table_1/pay_boom.rtf, ar2
+esttab payslump0 payslump1 payslump2 payslump3 payslump4 using results/Table_1/pay_boom.rtf, ar2
 
 
 // Kind Transfers
