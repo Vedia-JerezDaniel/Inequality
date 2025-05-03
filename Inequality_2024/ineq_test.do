@@ -67,7 +67,7 @@ esttab pols0 pols1 pols2 pols3 pols4 using results/Table_1/kind.rtf, ar2 re
 
 // INDIRECT TAXATION
 forvalues i=0/4 {
-	xtreg gini_net`i' dl.gini_net l(0/1).gdp_gro l(0/1).gov_ex l(0/1).ind_tx gdp_cycle if year < 2020, fe vce(robust)
+	xtreg gini_net`i' dl.gini_net l(0/1).gdp_gro l(0/1).gov_ex l(0/1).ind_tx`i' gdp_cycle if year < 2020, fe vce(robust)
 	eststo itols`i'	
 }
 	
