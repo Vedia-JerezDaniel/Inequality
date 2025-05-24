@@ -15,5 +15,8 @@
 *.Rproj.user
 *.Rproj
 /*.Rproj
-/Inequality_2024/*Rproj*
-/Inequality_2024/results/**/*.rtf
+Inequality_2024/*Rproj*
+Inequality_2024/results/**/*.rtf
+Inequality_2024/results/Table_1/*.rtf
+Inequality_2024/results/Table_2/*.rtf
+Inequality_2024/results/Table_8/*.rtf

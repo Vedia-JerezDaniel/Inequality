@@ -2,12 +2,13 @@ sort idem year serie
 encode idem, generate(country)
 xtset  country year, yearly
 
+cd "E:\GitRepo\Inequality\Inequality_2024"
 
 local var gini_net gdp_gro education_exp health_exp soc_payable soc_kind ind_tx property_taxes pit
 
 local var ed_bb he_bb soc_bb kind_bb indt_bb prt_bb pit_bb
 
-
+// construye rezagos para las variables
 foreach v of local var {
 	forvalues i=0/4 {
 		if "`v'"=="gini_net" {
@@ -39,6 +40,7 @@ forvalues i=0/4 {
 	eststo ols`i'	
 }
 
+cd "E:\GitRepo\Inequality\Inequality_2024"
 esttab ols0 ols1 ols2 ols3 ols4 using results/Table_1/edu.rtf, ar2
 
 // HEALTH EXP

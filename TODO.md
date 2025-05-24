@@ -47,4 +47,9 @@ _________________________________________________________
 * add table title
 * check and rewrite tables 8 & 9
 * Results for T 8&9 describe more the results
-* Make graph for Figure 3 and similars
+* Make graph for Figure 3 and similar
+
+17/05/2025
+* Check all tables estimations and results.
+* Don`t like Table 3, no estimation.
+* Don't do nothing with Tables 5 & 7. Just results.
