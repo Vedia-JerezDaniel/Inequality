@@ -3,9 +3,12 @@
 *.RData
 *.Ruserdata
 **/*.pdf
+**/*.rtf
+
 
 
 *.html
+*.rtf
 *.bak
 *.csv
 *.xlsx
