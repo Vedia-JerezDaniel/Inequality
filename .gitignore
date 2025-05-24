@@ -16,3 +16,4 @@
 *.Rproj
 /*.Rproj
 /Inequality_2024/*Rproj*
+/Inequality_2024/results/**/*.rtf
