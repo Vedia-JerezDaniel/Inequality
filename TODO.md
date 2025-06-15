@@ -1,5 +1,4 @@
  # TODO
-
 _________________________________________________________
 
 ### After the conclusion of each point, mark as “done...”
@@ -53,3 +52,5 @@ _________________________________________________________
 * Check all tables estimations and results.
 * Don`t like Table 3, no estimation.
 * Don't do nothing with Tables 5 & 7. Just results.
+* Table 8 & 9, estan bien. (nuevos modelos) done!!
+* Endoneidad modelo de educación. (revisar variables)

@@ -13,6 +13,15 @@ xtprobit ed_bb l.gdp_gro l.education_exp gdp_cycle gov_ex gov_debt rule_law if y
 
 predict pihat0
 
+// Akaike's information criterion and Bayesian information criterion
+//
+// -----------------------------------------------------------------------------
+//        Model |          N   ll(null)  ll(model)      df        AIC        BIC
+// -------------+---------------------------------------------------------------
+//            . |        644          .  -432.0554       7   878.1109   909.3848
+// -----------------------------------------------------------------------------
+
+
 * truncate ipws at 10 (pihat)
 gen pihat=pihat0
 replace pihat = .9 if pihat>.8 & pihat~=.
@@ -56,19 +65,19 @@ esttab DR10 DR11 DR12 DR13 DR14 using results/Table_8/Table8.rtf, replace scalar
 
 // ETEFFECTES 
 forvalues i=0/4 {
-	eteffects (gini_net`i' gdp_gro gov_ex  education_exp gov_eff ) (ed_bb gdp_cycle less_15 gov_ex ) if year < 2019, aeq vce(cluster idem)
+	eteffects (gini_net`i' gdp_gro education_exp gov_eff rule_law) (ed_bb gdp_cycle gov_ex less_15 rule_law) if year < 2019, atet aeq vce(cluster idem)
 	eststo DR1`i'
 }
 
 //mas asociado con el efecto de paises ricos
 forvalues i=0/4 {
-	eteffects (gini_net`i' gdp_gro gov_ex health_exp gov_eff ) (he_bb gdp_cycle _high gov_ex ) if year < 2019, aeq vce(cluster idem)
+	eteffects (gini_net`i' gdp_gro health_exp gov_eff ) (he_bb gdp_cycle gov_ex ) if year < 2019, aeq vce(cluster idem)
 	eststo DR1`i'
 }
 
 
 forvalues i=0/4 {
-	eteffects (gini_net`i' gdp_gro gov_ex soc_payable gov_eff) (soc_bb gdp_cycle gov_eff _high  ) if year < 2019, aeq vce(cluster idem) coeflegend
+	eteffects (gini_net`i' gdp_gro gov_ex soc_payable gov_eff) (soc_bb gdp_cycle gov_eff _high ) if year < 2019, aeq vce(cluster idem) coeflegend
 	eststo DR1`i'
 }
 
@@ -81,7 +90,6 @@ forvalues i=0/4 {
 	eteffects (gini_net`i' gdp_cycle gov_ex property_taxes gov_eff) (prt_bb gdp_gro gov_eff ) if year < 2019, aeq vce(cluster idem) coeflegend
 	eststo DR1`i'
 }
-
 
 forvalues i=0/4 {
 	eteffects (gini_net`i' gdp_cycle gov_ex ind_tx gov_eff sav_gdp ) (indt_bb gdp_gro gov_eff) if year < 2019, aeq vce(cluster idem) coeflegend
